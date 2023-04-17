@@ -1,9 +1,4 @@
-
-
-
-
-import { SupabaseClient, Session } from '@supabase/supabase-js';
-
+import { SupabaseClient, Session } from '@supabase/supabase-js'
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
@@ -11,14 +6,22 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			supabase: SupabaseClient;
-      getSession(): Promise<Session | null>;
+			supabase: SupabaseClient
+			getSession(): Promise<Session | null>
 		}
 		interface PageData {
-			session: Session | null;
-		  }
-		// interface Platform {}
+			session: Session | null
+		}
+		interface Platform {
+			env: {
+				COUNTER: DurableObjectNamespace
+			}
+			context: {
+				waitUntil(promise: Promise<any>): void
+			}
+			caches: CacheStorage & { default: Cache }
+		}
 	}
 }
 
-export {};
+export {}
