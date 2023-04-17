@@ -3,8 +3,13 @@
 
 	import LoginForm from '$lib/components/LoginForm.svelte'
 	import ThemeChange from '$lib/components/ThemeChange.svelte'
+	import { page } from '$app/stores'
 
 	export let data
+
+	$: {
+		console.log($page.url.pathname)
+	}
 
 	// Logout
 	let isLoggingOut = false
@@ -21,7 +26,7 @@
 	<div class="drawer drawer-mobile">
 		<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content flex flex-col">
-			<div class="navbar bg-base-300">
+			<div class="navbar bg-base-100">
 				<!-- <div class="flex-none lg:hidden">
 					<label for="my-drawer-3" class="btn btn-square btn-ghost">
 						<svg
@@ -120,18 +125,31 @@
 					</div>
 				</div>
 			</div>
-
 			<slot />
 		</div>
-		<div class="drawer-side">
+		<div class="drawer-side bg-base-100">
 			<label for="my-drawer-2" class="drawer-overlay" />
-			<ul class="menu p-4 w-80 bg-base-100 text-base-content">
-				<li><a href="/admin">Dashboard</a></li>
-				<li><a href="/admin/projects">Projects</a></li>
-			</ul>
+			<div>
+				<div class="h-16" />
+				<ul class="menu w-80 text-base-content">
+					<li
+						class={$page.url.pathname === '/admin'
+							? 'bordered bg-primary bg-opacity-20 font-medium'
+							: 'hover-bordered'}
+					>
+						<a href="/admin">Dashboard</a>
+					</li>
+					<li
+						class={$page.url.pathname === '/admin/projects'
+							? 'bordered bg-primary bg-opacity-20 font-medium'
+							: 'hover-bordered'}
+					>
+						<a href="/admin/projects">Projects</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
-	<ThemeChange />
 {:else}
 	<div class="h-screen flex justify-center items-center">
 		<LoginForm />

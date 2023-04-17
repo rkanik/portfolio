@@ -6,6 +6,4 @@
 	<title>Admin | RK Anik</title>
 </svelte:head>
 
-{#if !data.session}
-	<div>Admin Dashboard</div>
-{/if}
+<div class="p-5">Admin Dashboard</div>
