@@ -2,7 +2,7 @@
 </script>
 
 <svelte:head>
-	<title>Portfolio</title>
+	<title>RK Anik</title>
 </svelte:head>
 
 <div>

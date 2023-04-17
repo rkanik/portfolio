@@ -7,10 +7,6 @@
 
 	export let data
 
-	$: {
-		console.log($page.url.pathname)
-	}
-
 	// Logout
 	let isLoggingOut = false
 	const onLogout = async () => {
@@ -21,6 +17,12 @@
 		window.location.reload()
 	}
 </script>
+
+<svelte:head>
+	{#if !data.session}
+		<title>Login | RK Anik</title>
+	{/if}
+</svelte:head>
 
 {#if data.session}
 	<div class="drawer drawer-mobile">

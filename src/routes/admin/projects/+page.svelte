@@ -1,3 +1,7 @@
+<svelte:head>
+	<title>Projects | RK Anik</title>
+</svelte:head>
+
 <div class="px-4 md:px-0 py-4 md:py-5 container mx-auto">
 	<div class="py-2 flex items-center justify-between">
 		<h1 class="text-2xl font-medium">Projects</h1>
