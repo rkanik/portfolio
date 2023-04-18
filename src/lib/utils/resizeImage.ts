@@ -18,7 +18,8 @@ export const resizeImage = (file: File, options?: Options) => {
 			let ctx = canvas.getContext('2d')
 			if (ctx) ctx.drawImage(img, 0, 0)
 
-			const { maxWidth = 3, maxHeight = 3 } = options || {}
+			const maxWidth = options?.maxWidth || options?.maxHeight || 3
+			const maxHeight = options?.maxHeight || options?.maxWidth || 3
 
 			let width = img.width
 			let height = img.height

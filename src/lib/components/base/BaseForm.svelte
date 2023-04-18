@@ -2,28 +2,10 @@
 	import cn from 'classnames'
 	import { createEventDispatcher } from 'svelte'
 	import BaseCombobox from './BaseCombobox.svelte'
-
-	type Option = {
-		name: string
-		value: string | number
-	}
-
-	type Field = {
-		name: string
-		type: 'text' | 'number' | 'tel' | 'email' | 'file' | 'textarea' | 'combobox'
-		label?: string
-		class?: string
-		placeholder?: string
-		options?: Option[]
-		prefix?: string
-		suffix?: string
-		combobox?: any
-		multiple?: boolean
-		accept?: string
-	}
+	import type { BaseFormField } from '$lib/types'
 
 	export let data: any = {}
-	export let fields: Field[] = []
+	export let fields: BaseFormField[] = []
 	export let isLoading: boolean = false
 
 	const dispatch = createEventDispatcher()

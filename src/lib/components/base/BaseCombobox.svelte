@@ -1,3 +1,4 @@
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { fly } from 'svelte/transition'
@@ -29,24 +30,14 @@
 			: innerOptions
 	}
 
-	// $: if (value && innerOptions.length) {
-	// 	console.log({ innerOptions, value, selected })
-	// }
-
 	onMount(async () => {
 		innerOptions = await fetchOptions()
-		selected = value
-			? innerOptions.reduce((selected, option) => {
-					return value.includes(option.value) ? { ...selected, [option.value]: option } : selected
-			  }, {})
-			: selected
 	})
 
 	export let id = ''
 
 	export let optionText = 'text'
 	export let optionValue = 'value'
-	export let returnObject = false
 	export let value: any[] = []
 	export let readonly = false
 	export let placeholder = ''
@@ -55,7 +46,6 @@
 		inputValue: any,
 		activeOption: any,
 		showOptions = false,
-		selected: any = {},
 		first = true,
 		slot: any
 
@@ -88,28 +78,31 @@
 			: `top:${rect.top - possibleHeight}px;`
 	}
 
-	$: if (!first) {
-		value = returnObject
-			? Object.values(selected)
-			: Object.values(selected).map((option) => {
-					return option[optionValue]
-			  })
-	}
-
 	$: if ((activeOption && !filtered.includes(activeOption)) || (!activeOption && inputValue)) {
 		activeOption = filtered[0]
 	}
 
+	const isSame = (v1: any, v2: any) => {
+		return (v1?.[optionValue] || v1) === (v2?.[optionValue] || v2)
+	}
+
+	const isSelected = (option: any) => {
+		return value.some((item) => {
+			return isSame(item, option)
+		})
+	}
+
 	function add(option: any) {
 		if (!readonly) {
-			selected[option[optionValue]] = option
+			value = [...value, option]
 		}
 	}
 
-	function remove(optionValue: any) {
+	function remove(option: any) {
 		if (!readonly) {
-			const { [optionValue]: val, ...rest } = selected
-			selected = rest
+			value = value.filter((item) => {
+				return !isSame(item, option)
+			})
 		}
 	}
 
@@ -133,7 +126,7 @@
 					.trim()
 					.split(' ')
 					.forEach((value: string) => {
-						if (!selected[value]) {
+						if (!isSelected(value)) {
 							add({
 								[optionText]: value,
 								[optionValue]: value
@@ -141,9 +134,7 @@
 						}
 					})
 			} else {
-				Object.keys(selected).includes(activeOption[optionValue])
-					? remove(activeOption[optionValue])
-					: add(activeOption)
+				isSelected(activeOption) ? remove(activeOption) : add(activeOption)
 			}
 			inputValue = ''
 		}
@@ -169,7 +160,7 @@
 			e.stopPropagation()
 			remove(e.target.closest('.token').dataset.id)
 		} else if (e.target.closest('.remove-all')) {
-			selected = []
+			value = []
 			inputValue = ''
 		} else {
 			optionsVisibility(true)
@@ -178,10 +169,8 @@
 
 	function handleOptionMousedown(e: any) {
 		const value = e.target.dataset.value
-		console.log('handleOptionMousedown', value, selected)
-		if (selected[value]) {
-			remove(value)
-		} else {
+		if (isSelected(value)) remove(value)
+		else {
 			add(
 				innerOptions.find((option) => {
 					return option[optionValue] === value
@@ -197,9 +186,8 @@
 	bind:this={el}
 	class:readonly
 >
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div class="flex flex-wrap flex-1 -mt-2 -ml-2" on:click|preventDefault={handleTokenClick}>
-		{#each Object.values(selected) as option}
+		{#each value || [] as option}
 			<div
 				class="flex items-center h-8 gap-2 pl-3 pr-2 mt-2 ml-2 space-x-2 rounded-full bg-base-300"
 				data-id={option[optionValue]}
@@ -233,17 +221,6 @@
 				on:blur|preventDefault={handleBlur}
 				on:keyup|preventDefault={handleKeyup}
 			/>
-			<!-- <div class="remove-all" title="Remove All" class:hidden={!Object.keys(selected).length}>
-				<svg
-					class="icon-clear"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					viewBox="0 0 24 24"
-				>
-					<path d={iconClearPath} />
-				</svg>
-			</div> -->
 			<svg
 				width="18"
 				height="18"
@@ -257,7 +234,7 @@
 		{/if}
 	</div>
 
-	<select bind:this={slot} type="multiple" class="hidden">
+	<select bind:this={slot} multiple class="hidden">
 		<slot />
 	</select>
 
@@ -272,17 +249,16 @@
 					>
 						{#each filtered as option}
 							<li>
-								<a
+								<span
 									data-value={option[optionValue]}
-									href="javascript:void(0)"
-									on:click={(e) => e.preventDefault()}
 									class={cn('rounded-lg', {
 										'bg-black bg-opacity-20': activeOption === option,
-										'bg-purple-500 bg-opacity-20 text-white': selected[option[optionValue]]
+										'bg-purple-500 bg-opacity-20 text-white': isSelected(option)
 									})}
+									on:click={(e) => e.preventDefault()}
 								>
 									{option[optionText]}
-								</a>
+								</span>
 							</li>
 						{/each}
 					</ul>

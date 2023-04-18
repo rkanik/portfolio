@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 export type SupabaseFile = {
 	path: string
 	bucket?: string
-	file: File | string
+	file: File
 }
 
 const useSupabaseStorage = (supabase: SupabaseClient) => {
