@@ -6,7 +6,7 @@
 </svelte:head>
 
 <div class="p-5">
-	<div class="stats shadow">
+	<div class="shadow stats">
 		<div class="stat">
 			<div class="stat-figure text-primary">
 				<svg

@@ -27,7 +27,7 @@
 {#if data.session}
 	<div class="drawer drawer-mobile">
 		<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-		<div class="drawer-content flex flex-col">
+		<div class="flex flex-col drawer-content">
 			<div class="navbar bg-base-100">
 				<!-- <div class="flex-none lg:hidden">
 					<label for="my-drawer-3" class="btn btn-square btn-ghost">
@@ -62,14 +62,14 @@
 					</button>
 				</div>
 				<div class="flex-1">
-					<a href="/admin" class="btn btn-ghost normal-case text-xl">Admin</a>
+					<a href="/admin" class="text-xl normal-case btn btn-ghost">Admin</a>
 				</div>
 				<div class="flex-none">
 					<ThemeChange />
 					<button class="btn btn-ghost btn-circle">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							class="h-5 w-5"
+							class="w-5 h-5"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -85,7 +85,7 @@
 						<div class="indicator">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								class="h-5 w-5"
+								class="w-5 h-5"
 								fill="none"
 								viewBox="0 0 24 24"
 								stroke="currentColor"
@@ -111,7 +111,7 @@
 						</button>
 						<ul
 							tabindex="-1"
-							class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+							class="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
 						>
 							<li>
 								<a href="#" class="justify-between">
@@ -153,7 +153,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="h-screen flex justify-center items-center">
+	<div class="flex items-center justify-center h-screen">
 		<LoginForm />
 	</div>
 {/if}
