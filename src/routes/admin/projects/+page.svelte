@@ -130,15 +130,15 @@
 				resizedFiles.map(async (item) => {
 					const [src, thumbnail] = await storage.uploadMany(
 						[
-							item.file400 && {
-								path: 'projects',
-								bucket: 'uploads',
-								file: item.file400
-							},
 							item.file1200 && {
 								path: 'projects',
 								bucket: 'uploads',
 								file: item.file1200
+							},
+							item.file400 && {
+								path: 'projects',
+								bucket: 'uploads',
+								file: item.file400
 							}
 						].filter(Boolean) as SupabaseFile[]
 					)
