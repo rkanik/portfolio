@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HeroSection from '$lib/components/HeroSection.svelte'
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
 	import src from '$lib/utils/src.js'
 	import Icon from '@iconify/svelte'
@@ -11,21 +12,22 @@
 </svelte:head>
 
 <div>
+	<HeroSection />
 	<div class="container mx-auto">
 		<div class="py-16">
-			<h2 class="text-center text-2xl font-bold">Projects</h2>
-			<div class="grid grid-cols-4 mt-16 gap-8">
+			<h2 class="text-2xl font-bold text-center">Projects</h2>
+			<div class="grid grid-cols-4 gap-8 mt-16">
 				{#each data.projects.data || [] as project}
-					<div class="card glass overflow-hidden">
-						<div class="h-64 relative overflow-hidden">
+					<div class="overflow-hidden card glass">
+						<div class="relative h-64 overflow-hidden">
 							<img
 								alt={project.name}
 								src={src(project.projectAttachments?.[0]?.attachments?.thumbnail)}
-								class="object-cover transform scale-100 hover:scale-125 h-full transition-transform duration-500 ease-in-out w-full"
+								class="object-cover w-full h-full transition-transform duration-500 ease-in-out transform scale-100 hover:scale-125"
 							/>
 						</div>
 						<div class="card-body">
-							<h2 class="card-title flex items-center justify-between">
+							<h2 class="flex items-center justify-between card-title">
 								<span>{project.name}</span>
 								<div class="flex space-x-2">
 									{#if project.sourceCodeUrl}
@@ -54,7 +56,7 @@
 							<p>{project.description}</p>
 
 							<div class="mt-2">
-								<div class="flex flex-wrap -ml-1 -mt-1 max-w-xs">
+								<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
 									{#each project.tags?.split(',') || [] as tag}
 										<div class="badge ml-1 mt-1 pb-0.5">{tag}</div>
 									{/each}
@@ -67,8 +69,8 @@
 		</div>
 	</div>
 
-	<div class="hero min-h-screen bg-base-200">
-		<div class="hero-content flex-col lg:flex-row-reverse">
+	<div class="min-h-screen hero bg-base-200">
+		<div class="flex-col hero-content lg:flex-row-reverse">
 			<img
 				alt="Hero"
 				class="max-w-sm rounded-lg shadow-2xl"
