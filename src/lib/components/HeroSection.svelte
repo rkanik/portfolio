@@ -4,6 +4,7 @@
 
 	import random from '$lib/utils/random'
 	import OrganicShape from './OrganicShape.svelte'
+	import Icon from '@iconify/svelte'
 
 	const colors = darkColors
 
@@ -20,6 +21,7 @@
 
 	onMount(() => {
 		changeColor()
+		setInterval(changeColor, 10000)
 	})
 </script>
 
@@ -41,7 +43,55 @@
 							applications using cutting-edge technologies. I believe in delivering top-notch
 							solutions that not only meet but exceed my clients' expectations.
 						</p>
-						<div class="relative z-20 flex mt-8 space-x-8">
+						<div class="relative z-20 flex mt-8 space-x-2">
+							<a
+								target="_blank"
+								rel="noreferrer"
+								class="btn btn-square btn-outline"
+								href="https://github.com/rkanik"
+							>
+								<Icon icon="mdi:github" class="text-4xl" />
+							</a>
+							<a
+								target="_blank"
+								rel="noreferrer"
+								class="btn btn-square btn-outline"
+								href="https://www.linkedin.com/in/rkanik"
+							>
+								<Icon icon="mdi:linkedin" class="text-4xl" />
+							</a>
+							<a
+								target="_blank"
+								rel="noreferrer"
+								class="btn btn-square btn-outline"
+								href="https://www.facebook.com/rkanik.me"
+							>
+								<Icon icon="mdi:facebook" class="text-4xl" />
+							</a>
+							<a
+								target="_blank"
+								rel="noreferrer"
+								class="btn btn-square btn-outline"
+								href="https://www.instagram.com/rkanik.me"
+							>
+								<Icon icon="mdi:instagram" class="text-4xl" />
+							</a>
+							<a
+								target="_blank"
+								rel="noreferrer"
+								class="btn btn-square btn-outline"
+								href="https://wa.me/+8801703577953"
+							>
+								<Icon icon="mdi:whatsapp" class="text-4xl" />
+							</a>
+							<a
+								target="_blank"
+								rel="noreferrer"
+								class="btn btn-square btn-outline"
+								href="mailto:rkanik.me@gmail.com"
+							>
+								<Icon icon="mdi:gmail" class="text-4xl" />
+							</a>
 							<!-- <Button animate md="chevron_right" href="https://www.fiverr.com/rkanik">
 								Hire Me
 							</Button>

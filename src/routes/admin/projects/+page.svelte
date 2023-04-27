@@ -12,6 +12,7 @@
 	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
 	import type { BaseFormField, BaseFormFieldOption, TProject } from '$lib/types.js'
 	import cn from '$lib/utils/cn.js'
+	import Project from '$lib/models/ProjectModel.js'
 
 	export let data
 
@@ -61,7 +62,7 @@
 
 	const form = {
 		update: {
-			fields,
+			fields: [...fields, { name: 'sortOrder', type: 'text', label: 'Sort Order' }],
 			modal: false,
 			data: {
 				name: '',
@@ -96,9 +97,18 @@
 	const supabase = getSupabaseContext()
 	const storage = useSupabaseStorage($supabase)
 
+	// List
+	const onFetchProjects = async () => {
+		data.projects = await $supabase
+			.from('projects')
+			.select(`*,projectAttachments(*,attachments(*))`)
+			.order('sortOrder', { ascending: true })
+	}
+
 	const onSubmit = async (event: CustomEvent<typeof form.create.data>) => {
 		event.preventDefault()
 		try {
+			await $supabase.rpc('increment_project_sort_orders', { sort_order_above: 0 })
 			const projectInsertResponse = await $supabase
 				.from('projects')
 				.insert({
@@ -106,7 +116,8 @@
 					description: event.detail.description,
 					previewUrl: event.detail.previewUrl,
 					sourceCodeUrl: event.detail.sourceCodeUrl,
-					tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(',')
+					tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(','),
+					order: 1
 				})
 				.select()
 
@@ -193,21 +204,10 @@
 			}
 
 			modal = false
-			data.projects = await $supabase
-				.from('projects')
-				.select(`*,projectAttachments(*,attachments(*))`)
-				.order('createdAt', { ascending: false })
+			onFetchProjects()
 		} catch (error) {
 			console.log('onSubmit', error)
 		}
-	}
-
-	// List
-	const onFetchProjects = async () => {
-		data.projects = await $supabase
-			.from('projects')
-			.select(`*,projectAttachments(*,attachments(*))`)
-			.order('createdAt', { ascending: false })
 	}
 
 	// Update
@@ -239,6 +239,11 @@
 		if (!('name' in event.detail)) {
 			return
 		}
+
+		await $supabase.rpc('update_sort_order', {
+			row_id: event.detail.id,
+			sort_order: +event.detail.sortOrder
+		})
 
 		isUpdating = true
 		const { error } = await $supabase

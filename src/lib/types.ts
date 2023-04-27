@@ -1,4 +1,5 @@
 import type { Database } from '../supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export type BaseFormFieldOption = {
 	[key: string]: any
@@ -17,6 +18,8 @@ export type BaseFormField = {
 	multiple?: boolean
 	accept?: string
 }
+
+export type TSupabase = SupabaseClient<Database>
 
 export type TAttachments = Database['public']['Tables']['attachments']['Row']
 export type TProjectAttachments = Database['public']['Tables']['projectAttachments']['Row'] & {

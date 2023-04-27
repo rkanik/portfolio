@@ -100,6 +100,7 @@ export interface Database {
           id: string
           name: string
           previewUrl: string | null
+          sortOrder: number
           sourceCodeUrl: string | null
           status: string
           tags: string | null
@@ -111,6 +112,7 @@ export interface Database {
           id?: string
           name: string
           previewUrl?: string | null
+          sortOrder?: number
           sourceCodeUrl?: string | null
           status?: string
           tags?: string | null
@@ -122,6 +124,7 @@ export interface Database {
           id?: string
           name?: string
           previewUrl?: string | null
+          sortOrder?: number
           sourceCodeUrl?: string | null
           status?: string
           tags?: string | null
@@ -133,7 +136,31 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_project_sort_orders: {
+        Args: {
+          sort_order_above: number
+        }
+        Returns: undefined
+      }
+      incrementprojectsortorders: {
+        Args: {
+          sortorder: number
+        }
+        Returns: undefined
+      }
+      sync_project_sort_order: {
+        Args: {
+          so: number
+        }
+        Returns: undefined
+      }
+      update_sort_order: {
+        Args: {
+          row_id: string
+          sort_order: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -4,6 +4,6 @@ export const load = async ({ locals: { supabase } }) => {
 			.from('projects')
 			.select(`*,projectAttachments(*,attachments(*))`)
 			.eq('status', 'active')
-			.order('createdAt', { ascending: false })
+			.order('sortOrder', { ascending: true })
 	}
 }
