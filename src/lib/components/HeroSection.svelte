@@ -36,9 +36,10 @@
 							Developer
 						</h1>
 						<p class="max-w-xl mt-8 text-xl font-normal leading-normal text-gray-400">
-							I am very dedicated and passionate in programming. I can build website, web
-							application, Restful API, Desktop application and Database design. I always write
-							clean, reusable, maintainable, scalable code.
+							I am a full stack Javascript engineer based in Dhaka, Bangladesh. With over 3 years of
+							experience in the field, I am passionate about creating innovative and user-friendly
+							applications using cutting-edge technologies. I believe in delivering top-notch
+							solutions that not only meet but exceed my clients' expectations.
 						</p>
 						<div class="relative z-20 flex mt-8 space-x-8">
 							<!-- <Button animate md="chevron_right" href="https://www.fiverr.com/rkanik">
