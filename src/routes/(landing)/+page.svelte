@@ -1,5 +1,6 @@
 <script lang="ts">
 	import HeroSection from '$lib/components/HeroSection.svelte'
+	import Testimonials from '$lib/components/Testimonials.svelte'
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
 	import src from '$lib/utils/src.js'
 	import Icon from '@iconify/svelte'
@@ -12,6 +13,13 @@
 </svelte:head>
 
 <div>
+	<div class="container mx-auto">
+		<div class="py-16">
+			<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
+			<Testimonials />
+		</div>
+	</div>
+
 	<HeroSection />
 	<div class="container mx-auto">
 		<div class="py-16">
