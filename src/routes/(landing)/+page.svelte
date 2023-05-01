@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EduationAndExperiences from '$lib/components/EduationAndExperiences.svelte'
 	import HeroSection from '$lib/components/HeroSection.svelte'
 	import Testimonials from '$lib/components/Testimonials.svelte'
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
@@ -13,6 +14,15 @@
 </svelte:head>
 
 <div>
+	<div class="container flex items-center justify-center min-h-screen mx-auto">
+		<div class="w-full py-16">
+			<h2 class="mb-8 text-2xl font-bold text-center">Eduation And Experiences</h2>
+			<div class="flex items-center justify-center">
+				<EduationAndExperiences />
+			</div>
+		</div>
+	</div>
+
 	<div class="container flex items-center justify-center min-h-screen mx-auto">
 		<div class="w-full py-16">
 			<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
