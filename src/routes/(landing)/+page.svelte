@@ -13,10 +13,12 @@
 </svelte:head>
 
 <div>
-	<div class="container mx-auto">
-		<div class="py-16">
+	<div class="container flex items-center justify-center min-h-screen mx-auto">
+		<div class="w-full py-16">
 			<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
-			<Testimonials />
+			<div class="min-h-[32rem]">
+				<Testimonials />
+			</div>
 		</div>
 	</div>
 
