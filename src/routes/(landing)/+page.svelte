@@ -14,25 +14,8 @@
 </svelte:head>
 
 <div>
-	<div class="container flex items-center justify-center min-h-screen mx-auto">
-		<div class="w-full py-16">
-			<h2 class="mb-8 text-2xl font-bold text-center">Eduation And Experiences</h2>
-			<div class="flex items-center justify-center">
-				<EduationAndExperiences />
-			</div>
-		</div>
-	</div>
-
-	<div class="container flex items-center justify-center min-h-screen mx-auto">
-		<div class="w-full py-16">
-			<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
-			<div class="min-h-[32rem]">
-				<Testimonials />
-			</div>
-		</div>
-	</div>
-
 	<HeroSection />
+
 	<div class="container mx-auto">
 		<div class="py-16">
 			<h2 class="text-2xl font-bold text-center">Projects</h2>
@@ -85,6 +68,24 @@
 						</div>
 					</div>
 				{/each}
+			</div>
+		</div>
+	</div>
+
+	<div class="container flex items-center justify-center min-h-screen mx-auto">
+		<div class="w-full py-16">
+			<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
+			<div class="min-h-[32rem]">
+				<Testimonials />
+			</div>
+		</div>
+	</div>
+
+	<div class="container flex items-center justify-center min-h-screen mx-auto">
+		<div class="w-full py-16">
+			<h2 class="mb-8 text-2xl font-bold text-center">Eduation And Experiences</h2>
+			<div class="flex items-center justify-center">
+				<EduationAndExperiences />
 			</div>
 		</div>
 	</div>

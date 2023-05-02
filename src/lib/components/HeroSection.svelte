@@ -5,6 +5,7 @@
 	import random from '$lib/utils/random'
 	import OrganicShape from './OrganicShape.svelte'
 	import Icon from '@iconify/svelte'
+	import '$lib/assets/css/rainbow.css'
 
 	const colors = darkColors
 
@@ -108,7 +109,7 @@
 					<OrganicShape class="absolute z-10 -top-28 -left-48" />
 				</div>
 				<div class="relative max-w-4xl">
-					<svg
+					<!-- <svg
 						width="72"
 						height="64"
 						viewBox="0 0 72 64"
@@ -118,14 +119,15 @@
 							<rect rx="32" fill="none" width="64" height="64" />
 							<rect rx="8" width="16" height="16" fill="current-color" />
 						</g>
-					</svg>
+					</svg> -->
 					<img
 						alt="RK Anik"
 						class="relative z-10 object-cover object-top max-w-xl transform translate-y-32"
 						src="/img/hero-me-trans.png"
 					/>
 					<div
-						class="absolute z-0 w-full h-full max-w-[28rem] max-h-[28rem] transform -translate-x-1/2 bg-white bg-opacity-50 rounded-full left-1/2 top-24 glass-2"
+						style="background-image: var(--hero-gradient-background-image)"
+						class="absolute z-0 w-full h-full max-w-[28rem] max-h-[28rem] transform -translate-x-1/2 rounded-full left-1/2 top-24 blur-[120px] transition-all duration-1000"
 					/>
 				</div>
 			</div>
