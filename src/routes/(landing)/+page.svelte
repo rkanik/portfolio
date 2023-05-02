@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AboutMe from '$lib/components/AboutMe.svelte'
 	import EduationAndExperiences from '$lib/components/EduationAndExperiences.svelte'
 	import HeroSection from '$lib/components/HeroSection.svelte'
 	import Testimonials from '$lib/components/Testimonials.svelte'
@@ -13,8 +14,14 @@
 	<title>RK Anik</title>
 </svelte:head>
 
-<div>
+<div class="overflow-hidden">
 	<HeroSection />
+
+	<div class="container flex items-center justify-center min-h-screen px-4 mx-auto md:px-0">
+		<div class="w-full py-16">
+			<AboutMe />
+		</div>
+	</div>
 
 	<div class="container mx-auto">
 		<div class="py-16">

@@ -6,6 +6,7 @@
 	import OrganicShape from './OrganicShape.svelte'
 	import Icon from '@iconify/svelte'
 	import '$lib/assets/css/rainbow.css'
+	import SocialLinks from './SocialLinks.svelte'
 
 	const colors = darkColors
 
@@ -44,67 +45,18 @@
 							applications using cutting-edge technologies. I believe in delivering top-notch
 							solutions that not only meet but exceed my clients' expectations.
 						</p>
-						<div class="relative z-20 flex mt-8 space-x-2">
-							<a
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-square btn-outline"
-								href="https://github.com/rkanik"
-							>
-								<Icon icon="mdi:github" class="text-4xl" />
-							</a>
-							<a
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-square btn-outline"
-								href="https://www.linkedin.com/in/rkanik"
-							>
-								<Icon icon="mdi:linkedin" class="text-4xl" />
-							</a>
-							<a
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-square btn-outline"
-								href="https://www.facebook.com/rkanik.me"
-							>
-								<Icon icon="mdi:facebook" class="text-4xl" />
-							</a>
-							<a
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-square btn-outline"
-								href="https://www.instagram.com/rkanik.me"
-							>
-								<Icon icon="mdi:instagram" class="text-4xl" />
-							</a>
-							<a
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-square btn-outline"
-								href="https://wa.me/+8801703577953"
-							>
-								<Icon icon="mdi:whatsapp" class="text-4xl" />
-							</a>
-							<a
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-square btn-outline"
-								href="mailto:rkanik.me@gmail.com"
-							>
-								<Icon icon="mdi:gmail" class="text-4xl" />
-							</a>
-							<!-- <Button animate md="chevron_right" href="https://www.fiverr.com/rkanik">
-								Hire Me
-							</Button>
-							<Button
-								outlined
-								download
-								md="download"
-								href="https://firebasestorage.googleapis.com/v0/b/rkanik-me.appspot.com/o/docs%2FCV%20of%20Md.%20Rasel%20Khandkar%20%5BCF%5D.pdf?alt=media&token=60010cca-a80b-405e-a29e-1707c80b8063"
-							>
-								Download CV
-							</Button> -->
-						</div>
+						<SocialLinks class="relative z-20 mt-8" />
+						<!-- <Button animate md="chevron_right" href="https://www.fiverr.com/rkanik">
+							Hire Me
+						</Button>
+						<Button
+							outlined
+							download
+							md="download"
+							href="https://firebasestorage.googleapis.com/v0/b/rkanik-me.appspot.com/o/docs%2FCV%20of%20Md.%20Rasel%20Khandkar%20%5BCF%5D.pdf?alt=media&token=60010cca-a80b-405e-a29e-1707c80b8063"
+						>
+							Download CV
+						</Button> -->
 					</div>
 					<OrganicShape class="absolute z-10 -top-28 -left-48" />
 				</div>
