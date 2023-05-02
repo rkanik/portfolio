@@ -131,6 +131,52 @@ export interface Database {
           updatedAt?: string | null
         }
       }
+      technologies: {
+        Row: {
+          created_at: string | null
+          "description ": string | null
+          icon: string
+          id: string
+          name: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          "description "?: string | null
+          icon: string
+          id?: string
+          name: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          "description "?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          url?: string | null
+        }
+      }
+      userTechnologies: {
+        Row: {
+          created_at: string | null
+          id: string
+          technologyId: string
+          userId: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          technologyId: string
+          userId: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          technologyId?: string
+          userId?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

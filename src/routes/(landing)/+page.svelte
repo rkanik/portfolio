@@ -2,6 +2,7 @@
 	import AboutMe from '$lib/components/AboutMe.svelte'
 	import EduationAndExperiences from '$lib/components/EduationAndExperiences.svelte'
 	import HeroSection from '$lib/components/HeroSection.svelte'
+	import RandomizePosition from '$lib/components/RandomizePosition.svelte'
 	import Testimonials from '$lib/components/Testimonials.svelte'
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
 	import src from '$lib/utils/src.js'
@@ -15,6 +16,33 @@
 </svelte:head>
 
 <div class="overflow-hidden">
+	<div class="container flex items-center justify-center min-h-screen px-4 mx-auto md:px-0">
+		<div class="w-full py-16">
+			<h2 class="text-2xl font-bold text-center">Tools And Technologies</h2>
+
+			<RandomizePosition items={data.userTechnologies.data || []} let:item>
+				<div slot="item" class="flex flex-col items-center justify-center">
+					<Icon icon={item.technologies?.icon} class="text-6xl" />
+					<div class="mt-2 text-xs tracking-wider uppercase">{item.technologies?.name}</div>
+				</div>
+			</RandomizePosition>
+
+			<!-- {#if !data.userTechnologies.error}
+				<div class="max-w-5xl mx-auto mt-8">
+					<div class="flex flex-wrap justify-center">
+						{#each data.userTechnologies.data as tech}
+							<div
+								class="flex flex-col items-center justify-center w-32 h-32 p-5 hover:bg-base-100"
+							>
+								<Icon icon={tech.technologies?.icon} class="text-6xl" />
+								<div class="mt-2 text-xs tracking-wider uppercase">{tech.technologies?.name}</div>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if} -->
+		</div>
+	</div>
 	<HeroSection />
 
 	<div class="container flex items-center justify-center min-h-screen px-4 mx-auto md:px-0">
