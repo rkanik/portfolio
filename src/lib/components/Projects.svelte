@@ -110,7 +110,24 @@
 	{#if currentProject}
 		<div class="flex min-h-[80vh] space-x-5">
 			<div class="flex-none max-w-sm p-5 overflow-auto bg-base-300 rounded-2xl">
-				{currentProject.description}
+				<div class="mb-2 font-medium">Description</div>
+				<p>
+					{currentProject.description}
+				</p>
+
+				<div class="mt-2">
+					<div class="mb-2 font-medium">Tools and Technologies</div>
+					<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
+						{#if Array.isArray(currentProject.projectTechnologies)}
+							{#each currentProject.projectTechnologies as item}
+								<div class="badge ml-1 mt-1 pb-0.5 space-x-1 items-center">
+									<Icon icon={item.technologies?.icon} class="text-sm mt-0.5" />
+									<div>{item.technologies?.name}</div>
+								</div>
+							{/each}
+						{/if}
+					</div>
+				</div>
 			</div>
 			<div class="flex flex-col flex-1">
 				<div class="flex items-center flex-none p-2 mb-5 rounded-2xl bg-base-300">
