@@ -27,4 +27,5 @@ export type TProjectAttachments = Database['public']['Tables']['projectAttachmen
 }
 export type TProject = Database['public']['Tables']['projects']['Row'] & {
 	projectAttachments: TProjectAttachments[]
+	projectTechnologies: any[]
 }

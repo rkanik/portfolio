@@ -112,12 +112,13 @@
 			const projectInsertResponse = await $supabase
 				.from('projects')
 				.insert({
+					sortOrder: 1,
+					userId: data.session?.user.id,
 					name: event.detail.name,
 					description: event.detail.description,
 					previewUrl: event.detail.previewUrl,
 					sourceCodeUrl: event.detail.sourceCodeUrl,
-					tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(','),
-					order: 1
+					tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(',')
 				})
 				.select()
 
@@ -338,23 +339,23 @@
 		>
 			<div slot="item">
 				{#if header.value === 'tags'}
-					<div class="flex flex-wrap -ml-1 -mt-1 max-w-xs">
+					<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
 						{#each item.tags.split(',') as tag}
-							<div class="badge ml-1 mt-1">{tag}</div>
+							<div class="mt-1 ml-1 badge">{tag}</div>
 						{/each}
 					</div>
 				{:else if header.value === 'project'}
-					<div class="flex space-x-4 items-center py-2">
+					<div class="flex items-center py-2 space-x-4">
 						<div class="flex-none">
 							<img
 								alt={item.projectAttachments[0]?.attachments.name || ''}
 								src={src(item.projectAttachments[0]?.attachments.thumbnail)}
-								class="w-12 h-12 object-cover rounded"
+								class="object-cover w-12 h-12 rounded"
 							/>
 						</div>
 						<div>
 							<h5 class="text-base font-medium">{item.name}</h5>
-							<p class="text-sm opacity-50 max-w-sm max-h-16 overflow-hidden">{item.description}</p>
+							<p class="max-w-sm overflow-hidden text-sm opacity-50 max-h-16">{item.description}</p>
 						</div>
 					</div>
 				{:else if header.value === 'links'}
