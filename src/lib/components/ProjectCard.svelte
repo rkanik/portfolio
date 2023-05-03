@@ -3,18 +3,25 @@
 	import src from '$lib/utils/src'
 	import Icon from '@iconify/svelte'
 	import truncate from 'lodash/truncate'
+	import { createEventDispatcher } from 'svelte'
+
+	const dispatch = createEventDispatcher()
 
 	export let project: TProject = null!
+	export let glass = true
+	export let showThumbnail = true
 </script>
 
-<div class="overflow-hidden card glass">
-	<div class="relative h-48 overflow-hidden">
-		<img
-			alt={project.name}
-			src={src(project.projectAttachments?.[0]?.attachments?.thumbnail)}
-			class="object-cover w-full h-full transition-transform duration-500 ease-in-out transform scale-100 hover:scale-125"
-		/>
-	</div>
+<div class="overflow-hidden card" class:glass>
+	{#if showThumbnail}
+		<button class="relative h-48 overflow-hidden" on:click={() => dispatch('click', project)}>
+			<img
+				alt={project.name}
+				src={src(project.projectAttachments?.[0]?.attachments?.thumbnail)}
+				class="object-cover w-full h-full transition-transform duration-500 ease-in-out transform scale-100 hover:scale-125"
+			/>
+		</button>
+	{/if}
 	<div class="card-body">
 		<h2 class="flex items-center justify-between card-title">
 			<span>{project.name}</span>

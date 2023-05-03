@@ -1,4 +1,5 @@
 <script lang="ts">
+	import cn from '$lib/utils/cn'
 	import BaseTeleport from './BaseTeleport.svelte'
 
 	type Activator =
@@ -14,6 +15,8 @@
 		class: 'btn',
 		text: 'Open Modal'
 	}
+
+	export let modalBox = ''
 
 	const onShow = () => {
 		value = true
@@ -34,10 +37,8 @@
 	<div class="base-modal">
 		<input bind:checked={value} type="checkbox" class="modal-toggle" />
 		<div class="modal">
-			<div class="modal-box relative overflow-y-auto">
-				<button class="btn btn-sm btn-circle absolute right-2 top-2" on:click={onHide}>
-					✕
-				</button>
+			<div class={cn('relative overflow-y-auto modal-box', modalBox)}>
+				<button class="absolute btn btn-sm btn-circle right-2 top-2" on:click={onHide}> ✕ </button>
 				<h3 class="text-lg font-bold">{title}</h3>
 				<div class="mt-4">
 					<slot />
