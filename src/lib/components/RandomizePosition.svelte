@@ -90,10 +90,20 @@
 				height: 2 * radius + 'px'
 			}
 		})
-		setTimeout(() => {
-			randomize()
-			// setInterval(randomize, 5000)
-		}, 1000)
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						randomize()
+						observer.unobserve(container)
+					}
+				})
+			},
+			{ threshold: 0.35 }
+		)
+
+		observer.observe(container)
 	})
 </script>
 
