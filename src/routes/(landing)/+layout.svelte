@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte'
 	import { invalidate } from '$app/navigation'
 	import type { LayoutData } from './$types'
+	import Navbar from '$lib/components/Navbar.svelte'
 
 	export let data: LayoutData
 
@@ -22,9 +23,13 @@
 <svelte:head />
 
 <div>
-	<slot />
+	<Navbar />
 
-	<footer class="footer footer-center p-10 bg-primary text-primary-content">
+	<div class="pt-16">
+		<slot />
+	</div>
+
+	<footer class="p-10 footer footer-center bg-primary text-primary-content">
 		<div>
 			<svg
 				width="50"

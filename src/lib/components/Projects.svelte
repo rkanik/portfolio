@@ -49,7 +49,7 @@
 	}
 </script>
 
-<div class="container min-h-screen py-16 mx-auto">
+<div class="container min-h-screen px-4 py-16 mx-auto md:px-0">
 	<h2 class="text-2xl font-bold text-center">Projects Showcase</h2>
 	<p class="max-w-5xl mx-auto mt-4 text-center">
 		Welcome to my Portfolio Projects Showcase, where I highlight my most recent and impressive
@@ -85,7 +85,7 @@
 		</div>
 	</div>
 
-	<div class="grid grid-cols-4 gap-8 mt-8">
+	<div class="grid grid-cols-1 gap-8 mt-8 md:grid-cols-4">
 		{#each (projects.data || []).slice(0, max) as project}
 			<ProjectCard {project} />
 		{/each}

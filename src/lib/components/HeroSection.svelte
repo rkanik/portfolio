@@ -29,7 +29,7 @@
 
 <div class="relative overflow-hidden landing-hero" style={bgColor}>
 	<div class="container px-4 mx-auto sm:px-0">
-		<div class="flex items-center h-screen px-16">
+		<div class="flex items-center h-screen px-4">
 			<div class="relative flex items-center justify-between w-full">
 				<div class="relative">
 					<div class="relative z-20 blend-dodge">
