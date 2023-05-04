@@ -160,7 +160,7 @@ export interface Database {
       technologies: {
         Row: {
           created_at: string | null
-          "description ": string | null
+          description: string | null
           icon: string
           id: string
           name: string
@@ -168,7 +168,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string | null
-          "description "?: string | null
+          description?: string | null
           icon: string
           id?: string
           name: string
@@ -176,7 +176,7 @@ export interface Database {
         }
         Update: {
           created_at?: string | null
-          "description "?: string | null
+          description?: string | null
           icon?: string
           id?: string
           name?: string

@@ -6,12 +6,14 @@
 	import { validator } from '@felte/validator-zod'
 	import { getSupabaseContext } from '$lib/store/useSupabase'
 
-	import BaseJson from '$lib/components/base/BaseJson.svelte'
 	import TextField from '$lib/components/base/TextField.svelte'
 	import TextArea from '$lib/components/base/TextArea.svelte'
+	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
+	import Icon from '@iconify/svelte'
+	import { onMount } from 'svelte'
 
 	export let data
-	const { project } = data
+	const { project, userTechnologies } = data
 
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
@@ -23,7 +25,14 @@
 		description: z.string().nullable(),
 		previewUrl: nullableURL,
 		sourceCodeUrl: nullableURL,
-		status: z.boolean().default(false)
+		status: z.boolean().default(false),
+		technologies: z.array(
+			z.object({
+				technologies: z.object({
+					id: z.string()
+				})
+			})
+		)
 	})
 
 	type TProjectSchema = z.infer<typeof projectSchema>
@@ -35,7 +44,9 @@
 		isSubmitting,
 		data: values,
 		form,
-		setIsSubmitting
+		setIsSubmitting,
+		setFields,
+		setData
 	} = createForm<TProjectSchema>({
 		extend: validator({ schema: projectSchema }),
 		initialValues: {
@@ -59,19 +70,47 @@
 					status: values.status ? 'active' : 'disabled'
 				})
 				.eq('id', project.id)
+
+			await $supabase
+				.from('projectTechnologies')
+				.delete()
+				.in(
+					'technologyId',
+					project.projectTechnologies
+						.filter((tech) => {
+							return !values.technologies.some((item) => {
+								return item.technologies.id === tech.technologies.id
+							})
+						})
+						.map((v) => v.technologies.id)
+				)
+			await $supabase.from('projectTechnologies').insert(
+				values.technologies
+					.filter((tech) => {
+						return !project.projectTechnologies.some((item) => {
+							return item.technologies.id === tech.technologies.id
+						})
+					})
+					.map((tech) => ({
+						projectId: project.id,
+						technologyId: tech.technologies.id
+					}))
+			)
+
 			setIsSubmitting(false)
 
 			console.log({ data, error })
 		}
 	})
 
-	$: {
-		console.log($values)
-	}
+	let mounted = false
+	onMount(() => {
+		mounted = true
+	})
 </script>
 
-<div class="w-full max-w-4xl mx-auto">
-	<form use:form>
+<div class="w-full max-w-4xl mx-auto py-16">
+	<form use:form class="flex flex-col space-y-2">
 		<TextField
 			required
 			name="name"
@@ -97,6 +136,44 @@
 			placeholder="Preview url.."
 			errors={$errors.sourceCodeUrl || []}
 		/>
+
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<Autocomplete
+			name="technologies"
+			options={userTechnologies}
+			optionText="technologies.name"
+			optionValue="technologies.id"
+			label="Tolls and Technologies"
+			placeholder="Select tools and technologies..."
+			value={project?.projectTechnologies || []}
+			on:change={(e) => setFields('technologies', e.detail)}
+		>
+			<svelte:fragment slot="selection" let:item let:remove>
+				{#if mounted}
+					<button class="btn btn-sm mt-1 ml-1 rounded-full flex items-center space-x-2 normal-case">
+						<Icon icon={item.technologies.icon} class="text-sm" />
+						<span>{item.technologies.name}</span>
+						<button on:click={remove}>
+							<Icon icon="iconamoon:sign-times-circle-fill" />
+						</button>
+					</button>
+				{/if}
+			</svelte:fragment>
+
+			<svelte:fragment slot="item" let:item let:selected let:focused let:onClick>
+				<li on:click={onClick}>
+					<span
+						class={cn('rounded-lg', {
+							'bg-black bg-opacity-20': focused,
+							'bg-purple-500 bg-opacity-10 text-white': selected
+						})}
+					>
+						<Icon icon={item.technologies.icon} class="text-lg" />
+						<span class="text-base font-medium">{item.technologies.name}</span>
+					</span>
+				</li>
+			</svelte:fragment>
+		</Autocomplete>
 
 		<div class="mt-4 form-control">
 			<label class="cursor-pointer label">
