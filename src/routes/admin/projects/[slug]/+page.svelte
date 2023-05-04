@@ -11,6 +11,7 @@
 	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
+	import AttachmentUploader from '$lib/components/base/AttachmentUploader.svelte'
 
 	export let data
 	const { project, userTechnologies } = data
@@ -111,6 +112,10 @@
 
 <div class="w-full max-w-4xl mx-auto py-16">
 	<form use:form class="flex flex-col space-y-2">
+		<AttachmentUploader
+			attachments={project?.projectAttachments.map((item) => item.attachments) || []}
+		/>
+
 		<TextField
 			required
 			name="name"
