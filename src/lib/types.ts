@@ -25,7 +25,15 @@ export type TAttachments = Database['public']['Tables']['attachments']['Row']
 export type TProjectAttachments = Database['public']['Tables']['projectAttachments']['Row'] & {
 	attachments: TAttachments
 }
+
+export type Technology = Database['public']['Tables']['technologies']['Row']
+export type TProjectTechnology = Database['public']['Tables']['projectTechnologies']['Row'] & {
+	technologies: Technology
+}
+
 export type TProject = Database['public']['Tables']['projects']['Row'] & {
 	projectAttachments: TProjectAttachments[]
-	projectTechnologies: any[]
+	projectTechnologies: TProjectTechnology[]
 }
+
+export type TProjectNew = Database['public']['Tables']['projects']['Insert']

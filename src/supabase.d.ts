@@ -96,39 +96,65 @@ export interface Database {
       projects: {
         Row: {
           createdAt: string | null
-          description: string
+          description: string | null
           id: string
           name: string
           previewUrl: string | null
+          slug: string
           sortOrder: number
           sourceCodeUrl: string | null
           status: string
           tags: string | null
           updatedAt: string | null
+          userId: string
         }
         Insert: {
           createdAt?: string | null
-          description: string
+          description?: string | null
           id?: string
           name: string
           previewUrl?: string | null
+          slug?: string
           sortOrder?: number
           sourceCodeUrl?: string | null
           status?: string
           tags?: string | null
           updatedAt?: string | null
+          userId: string
         }
         Update: {
           createdAt?: string | null
-          description?: string
+          description?: string | null
           id?: string
           name?: string
           previewUrl?: string | null
+          slug?: string
           sortOrder?: number
           sourceCodeUrl?: string | null
           status?: string
           tags?: string | null
           updatedAt?: string | null
+          userId?: string
+        }
+      }
+      projectTechnologies: {
+        Row: {
+          created_at: string | null
+          id: number
+          projectId: string
+          technologyId: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          projectId: string
+          technologyId: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          projectId?: string
+          technologyId?: string
         }
       }
       technologies: {

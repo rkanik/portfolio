@@ -399,7 +399,11 @@
 					{item}
 					actions={[
 						{ text: 'View', event: 'view', icon: 'ic:baseline-remove-red-eye' },
-						{ text: 'Update', event: 'update', icon: 'ph:pencil' },
+						{
+							text: 'Update',
+							href: `/admin/projects/${item.slug}`,
+							icon: 'ph:pencil'
+						},
 						{
 							event: 'status',
 							text: item.status === 'active' ? 'Disable Project' : 'Enable',

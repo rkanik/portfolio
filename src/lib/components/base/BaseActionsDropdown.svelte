@@ -8,8 +8,9 @@
 		| { divider: true }
 		| {
 				text: string
-				event: string
 				icon: string
+				href?: string
+				event?: string
 		  }
 
 	export let item: any
@@ -24,7 +25,7 @@
 	const dispatch = createEventDispatcher()
 	const onClick = (action: Action) => {
 		return () => {
-			if ('event' in action) {
+			if ('event' in action && action.event) {
 				dispatch(action.event, item)
 			}
 		}
@@ -35,14 +36,14 @@
 	<button slot="activator" class="btn btn-sm btn-circle">
 		<Icon icon="material-symbols:more-vert" class="text-lg" />
 	</button>
-	<ul class="menu p-2 shadow bg-base-200 border rounded-box w-52">
+	<ul class="p-2 border shadow menu bg-base-200 rounded-box w-52">
 		{#each actions as action}
 			{#if 'divider' in action}
-				<div class="divider my-0 mx-2" />
+				<div class="mx-2 my-0 divider" />
 			{:else}
 				<!-- svelte-ignore a11y-invalid-attribute -->
 				<li>
-					<a href="#" class="text-sm font-normal" on:click={onClick(action)}>
+					<a href={action.href || '#'} class="text-sm font-normal" on:click={onClick(action)}>
 						<Icon icon={action.icon} class="text-xl" />
 						<span>{action.text}</span>
 					</a>

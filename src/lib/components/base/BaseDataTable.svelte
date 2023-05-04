@@ -4,13 +4,15 @@
 		value: string | ((item: any, header: DataTableHeader) => string)
 	}
 
+	type T = $$Generic<any>
+
 	export let actions = false
 	export let selectable = true
-	export let items: any[] = []
+	export let items: T[] = []
 	export let headers: DataTableHeader[] = []
 </script>
 
-<table class="base-data-table table table-compact w-full">
+<table class="table w-full base-data-table table-compact">
 	<!-- head -->
 	<thead>
 		<tr>
