@@ -1,0 +1,337 @@
+@keyframes rainbow {
+	0% {
+		--color-light: #00a98e;
+		--color-light-next: #009ff7;
+	}
+	1.25% {
+		--color-light: #00a996;
+		--color-light-next: #009dfa;
+	}
+	2.5% {
+		--color-light: #00a99f;
+		--color-light-next: #009bfc;
+	}
+	3.75% {
+		--color-light: #00a9a7;
+		--color-light-next: #0098fd;
+	}
+	5% {
+		--color-light: #00a9b0;
+		--color-light-next: #0096fd;
+	}
+	6.25% {
+		--color-light: #00a9b8;
+		--color-light-next: #0093fd;
+	}
+	7.5% {
+		--color-light: #00a9c0;
+		--color-light-next: #2e90fc;
+	}
+	8.75% {
+		--color-light: #00a8c7;
+		--color-light-next: #4d8dfa;
+	}
+	10% {
+		--color-light: #00a8cf;
+		--color-light-next: #638af8;
+	}
+	11.25% {
+		--color-light: #00a7d5;
+		--color-light-next: #7587f5;
+	}
+	12.5% {
+		--color-light: #00a6dc;
+		--color-light-next: #8583f1;
+	}
+	13.75% {
+		--color-light: #00a6e2;
+		--color-light-next: #9280ed;
+	}
+	15% {
+		--color-light: #00a4e7;
+		--color-light-next: #9f7ce9;
+	}
+	16.25% {
+		--color-light: #00a3ec;
+		--color-light-next: #aa78e3;
+	}
+	17.5% {
+		--color-light: #00a2f1;
+		--color-light-next: #b574dd;
+	}
+	18.75% {
+		--color-light: #00a0f4;
+		--color-light-next: #be71d7;
+	}
+	20% {
+		--color-light: #009ff7;
+		--color-light-next: #c76dd1;
+	}
+	21.25% {
+		--color-light: #009dfa;
+		--color-light-next: #cf69c9;
+	}
+	22.5% {
+		--color-light: #009bfc;
+		--color-light-next: #d566c2;
+	}
+	23.75% {
+		--color-light: #0098fd;
+		--color-light-next: #dc63ba;
+	}
+	25% {
+		--color-light: #0096fd;
+		--color-light-next: #e160b3;
+	}
+	26.25% {
+		--color-light: #0093fd;
+		--color-light-next: #e65eab;
+	}
+	27.5% {
+		--color-light: #2e90fc;
+		--color-light-next: #e95ca2;
+	}
+	28.75% {
+		--color-light: #4d8dfa;
+		--color-light-next: #ed5a9a;
+	}
+	30% {
+		--color-light: #638af8;
+		--color-light-next: #ef5992;
+	}
+	31.25% {
+		--color-light: #7587f5;
+		--color-light-next: #f15989;
+	}
+	32.5% {
+		--color-light: #8583f1;
+		--color-light-next: #f25981;
+	}
+	33.75% {
+		--color-light: #9280ed;
+		--color-light-next: #f25a79;
+	}
+	35% {
+		--color-light: #9f7ce9;
+		--color-light-next: #f25c71;
+	}
+	36.25% {
+		--color-light: #aa78e3;
+		--color-light-next: #f15e69;
+	}
+	37.5% {
+		--color-light: #b574dd;
+		--color-light-next: #ef6061;
+	}
+	38.75% {
+		--color-light: #be71d7;
+		--color-light-next: #ed635a;
+	}
+	40% {
+		--color-light: #c76dd1;
+		--color-light-next: #eb6552;
+	}
+	41.25% {
+		--color-light: #cf69c9;
+		--color-light-next: #e8694b;
+	}
+	42.5% {
+		--color-light: #d566c2;
+		--color-light-next: #e46c44;
+	}
+	43.75% {
+		--color-light: #dc63ba;
+		--color-light-next: #e06f3d;
+	}
+	45% {
+		--color-light: #e160b3;
+		--color-light-next: #db7336;
+	}
+	46.25% {
+		--color-light: #e65eab;
+		--color-light-next: #d77630;
+	}
+	47.5% {
+		--color-light: #e95ca2;
+		--color-light-next: #d17a2a;
+	}
+	48.75% {
+		--color-light: #ed5a9a;
+		--color-light-next: #cc7d24;
+	}
+	50% {
+		--color-light: #ef5992;
+		--color-light-next: #c6811e;
+	}
+	51.25% {
+		--color-light: #f15989;
+		--color-light-next: #bf8418;
+	}
+	52.5% {
+		--color-light: #f25981;
+		--color-light-next: #b98713;
+	}
+	53.75% {
+		--color-light: #f25a79;
+		--color-light-next: #b28a0f;
+	}
+	55% {
+		--color-light: #f25c71;
+		--color-light-next: #ab8d0c;
+	}
+	56.25% {
+		--color-light: #f15e69;
+		--color-light-next: #a3900b;
+	}
+	57.5% {
+		--color-light: #ef6061;
+		--color-light-next: #9c920d;
+	}
+	58.75% {
+		--color-light: #ed635a;
+		--color-light-next: #949510;
+	}
+	60% {
+		--color-light: #eb6552;
+		--color-light-next: #8b9715;
+	}
+	61.25% {
+		--color-light: #e8694b;
+		--color-light-next: #83991b;
+	}
+	62.5% {
+		--color-light: #e46c44;
+		--color-light-next: #7a9b21;
+	}
+	63.75% {
+		--color-light: #e06f3d;
+		--color-light-next: #719d27;
+	}
+	65% {
+		--color-light: #db7336;
+		--color-light-next: #679e2e;
+	}
+	66.25% {
+		--color-light: #d77630;
+		--color-light-next: #5da035;
+	}
+	67.5% {
+		--color-light: #d17a2a;
+		--color-light-next: #51a13c;
+	}
+	68.75% {
+		--color-light: #cc7d24;
+		--color-light-next: #44a244;
+	}
+	70% {
+		--color-light: #c6811e;
+		--color-light-next: #34a44b;
+	}
+	71.25% {
+		--color-light: #bf8418;
+		--color-light-next: #1ba553;
+	}
+	72.5% {
+		--color-light: #b98713;
+		--color-light-next: #00a65b;
+	}
+	73.75% {
+		--color-light: #b28a0f;
+		--color-light-next: #00a663;
+	}
+	75% {
+		--color-light: #ab8d0c;
+		--color-light-next: #00a76c;
+	}
+	76.25% {
+		--color-light: #a3900b;
+		--color-light-next: #00a874;
+	}
+	77.5% {
+		--color-light: #9c920d;
+		--color-light-next: #00a87d;
+	}
+	78.75% {
+		--color-light: #949510;
+		--color-light-next: #00a985;
+	}
+	80% {
+		--color-light: #8b9715;
+		--color-light-next: #00a98e;
+	}
+	81.25% {
+		--color-light: #83991b;
+		--color-light-next: #00a996;
+	}
+	82.5% {
+		--color-light: #7a9b21;
+		--color-light-next: #00a99f;
+	}
+	83.75% {
+		--color-light: #719d27;
+		--color-light-next: #00a9a7;
+	}
+	85% {
+		--color-light: #679e2e;
+		--color-light-next: #00a9b0;
+	}
+	86.25% {
+		--color-light: #5da035;
+		--color-light-next: #00a9b8;
+	}
+	87.5% {
+		--color-light: #51a13c;
+		--color-light-next: #00a9c0;
+	}
+	88.75% {
+		--color-light: #44a244;
+		--color-light-next: #00a8c7;
+	}
+	90% {
+		--color-light: #34a44b;
+		--color-light-next: #00a8cf;
+	}
+	91.25% {
+		--color-light: #1ba553;
+		--color-light-next: #00a7d5;
+	}
+	92.5% {
+		--color-light: #00a65b;
+		--color-light-next: #00a6dc;
+	}
+	93.75% {
+		--color-light: #00a663;
+		--color-light-next: #00a6e2;
+	}
+	95% {
+		--color-light: #00a76c;
+		--color-light-next: #00a4e7;
+	}
+	96.25% {
+		--color-light: #00a874;
+		--color-light-next: #00a3ec;
+	}
+	97.5% {
+		--color-light: #00a87d;
+		--color-light-next: #00a2f1;
+	}
+	98.75% {
+		--color-light: #00a985;
+		--color-light-next: #00a0f4;
+	}
+	100% {
+		--color-light: #00a98e;
+		--color-light-next: #009ff7;
+	}
+}
+
+:root {
+	--color-light: #00a98e;
+	--color-light-next: #009ff7;
+	--hero-gradient-background-image: linear-gradient(
+		-45deg,
+		var(--color-light) 30%,
+		var(--color-light-next)
+	);
+	animation: rainbow 20s linear infinite;
+}

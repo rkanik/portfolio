@@ -12,6 +12,7 @@
 	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
 	import type { BaseFormField, BaseFormFieldOption, TProject } from '$lib/types.js'
 	import cn from '$lib/utils/cn.js'
+	import Project from '$lib/models/ProjectModel.js'
 
 	export let data
 
@@ -61,7 +62,7 @@
 
 	const form = {
 		update: {
-			fields,
+			fields: [...fields, { name: 'sortOrder', type: 'text', label: 'Sort Order' }],
 			modal: false,
 			data: {
 				name: '',
@@ -96,12 +97,23 @@
 	const supabase = getSupabaseContext()
 	const storage = useSupabaseStorage($supabase)
 
+	// List
+	const onFetchProjects = async () => {
+		data.projects = await $supabase
+			.from('projects')
+			.select(`*,projectAttachments(*,attachments(*))`)
+			.order('sortOrder', { ascending: true })
+	}
+
 	const onSubmit = async (event: CustomEvent<typeof form.create.data>) => {
 		event.preventDefault()
 		try {
+			await $supabase.rpc('increment_project_sort_orders', { sort_order_above: 0 })
 			const projectInsertResponse = await $supabase
 				.from('projects')
 				.insert({
+					sortOrder: 1,
+					userId: data.session?.user.id,
 					name: event.detail.name,
 					description: event.detail.description,
 					previewUrl: event.detail.previewUrl,
@@ -130,15 +142,15 @@
 				resizedFiles.map(async (item) => {
 					const [src, thumbnail] = await storage.uploadMany(
 						[
-							item.file400 && {
-								path: 'projects',
-								bucket: 'uploads',
-								file: item.file400
-							},
 							item.file1200 && {
 								path: 'projects',
 								bucket: 'uploads',
 								file: item.file1200
+							},
+							item.file400 && {
+								path: 'projects',
+								bucket: 'uploads',
+								file: item.file400
 							}
 						].filter(Boolean) as SupabaseFile[]
 					)
@@ -193,21 +205,10 @@
 			}
 
 			modal = false
-			data.projects = await $supabase
-				.from('projects')
-				.select(`*,projectAttachments(*,attachments(*))`)
-				.order('createdAt', { ascending: false })
+			onFetchProjects()
 		} catch (error) {
 			console.log('onSubmit', error)
 		}
-	}
-
-	// List
-	const onFetchProjects = async () => {
-		data.projects = await $supabase
-			.from('projects')
-			.select(`*,projectAttachments(*,attachments(*))`)
-			.order('createdAt', { ascending: false })
 	}
 
 	// Update
@@ -239,6 +240,11 @@
 		if (!('name' in event.detail)) {
 			return
 		}
+
+		await $supabase.rpc('update_sort_order', {
+			row_id: event.detail.id,
+			sort_order: +event.detail.sortOrder
+		})
 
 		isUpdating = true
 		const { error } = await $supabase
@@ -333,23 +339,23 @@
 		>
 			<div slot="item">
 				{#if header.value === 'tags'}
-					<div class="flex flex-wrap -ml-1 -mt-1 max-w-xs">
+					<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
 						{#each item.tags.split(',') as tag}
-							<div class="badge ml-1 mt-1">{tag}</div>
+							<div class="mt-1 ml-1 badge">{tag}</div>
 						{/each}
 					</div>
 				{:else if header.value === 'project'}
-					<div class="flex space-x-4 items-center py-2">
+					<div class="flex items-center py-2 space-x-4">
 						<div class="flex-none">
 							<img
 								alt={item.projectAttachments[0]?.attachments.name || ''}
 								src={src(item.projectAttachments[0]?.attachments.thumbnail)}
-								class="w-12 h-12 object-cover rounded"
+								class="object-cover w-12 h-12 rounded"
 							/>
 						</div>
 						<div>
 							<h5 class="text-base font-medium">{item.name}</h5>
-							<p class="text-sm opacity-50 max-w-sm max-h-16 overflow-hidden">{item.description}</p>
+							<p class="max-w-sm overflow-hidden text-sm opacity-50 max-h-16">{item.description}</p>
 						</div>
 					</div>
 				{:else if header.value === 'links'}
@@ -393,7 +399,11 @@
 					{item}
 					actions={[
 						{ text: 'View', event: 'view', icon: 'ic:baseline-remove-red-eye' },
-						{ text: 'Update', event: 'update', icon: 'ph:pencil' },
+						{
+							text: 'Update',
+							href: `/admin/projects/${item.slug}`,
+							icon: 'ph:pencil'
+						},
 						{
 							event: 'status',
 							text: item.status === 'active' ? 'Disable Project' : 'Enable',

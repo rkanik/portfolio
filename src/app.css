@@ -1,3 +1,74 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+input,
+button:focus {
+	border: none;
+	outline: none;
+}
+
+svg {
+	fill: currentColor;
+}
+
+.c-i-a-h-c {
+	animation: rotate-full 60s linear infinite;
+	transform: rotate(165deg);
+}
+
+@keyframes rotate-full {
+	from {
+		transform: rotate(165deg);
+	}
+	to {
+		transform: rotate(525deg);
+	}
+}
+
+.hover\:bg-white-10:hover {
+	background-color: rgba(white, 0.1);
+}
+.hover\:bg-white-20:hover {
+	background-color: rgba(white, 0.2);
+}
+.box-orient-vertical {
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+.scrollbar-thin::-webkit-scrollbar {
+	width: 2px !important;
+}
+.transition-left {
+	transition-property: left;
+	transition-timing-function: cubic-bezier(0.68, 0, 0.36, 0.97);
+	transition-duration: 400ms;
+}
+.blur-1 {
+	backdrop-filter: blur(4px);
+}
+.blur-2 {
+	backdrop-filter: blur(8px);
+}
+.bg-gray-18 {
+	background-color: var(--gray-18);
+}
+.bg-gray-19 {
+	background-color: var(--gray-19);
+}
+.bg-gray-18.bg-opacity-20 {
+	background-color: rgba(var(--gray-18), 0.2);
+}
+
+.blend-dodge {
+	mix-blend-mode: color-dodge;
+}
+
+.glass-2 {
+	backdrop-filter: blur(8px);
+}
