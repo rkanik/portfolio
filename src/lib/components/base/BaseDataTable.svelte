@@ -4,11 +4,9 @@
 		value: string | ((item: any, header: DataTableHeader) => string)
 	}
 
-	type T = $$Generic<any>
-
 	export let actions = false
 	export let selectable = true
-	export let items: T[] = []
+	export let items: any[] = []
 	export let headers: DataTableHeader[] = []
 </script>
 

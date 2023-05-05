@@ -183,6 +183,47 @@ export interface Database {
           url?: string | null
         }
       }
+      testimonials: {
+        Row: {
+          attachments: Json[]
+          avatar: string | null
+          company: string
+          createdAt: string
+          date: string | null
+          id: number
+          name: string
+          rating: number
+          status: string
+          testimonial: string
+          updatedAt: string
+        }
+        Insert: {
+          attachments?: Json[]
+          avatar?: string | null
+          company: string
+          createdAt?: string
+          date?: string | null
+          id?: number
+          name: string
+          rating: number
+          status?: string
+          testimonial: string
+          updatedAt?: string
+        }
+        Update: {
+          attachments?: Json[]
+          avatar?: string | null
+          company?: string
+          createdAt?: string
+          date?: string | null
+          id?: number
+          name?: string
+          rating?: number
+          status?: string
+          testimonial?: string
+          updatedAt?: string
+        }
+      }
       userTechnologies: {
         Row: {
           created_at: string | null
@@ -200,6 +241,29 @@ export interface Database {
           created_at?: string | null
           id?: string
           technologyId?: string
+          userId?: string
+        }
+      }
+      userTestimonials: {
+        Row: {
+          createdAt: string
+          id: number
+          testimonialId: number
+          updatedAt: string
+          userId: string
+        }
+        Insert: {
+          createdAt?: string
+          id?: number
+          testimonialId: number
+          updatedAt?: string
+          userId: string
+        }
+        Update: {
+          createdAt?: string
+          id?: number
+          testimonialId?: number
+          updatedAt?: string
           userId?: string
         }
       }

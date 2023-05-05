@@ -1,4 +1,15 @@
-export const load = async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { getContext } }) => {
+	const { user, supabase } = await getContext()
+
+	if (!user) {
+		return {
+			projects: {
+				data: [],
+				error: new Error('Unauthorized')
+			}
+		}
+	}
+
 	return {
 		projects: await supabase
 			.from('projects')
@@ -11,6 +22,7 @@ export const load = async ({ locals: { supabase } }) => {
 					*,technologies(*)
 				)`
 			)
+			.eq('userId', user.id)
 			.order('sortOrder', { ascending: true })
 	}
 }

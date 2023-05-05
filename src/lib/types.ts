@@ -1,5 +1,5 @@
 import type { Database } from '../supabase'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 
 export type BaseFormFieldOption = {
 	[key: string]: any
@@ -39,4 +39,36 @@ export type TProject = Database['public']['Tables']['projects']['Row'] & {
 	projectTechnologies: TProjectTechnology[]
 }
 
-export type TProjectNew = Database['public']['Tables']['projects']['Insert']
+export type Testimonial = Database['public']['Tables']['testimonials']['Row']
+export type TUserTestimonial = Database['public']['Tables']['userTestimonials']['Row'] & {
+	testimonials: Testimonial
+}
+
+export type TProfile = Database['public']['Tables']['profiles']['Row'] & {
+	user: User
+}
+
+export type TPublicUser = {
+	id: string
+}
+
+export type TPublicContext = {
+	user: User | null
+	session: Session | null
+	publicUser: TPublicUser
+	supabase: SupabaseClient<Database>
+}
+
+export type TAuthContext = {
+	user: User
+	session: Session
+	publicUser: TPublicUser
+	supabase: SupabaseClient<Database>
+}
+
+export type TContext = TPublicContext | TAuthContext
+
+export type TPagination = {
+	page?: number
+	perPage?: number
+}

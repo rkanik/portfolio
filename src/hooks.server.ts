@@ -3,36 +3,35 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_USER_ID } from '$
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import type { Handle } from '@sveltejs/kit'
 import type { Database } from './supabase'
+import type { TPublicUser, TSupabase } from '$lib/types'
 
 export const handle: Handle = async ({ event, resolve }) => {
-	if (!event.locals.user) {
-		event.locals.user = {
+	event.locals.getContext = async () => {
+		// Public user
+		const publicUser: TPublicUser = {
 			id: PUBLIC_USER_ID
+		}
+
+		// Supabase instance
+		const supabase: TSupabase = createSupabaseServerClient<Database>({
+			event,
+			supabaseUrl: PUBLIC_SUPABASE_URL,
+			supabaseKey: PUBLIC_SUPABASE_ANON_KEY
+		})
+
+		// Current session
+		const session = await supabase.auth.getSession()
+
+		// returning the context
+		return {
+			publicUser,
+			user: session.data.session?.user || null,
+			session: session.data.session,
+			supabase
 		}
 	}
 
-	event.locals.supabase = createSupabaseServerClient<Database>({
-		supabaseUrl: PUBLIC_SUPABASE_URL,
-		supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
-		event
-	})
-
-	/**
-	 * A convenience helper so we can just call await getSession() instead const { data: { session } } = await supabase.auth.getSession()
-	 */
-	event.locals.getSession = async () => {
-		const {
-			data: { session }
-		} = await event.locals.supabase.auth.getSession()
-		return session
-	}
-
 	return resolve(event, {
-		/**
-		 * There´s an issue with `filterSerializedResponseHeaders` not working when using `sequence`
-		 *
-		 * https://github.com/sveltejs/kit/issues/8061
-		 */
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range'
 		}

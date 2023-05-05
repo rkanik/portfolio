@@ -148,6 +148,13 @@
 					>
 						<a href="/admin/projects">Projects</a>
 					</li>
+					<li
+						class={$page.url.pathname === '/admin/testimonials'
+							? 'bordered bg-primary bg-opacity-20 font-medium'
+							: 'hover-bordered'}
+					>
+						<a href="/admin/testimonials">Testimonials</a>
+					</li>
 				</ul>
 			</div>
 		</div>

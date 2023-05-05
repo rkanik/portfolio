@@ -1,7 +1,7 @@
 import type { TProject, TUserTechnology } from '$lib/types'
 
-export const load = async ({ params, locals: { supabase, getSession } }) => {
-	const session = await getSession()
+export const load = async ({ params, locals: { getContext } }) => {
+	const { session, supabase } = await getContext()
 
 	if (!session) {
 		return {

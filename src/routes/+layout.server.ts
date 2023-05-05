@@ -1,5 +1,7 @@
-export const load = async ({ locals: { getSession } }) => {
+export const load = async ({ locals: { getContext } }) => {
+	const context = await getContext()
 	return {
-		session: getSession()
+		publicUser: context.publicUser,
+		session: context.session
 	}
 }

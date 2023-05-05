@@ -21,7 +21,7 @@
 	import type { TAttachment, TProjectAttachment } from '$lib/types.js'
 
 	export let data
-	const { project, userTechnologies } = data
+	const { project, supabase, userTechnologies } = data
 
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
@@ -45,7 +45,7 @@
 
 	type TProjectSchema = z.infer<typeof projectSchema>
 
-	const supabase = getSupabaseContext()
+	// const supabase = getSupabaseContext()
 
 	const {
 		errors,
@@ -68,7 +68,7 @@
 			if (!project) return
 
 			setIsSubmitting(true)
-			const { data, error } = await $supabase
+			const { data, error } = await supabase
 				.from('projects')
 				.update({
 					name: values.name,
@@ -79,7 +79,7 @@
 				})
 				.eq('id', project.id)
 
-			await $supabase
+			await supabase
 				.from('projectTechnologies')
 				.delete()
 				.in(
@@ -92,7 +92,7 @@
 						})
 						.map((v) => v.technologies.id)
 				)
-			await $supabase.from('projectTechnologies').insert(
+			await supabase.from('projectTechnologies').insert(
 				values.technologies
 					.filter((tech) => {
 						return !project.projectTechnologies.some((item) => {
@@ -111,7 +111,7 @@
 		}
 	})
 
-	const storage = useSupabaseStorage($supabase)
+	const storage = useSupabaseStorage(supabase)
 
 	const onUpload: UploadFunction = async (file) => {
 		if (!project) return [new Error('Project not found'), null]
@@ -135,7 +135,7 @@
 			].filter((v) => v.file) as SupabaseFile[]
 		)
 
-		const response = await $supabase
+		const response = await supabase
 			.from('attachments')
 			.insert({
 				base64,
@@ -151,7 +151,7 @@
 			return [response.error, null]
 		}
 
-		const projectAttachmentsResponse = await $supabase
+		const projectAttachmentsResponse = await supabase
 			.from('projectAttachments')
 			.insert({
 				projectId: project?.id,
@@ -160,7 +160,7 @@
 			.select('*,attachments(*)')
 
 		if (projectAttachmentsResponse.error) {
-			await $supabase
+			await supabase
 				.from('attachments')
 				.delete()
 				.in(
@@ -184,7 +184,7 @@
 			}
 		}
 
-		const { error: databaseError } = await $supabase
+		const { error: databaseError } = await supabase
 			.from('attachments')
 			.delete()
 			.eq('id', attachment.id)
