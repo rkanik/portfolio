@@ -11,7 +11,14 @@
 	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
-	import AttachmentUploader from '$lib/components/base/AttachmentUploader.svelte'
+	import AttachmentUploader, {
+		type RemoveFunction,
+		type UploadFunction
+	} from '$lib/components/base/AttachmentUploader.svelte'
+	import { resizeImage } from '$lib/utils/resizeImage.js'
+	import dataURLtoFile from '$lib/utils/dataURLtoFile.js'
+	import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage.js'
+	import type { TAttachment, TProjectAttachment } from '$lib/types.js'
 
 	export let data
 	const { project, userTechnologies } = data
@@ -104,15 +111,108 @@
 		}
 	})
 
+	const storage = useSupabaseStorage($supabase)
+
+	const onUpload: UploadFunction = async (file) => {
+		if (!project) return [new Error('Project not found'), null]
+
+		const base64 = await resizeImage(file, { maxWidth: 3 })
+		const file400 = dataURLtoFile(await resizeImage(file, { maxWidth: 400 }), file.name)
+		const file1200 = dataURLtoFile(await resizeImage(file, { maxWidth: 1200 }), file.name)
+
+		const [src, thumbnail] = await storage.uploadMany(
+			[
+				{
+					path: 'projects',
+					bucket: 'uploads',
+					file: file1200
+				},
+				{
+					path: 'projects',
+					bucket: 'uploads',
+					file: file400
+				}
+			].filter((v) => v.file) as SupabaseFile[]
+		)
+
+		const response = await $supabase
+			.from('attachments')
+			.insert({
+				base64,
+				name: file.name,
+				mimeType: file.type,
+				src: src.data?.path as string,
+				thumbnail: thumbnail.data?.path
+			})
+			.select()
+
+		if (response.error) {
+			console.log('response:error', response)
+			return [response.error, null]
+		}
+
+		const projectAttachmentsResponse = await $supabase
+			.from('projectAttachments')
+			.insert({
+				projectId: project?.id,
+				attachmentId: response.data[0].id
+			})
+			.select('*,attachments(*)')
+
+		if (projectAttachmentsResponse.error) {
+			await $supabase
+				.from('attachments')
+				.delete()
+				.in(
+					'id',
+					response.data.map((v) => v.id)
+				)
+			return [projectAttachmentsResponse.error, null]
+		}
+
+		return [null, projectAttachmentsResponse.data[0].attachments as TAttachment]
+	}
+
+	const onRemoveAttachment: RemoveFunction = async (attachment) => {
+		const { error: storageError } = await storage.remove(
+			[attachment.src, attachment.thumbnail].filter(Boolean).map((v) => `uploads/${v}`)
+		)
+		if (storageError) {
+			return {
+				data: null,
+				error: new Error('Error while removing attachments from Storage.')
+			}
+		}
+
+		const { error: databaseError } = await $supabase
+			.from('attachments')
+			.delete()
+			.eq('id', attachment.id)
+
+		if (databaseError) {
+			return {
+				data: null,
+				error: new Error('Error while removing attachments from the database.')
+			}
+		}
+
+		return {
+			error: null,
+			data: attachment
+		}
+	}
+
 	let mounted = false
 	onMount(() => {
 		mounted = true
 	})
 </script>
 
-<div class="w-full max-w-4xl mx-auto py-16">
+<div class="w-full max-w-4xl py-16 mx-auto">
 	<form use:form class="flex flex-col space-y-2">
 		<AttachmentUploader
+			upload={onUpload}
+			remove={onRemoveAttachment}
 			attachments={project?.projectAttachments.map((item) => item.attachments) || []}
 		/>
 
@@ -155,7 +255,7 @@
 		>
 			<svelte:fragment slot="selection" let:item let:remove>
 				{#if mounted}
-					<button class="btn btn-sm mt-1 ml-1 rounded-full flex items-center space-x-2 normal-case">
+					<button class="flex items-center mt-1 ml-1 space-x-2 normal-case rounded-full btn btn-sm">
 						<Icon icon={item.technologies.icon} class="text-sm" />
 						<span>{item.technologies.name}</span>
 						<button on:click={remove}>

@@ -37,6 +37,12 @@ dependencies:
   nanoid:
     specifier: ^4.0.2
     version: 4.0.2
+  sortablejs:
+    specifier: ^1.15.0
+    version: 1.15.0
+  svelte-dragdroplist:
+    specifier: ^1.1.1
+    version: 1.1.1(svelte@3.54.0)
   theme-change:
     specifier: ^2.5.0
     version: 2.5.0
@@ -60,6 +66,9 @@ devDependencies:
   '@types/lodash':
     specifier: ^4.14.194
     version: 4.14.194
+  '@types/sortablejs':
+    specifier: ^1.15.1
+    version: 1.15.1
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.45.0
     version: 5.45.0(@typescript-eslint/parser@5.45.0)(eslint@8.28.0)(typescript@5.0.2)
@@ -805,6 +814,10 @@ packages:
 
   /@types/semver@7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
+    dev: true
+
+  /@types/sortablejs@1.15.1:
+    resolution: {integrity: sha512-g/JwBNToh6oCTAwNS8UGVmjO7NLDKsejVhvE4x1eWiPTC3uCuNsa/TD4ssvX3du+MLiM+SHPNDuijp8y76JzLQ==}
     dev: true
 
   /@types/websocket@1.0.5:
@@ -2375,6 +2388,10 @@ packages:
       sander: 0.5.1
     dev: true
 
+  /sortablejs@1.15.0:
+    resolution: {integrity: sha512-bv9qgVMjUMf89wAvM6AxVvS/4MX3sPeN0+agqShejLU5z5GX4C75ow1O2e5k4L6XItUyAK3gH6AxSbXrOM5e8w==}
+    dev: false
+
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
@@ -2468,6 +2485,14 @@ packages:
       - stylus
       - sugarss
     dev: true
+
+  /svelte-dragdroplist@1.1.1(svelte@3.54.0):
+    resolution: {integrity: sha512-63jrgGeBG3J+ZjHhfnzhRdikj/lAdAbGDoryiGw2lrGr5/et3Tp8Y0Vmgf6t4lSkhq/DMmjxbwaVmWNj4nGiUg==}
+    peerDependencies:
+      svelte: ^3.0.0
+    dependencies:
+      svelte: 3.54.0
+    dev: false
 
   /svelte-hmr@0.15.1(svelte@3.54.0):
     resolution: {integrity: sha512-BiKB4RZ8YSwRKCNVdNxK/GfY+r4Kjgp9jCLEy0DuqAKfmQtpL38cQK3afdpjw4sqSs4PLi3jIPJIFp259NkZtA==}

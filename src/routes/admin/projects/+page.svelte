@@ -117,8 +117,8 @@
 					name: event.detail.name,
 					description: event.detail.description,
 					previewUrl: event.detail.previewUrl,
-					sourceCodeUrl: event.detail.sourceCodeUrl,
-					tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(',')
+					sourceCodeUrl: event.detail.sourceCodeUrl
+					// tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(',')
 				})
 				.select()
 
@@ -223,11 +223,11 @@
 	const onInitUpdate = (event: CustomEvent<TProject>) => {
 		updateModal = true
 		currentProject = {
-			...event.detail,
-			tagList:
-				event.detail.tags?.split(',').map((tag) => {
-					return { text: tag, value: tag }
-				}) || []
+			...event.detail
+			// tagList:
+			// 	event.detail.tags?.split(',').map((tag) => {
+			// 		return { text: tag, value: tag }
+			// 	}) || []
 		}
 	}
 
@@ -253,12 +253,12 @@
 				name: event.detail.name,
 				description: event.detail.description,
 				previewUrl: event.detail.previewUrl,
-				sourceCodeUrl: event.detail.sourceCodeUrl,
-				tags: event.detail.tagList
-					.map((tag) => {
-						return tag.value.toLowerCase()
-					})
-					.join(',')
+				sourceCodeUrl: event.detail.sourceCodeUrl
+				// tags: event.detail.tagList
+				// 	.map((tag) => {
+				// 		return tag.value.toLowerCase()
+				// 	})
+				// 	.join(',')
 			})
 			.eq('id', event.detail.id)
 		isUpdating = false
@@ -328,7 +328,7 @@
 			headers={[
 				{ text: 'Project', value: 'project' },
 
-				{ text: 'Tags', value: 'tags' },
+				{ text: 'Technologies', value: 'technologies' },
 				{ text: 'Links', value: 'links' },
 				{ text: 'Status', value: 'status' },
 				{ text: 'Created', value: 'createdAt' },
@@ -338,10 +338,13 @@
 			let:header
 		>
 			<div slot="item">
-				{#if header.value === 'tags'}
+				{#if header.value === 'technologies'}
 					<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
-						{#each item.tags.split(',') as tag}
-							<div class="mt-1 ml-1 badge">{tag}</div>
+						{#each item.projectTechnologies as technology}
+							<div class="flex items-center mt-1 ml-1 space-x-1 badge">
+								<Icon icon={technology.technologies.icon} class="text-sm" />
+								<span>{technology.technologies.name}</span>
+							</div>
 						{/each}
 					</div>
 				{:else if header.value === 'project'}

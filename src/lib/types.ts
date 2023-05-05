@@ -22,7 +22,7 @@ export type BaseFormField = {
 export type TSupabase = SupabaseClient<Database>
 
 export type TAttachment = Database['public']['Tables']['attachments']['Row']
-export type TProjectAttachments = Database['public']['Tables']['projectAttachments']['Row'] & {
+export type TProjectAttachment = Database['public']['Tables']['projectAttachments']['Row'] & {
 	attachments: TAttachment
 }
 
@@ -35,7 +35,7 @@ export type TProjectTechnology = Database['public']['Tables']['projectTechnologi
 }
 
 export type TProject = Database['public']['Tables']['projects']['Row'] & {
-	projectAttachments: TProjectAttachments[]
+	projectAttachments: TProjectAttachment[]
 	projectTechnologies: TProjectTechnology[]
 }
 
