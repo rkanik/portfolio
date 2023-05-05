@@ -210,12 +210,6 @@
 
 <div class="w-full max-w-4xl py-16 mx-auto">
 	<form use:form class="flex flex-col space-y-2">
-		<AttachmentUploader
-			upload={onUpload}
-			remove={onRemoveAttachment}
-			attachments={project?.projectAttachments.map((item) => item.attachments) || []}
-		/>
-
 		<TextField
 			required
 			name="name"
@@ -279,6 +273,15 @@
 				</li>
 			</svelte:fragment>
 		</Autocomplete>
+
+		<div>
+			<AttachmentUploader
+				class="mt-4"
+				upload={onUpload}
+				remove={onRemoveAttachment}
+				attachments={project?.projectAttachments.map((item) => item.attachments) || []}
+			/>
+		</div>
 
 		<div class="mt-4 form-control">
 			<label class="cursor-pointer label">

@@ -24,6 +24,8 @@
 	import uniqueId from 'lodash/uniqueId'
 	import { createEventDispatcher } from 'svelte'
 	import SvelteSortable from 'svelte-sortablejs'
+	import BaseImage from './BaseImage.svelte'
+	import cn from '$lib/utils/cn'
 
 	export let attachments: TAttachment[] = []
 	export let upload: UploadFunction
@@ -156,10 +158,13 @@
 			}
 		})
 	}
+
+	let clazz = ''
+	export { clazz as class }
 </script>
 
 <div
-	class="relative p-4 shadow-xl bg-base-100 rounded-xl"
+	class={cn('relative p-4 shadow-xl bg-base-100 rounded-xl', clazz)}
 	on:dragenter|preventDefault|stopPropagation={highlight}
 	on:mouseleave={() => (isDropable = true)}
 	on:mouseenter={() => (isDropable = false)}
@@ -199,17 +204,17 @@
 		class="grid grid-cols-3 gap-4 mt-4"
 	>
 		{#each innerAttachments as attachment, index}
-			<div class="relative h-64" data-id={attachment.id}>
+			<div class="relative h-64 group" data-id={attachment.id}>
 				{#if attachment.id.startsWith('new')}
 					<div class="absolute badge badge-primary top-1 right-1">New</div>
 				{/if}
-				<img
+				<BaseImage
 					alt={attachment.name}
 					src={src(attachment.thumbnail)}
-					class="object-cover object-center w-full h-full rounded-xl"
+					class="object-cover object-top w-full h-full rounded-xl"
 				/>
 				<button
-					class="absolute btn btn-circle btn-sm btn-error bottom-1 right-1"
+					class="absolute opacity-0 btn btn-circle btn-sm btn-error bottom-1 right-1 group-hover:opacity-100"
 					on:click={onClickRemove(attachment)}
 				>
 					<Icon icon="ic:outline-delete" class="text-lg" />

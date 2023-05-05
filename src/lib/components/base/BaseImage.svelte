@@ -23,8 +23,7 @@
 		obserber = new IntersectionObserver((entries) => {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
-					const lazySrc = entry.target.getAttribute('data-src')
-					if (lazySrc) {
+					if (lazySrc && (entry.target as HTMLImageElement).src !== lazySrc) {
 						entry.target.setAttribute('src', lazySrc)
 						obserber.unobserve(imgRef)
 					}
@@ -37,13 +36,9 @@
 	onDestroy(() => {
 		obserber?.unobserve(imgRef)
 	})
+
+	let clazz = 'object-contain content-center w-full'
+	export { clazz as class }
 </script>
 
-<img
-	{alt}
-	{src}
-	data-src={lazySrc}
-	bind:this={imgRef}
-	on:error={onError}
-	class="object-contain content-center w-full"
-/>
+<img {alt} {src} bind:this={imgRef} on:error={onError} class={clazz} />
