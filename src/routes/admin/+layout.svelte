@@ -16,6 +16,13 @@
 
 		window.location.reload()
 	}
+
+	const items = [
+		{ path: '/admin', name: 'Dashboard' },
+		{ path: '/admin/projects', name: 'Projects' },
+		{ path: '/admin/testimonials', name: 'Testimonials' },
+		{ path: '/admin/uploads', name: 'Uploads' }
+	]
 </script>
 
 <svelte:head>
@@ -134,27 +141,15 @@
 			<div>
 				<div class="h-16" />
 				<ul class="menu w-80 text-base-content">
-					<li
-						class={$page.url.pathname === '/admin'
-							? 'bordered bg-primary bg-opacity-20 font-medium'
-							: 'hover-bordered'}
-					>
-						<a href="/admin">Dashboard</a>
-					</li>
-					<li
-						class={$page.url.pathname === '/admin/projects'
-							? 'bordered bg-primary bg-opacity-20 font-medium'
-							: 'hover-bordered'}
-					>
-						<a href="/admin/projects">Projects</a>
-					</li>
-					<li
-						class={$page.url.pathname === '/admin/testimonials'
-							? 'bordered bg-primary bg-opacity-20 font-medium'
-							: 'hover-bordered'}
-					>
-						<a href="/admin/testimonials">Testimonials</a>
-					</li>
+					{#each items as item}
+						<li
+							class={$page.url.pathname === item.path
+								? 'bordered bg-primary bg-opacity-20 font-medium'
+								: 'hover-bordered'}
+						>
+							<a href={item.path}>{item.name}</a>
+						</li>
+					{/each}
 				</ul>
 			</div>
 		</div>
