@@ -1,6 +1,6 @@
 <script lang="ts">
 	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
-	import BaseForm from '$lib/components/base/BaseForm.svelte'
+	import BaseFormOld from '$lib/components/base/BaseFormOld.svelte'
 	import BaseModal from '$lib/components/base/BaseModal.svelte'
 	import { getSupabaseContext } from '$lib/store/useSupabase'
 	import dataURLtoFile from '$lib/utils/dataURLtoFile'
@@ -304,7 +304,7 @@
 			title="Create new project"
 			activator={{ class: 'btn btn-sm btn-primary', text: 'New Project' }}
 		>
-			<BaseForm
+			<BaseFormOld
 				bind:data={form.create.data}
 				fields={form.create.fields}
 				on:submit={onSubmit}
@@ -313,7 +313,7 @@
 		</BaseModal>
 
 		<BaseModal bind:value={updateModal} title="Update Project" activator={false}>
-			<BaseForm
+			<BaseFormOld
 				bind:data={currentProject}
 				fields={form.update.fields}
 				on:submit={onUpdate}

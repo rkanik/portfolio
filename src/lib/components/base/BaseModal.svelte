@@ -36,8 +36,8 @@
 <BaseTeleport to="body">
 	<div class="base-modal">
 		<input bind:checked={value} type="checkbox" class="modal-toggle" />
-		<div class="modal">
-			<div class={cn('relative overflow-y-auto modal-box', modalBox)}>
+		<div class="modal overflow-auto">
+			<div class={cn('relative overflow-visible modal-box', modalBox)}>
 				<button class="absolute btn btn-sm btn-circle right-2 top-2" on:click={onHide}> ✕ </button>
 				<h3 class="text-lg font-bold">{title}</h3>
 				<div class="mt-4">

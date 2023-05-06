@@ -1,6 +1,7 @@
 <script lang="ts">
 	import cn from '$lib/utils/cn'
 
+	export let required: boolean = false
 	export let errors: string[] = []
 	export let label: string = ''
 	export let placeholder: string = ''
@@ -9,10 +10,15 @@
 	export let rows: number = 3
 </script>
 
-<div class="form-control">
+<div class={cn('form-control', $$props.class)}>
 	{#if label}
 		<label for={id} class="label">
-			<span class="label-text">{label}</span>
+			<span class="label-text">
+				{label}
+				{#if required}
+					<span class="text-red-500">*</span>
+				{/if}
+			</span>
 		</label>
 	{/if}
 	<textarea

@@ -1,83 +1,113 @@
-<script lang="ts">
-	import cn from 'classnames'
-	import { createEventDispatcher } from 'svelte'
-	import BaseCombobox from './BaseCombobox.svelte'
-	import type { BaseFormField } from '$lib/types'
+<script lang="ts" context="module">
+	import type { createForm } from 'felte'
 
-	export let data: any = {}
-	export let fields: BaseFormField[] = []
-	export let isLoading: boolean = false
+	type TForm = ReturnType<typeof createForm<any>>
 
-	const dispatch = createEventDispatcher()
-
-	const onSubmit = (e: any) => {
-		e.preventDefault()
-		dispatch('submit', data)
+	type TBaseField = {
+		name: string
+		class?: string
+		label?: string
+		required?: boolean
 	}
 
-	const onCancel = () => {
-		dispatch('cancel')
+	type TTextField = TBaseField & {
+		type: 'text' | 'email' | 'password' | 'tel'
+		placeholder?: string
 	}
+
+	type TDateField = TBaseField & {
+		type: 'date'
+		placeholder?: string
+	}
+
+	type TRatingField = TBaseField & {
+		type: 'rating'
+	}
+
+	type TTextAreaField = TBaseField & {
+		type: 'textarea'
+		placeholder?: string
+	}
+
+	type TAvatarField = TBaseField & {
+		type: 'avatar'
+	}
+
+	export type TField = TTextField | TDateField | TRatingField | TTextAreaField | TAvatarField
 </script>
 
-<form on:submit|preventDefault class="grid grid-cols-12 gap-4">
-	{#each fields as field}
-		<div class={field.class || 'col-span-12'}>
-			{#if ['text', 'file', 'textarea', 'combobox'].includes(field.type)}
-				<div class="form-control">
-					{#if field.label}
-						<label for="" class="label">
-							<span class="label-text">{field.label}</span>
-						</label>
-					{/if}
-					<label class={cn({ 'input-group': field.prefix || field.suffix })}>
-						{#if field.prefix}
-							<span>{field.prefix}</span>
-						{/if}
-						{#if field.type === 'text'}
-							<input
-								bind:value={data[field.name]}
-								type="text"
-								placeholder={field.placeholder || 'Type here...'}
-								class="w-full input input-bordered"
-							/>
-						{:else if field.type === 'file'}
-							<input
-								bind:files={data[field.name]}
-								type="file"
-								accept={field.accept || '*'}
-								multiple={field.multiple ?? false}
-								class="w-full file-input input-bordered"
-								placeholder={field.placeholder || 'Choose file...'}
-							/>
-						{:else if field.type === 'textarea'}
-							<textarea
-								bind:value={data[field.name]}
-								class="w-full textarea textarea-bordered"
-								placeholder={field.placeholder || 'Type here...'}
-							/>
-						{:else if field.type === 'combobox'}
-							<BaseCombobox
-								{...field.combobox || {}}
-								bind:value={data[field.name]}
-								returnObject
-								options={field.options || []}
-								placeholder={field.placeholder}
-							/>
-						{/if}
-						{#if field.suffix}
-							<span>{field.suffix}</span>
-						{/if}
-					</label>
-				</div>
-			{/if}
-		</div>
-	{/each}
+<script lang="ts">
+	import Rating from './Rating.svelte'
+	import TextArea from './TextArea.svelte'
+	import TextField from './TextField.svelte'
+	import DatePicker from './DatePicker.svelte'
+	import AvatarPicker from './AvatarPicker.svelte'
 
-	<div class="flex items-center justify-end col-span-12 space-x-4">
-		<button type="button" class="btn" on:click={onCancel}>Cancel</button>
-		<button type="button" class="btn btn-primary {cn({ loading: isLoading })}" on:click={onSubmit}>
-			Submit
-		</button>
+	export let form: TForm
+	export let fields: TField[] = []
+	export let loading: boolean = false
+
+	const { errors, form: useForm, data: values } = form
+</script>
+
+<form use:useForm class="grid grid-cols-12 gap-1">
+	{#each fields as field}
+		{#if field.type === 'text' || field.type === 'email' || field.type === 'password' || field.type === 'tel'}
+			<TextField
+				name={field.name}
+				label={field.label}
+				required={field.required}
+				placeholder={field.placeholder}
+				class={field.class || 'col-span-12'}
+				errors={$errors[field.name] || []}
+			/>
+		{/if}
+		{#if field.type === 'textarea'}
+			<TextArea
+				name={field.name}
+				label={field.label}
+				required={field.required}
+				placeholder={field.placeholder}
+				class={field.class || 'col-span-12'}
+				errors={$errors[field.name] || []}
+			/>
+		{/if}
+		{#if field.type === 'date'}
+			<DatePicker
+				name={field.name}
+				label={field.label}
+				required={field.required}
+				setFields={form.setFields}
+				placeholder={field.placeholder}
+				class={field.class || 'col-span-12'}
+				errors={$errors[field.name] || []}
+			/>
+		{/if}
+		{#if field.type === 'rating'}
+			<Rating
+				name={field.name}
+				label={field.label}
+				required={field.required}
+				setFields={form.setFields}
+				class={field.class || 'col-span-12'}
+				value={$values[field.name]}
+				errors={$errors[field.name] || []}
+			/>
+		{/if}
+		{#if field.type === 'avatar'}
+			<AvatarPicker
+				name={field.name}
+				label={field.label}
+				required={field.required}
+				setFields={form.setFields}
+				class={field.class || 'col-span-12'}
+				value={$values[field.name]}
+				errors={$errors[field.name] || []}
+			/>
+		{/if}
+	{/each}
+	<div class="col-span-12 flex items-center justify-end space-x-2 mt-3">
+		<button type="button" class="btn btn-ghost normal-case">Cancel</button>
+		<button type="submit" class="btn btn-primary normal-case px-8" class:loading> Save </button>
 	</div>
 </form>

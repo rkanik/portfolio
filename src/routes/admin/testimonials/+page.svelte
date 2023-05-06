@@ -7,6 +7,8 @@
 	import d from '$lib/utils/dayjs'
 	import cn from '$lib/utils/cn'
 	import get from 'lodash/get'
+	import BaseModal from '$lib/components/base/BaseModal.svelte'
+	import TestimonialForm from '$lib/components/forms/TestimonialForm.svelte'
 
 	export let data
 
@@ -17,10 +19,12 @@
 	$: {
 		console.log(testimonials)
 	}
+
+	let modal = false
 </script>
 
 <svelte:head>
-	<title>Projects | RK Anik</title>
+	<title>Testimonials | RK Anik</title>
 </svelte:head>
 
 {#if error}
@@ -29,23 +33,25 @@
 {:else}
 	<div class="container px-4 py-4 mx-auto md:px-0 md:py-5">
 		<div class="flex items-center justify-between py-2">
-			<h1 class="text-2xl font-medium">Projects</h1>
+			<h1 class="text-2xl font-medium">Testimonials</h1>
 
-			<!-- <BaseModal
+			<BaseModal
 				bind:value={modal}
 				title="Create new project"
-				activator={{ class: 'btn btn-sm btn-primary', text: 'New Project' }}
+				activator={{ class: 'btn btn-sm btn-primary', text: 'New Testimonial' }}
 			>
-				<BaseForm
-					bind:data={form.create.data}
-					fields={form.create.fields}
-					on:submit={onSubmit}
-					on:cancel={() => (modal = false)}
+				<TestimonialForm
+					on:created={(e) => {
+						modal = false
+						testimonials.data = [e.detail, ...testimonials.data]
+					}}
 				/>
 			</BaseModal>
 
+			<!-- 
+
 			<BaseModal bind:value={updateModal} title="Update Project" activator={false}>
-				<BaseForm
+				<BaseFormOld
 					bind:data={currentProject}
 					fields={form.update.fields}
 					on:submit={onUpdate}

@@ -10,7 +10,7 @@
 	export let id = Math.random().toString(36).slice(-10)
 </script>
 
-<div class="form-control">
+<div class={cn('form-control', $$props.class)}>
 	{#if label}
 		<label for={id} class="label">
 			<span class="label-text">
