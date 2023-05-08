@@ -1,10 +1,10 @@
-import { useStorageModule } from '$lib/modules/Storage'
+// import { useStorageModule } from '$lib/modules/Storage'
 
-export const load = async ({ locals: { getContext } }) => {
-	const context = await getContext()
-	const Storage = useStorageModule(context)
+// export const load = async ({ locals: { getContext } }) => {
+// 	const context = await getContext()
+// 	const Storage = useStorageModule(context)
 
-	return {
-		uploads: await Storage.list()
-	}
-}
+// 	return {
+// 		uploads: await Storage.list()
+// 	}
+// }
