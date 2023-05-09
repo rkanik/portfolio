@@ -72,9 +72,9 @@
 					<div class="text-lg mt-4">
 						Interested in working together? We should queue up a time to chat. <br /> I’ll buy the coffee.
 					</div>
-					<button class="btn btn-primary rounded-full px-8 mt-4 lg:mt-8 text-sm">
+					<a href="/contact" class="btn btn-primary rounded-full px-8 mt-4 lg:mt-8 text-sm">
 						Contact me
-					</button>
+					</a>
 				</div>
 			</div>
 

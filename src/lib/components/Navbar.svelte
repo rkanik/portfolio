@@ -3,10 +3,6 @@
 	import { page } from '$app/stores'
 
 	const items = [
-		// {
-		// 	href: '/',
-		// 	label: 'Home'
-		// },
 		{
 			href: '/projects',
 			label: 'Projects'
@@ -108,7 +104,9 @@
 			</ul>
 		</div>
 		<div class="ml-8">
-			<button class="btn btn-outline btn-secondary rounded-full normal-case">Contact Me</button>
+			<a href="/contact" class="btn btn-outline btn-secondary rounded-full normal-case"
+				>Contact Me</a
+			>
 		</div>
 	</div>
 </div>

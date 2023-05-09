@@ -43,8 +43,8 @@
 			<p>Let's turn your ideas into reality with my expertise!</p>
 
 			<div class="flex items-center mt-8 space-x-4">
-				<button class="text-base tracking-wide normal-case rounded-full btn btn-primary"
-					>Contact me</button
+				<a href="/contact" class="text-base tracking-wide normal-case rounded-full btn btn-primary"
+					>Contact me</a
 				>
 				<SocialLinks class="" btnClass="btn-circle btn-sm" iconClass="text-2xl" />
 			</div>

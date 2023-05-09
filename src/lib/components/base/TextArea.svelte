@@ -26,7 +26,7 @@
 		{name}
 		{rows}
 		{placeholder}
-		class={cn('textarea textarea-bordered border-solid', {
+		class={cn('textarea textarea-bordered border-solid bg-transparent', {
 			'textarea-error': errors.length > 0
 		})}
 	/>

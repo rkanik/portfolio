@@ -16,9 +16,19 @@
 		icon="material-symbols:format-quote-rounded"
 		class="-ml-2 text-5xl transition-all transform rotate-180 text-opacity-80 text-secondary"
 	/>
+
 	<p class="relative flex-1 mt-2 text-base leading-snug">
 		{testimonial.testimonial}
 	</p>
+
+	<div class="flex space-x-1 mt-2">
+		{#each [...Array(5).keys()] as index}
+			<Icon
+				icon={testimonial.rating > index ? 'ic:outline-star' : 'ic:outline-star-border'}
+				class={cn('text-lg', testimonial.rating > index ? 'text-orange-400' : '')}
+			/>
+		{/each}
+	</div>
 
 	<div class="flex mt-4 space-x-4">
 		<div class="flex-none mt-1 avatar">

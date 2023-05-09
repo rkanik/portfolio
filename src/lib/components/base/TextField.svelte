@@ -6,7 +6,7 @@
 	export let label: string = ''
 	export let placeholder: string = ''
 	export let name: string
-	export let type: 'text' | 'number' | 'tel' = 'text'
+	export let type: 'text' | 'number' | 'tel' | 'email' = 'text'
 	export let id = Math.random().toString(36).slice(-10)
 </script>
 
@@ -26,7 +26,7 @@
 		{type}
 		{name}
 		{placeholder}
-		class={cn('input input-bordered border-solid', {
+		class={cn('input input-bordered border-solid bg-transparent', {
 			'input-error': errors.length > 0
 		})}
 	/>
