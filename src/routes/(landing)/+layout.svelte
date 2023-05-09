@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte'
 	import { invalidate } from '$app/navigation'
 	import Navbar from '$lib/components/Navbar.svelte'
+	import ScrollToTop from '$lib/components/ScrollToTop.svelte'
 
 	export let data
 	$: ({ supabase, session } = data)
@@ -21,8 +22,9 @@
 
 <div>
 	<Navbar />
+	<ScrollToTop />
 
-	<div class="pt-16">
+	<div>
 		<slot />
 	</div>
 

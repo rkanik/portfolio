@@ -29,8 +29,8 @@
 		}
 	]
 
-	export let iconClass = 'text-4xl'
-	export let btnClass = 'btn-square btn-outline'
+	export let iconClass = 'text-lg md:text-4xl'
+	export let btnClass = 'btn-square btn-outline btn-sm md:btn-md'
 </script>
 
 <div class={cn('flex space-x-2', $$props.class)}>

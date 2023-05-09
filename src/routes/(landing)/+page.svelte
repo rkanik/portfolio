@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AboutMe from '$lib/components/AboutMe.svelte'
-	import EduationAndExperiences from '$lib/components/EduationAndExperiences.svelte'
+	import EducationAndExperiences from '$lib/components/EducationAndExperiences.svelte'
 	import HeroSection from '$lib/components/HeroSection.svelte'
 	import Projects from '$lib/components/Projects.svelte'
 	import RandomizePosition from '$lib/components/RandomizePosition.svelte'
@@ -38,7 +38,7 @@
 		<div class="w-full py-16">
 			<h2 class="mb-8 text-2xl font-bold text-center">Eduation And Experiences</h2>
 			<div class="flex items-center justify-center">
-				<EduationAndExperiences />
+				<EducationAndExperiences />
 			</div>
 		</div>
 	</div>

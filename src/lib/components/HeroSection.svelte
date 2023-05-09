@@ -29,17 +29,17 @@
 
 <div class="relative overflow-hidden landing-hero" style={bgColor}>
 	<div class="container px-4 mx-auto sm:px-0">
-		<div class="flex items-center h-screen px-4">
+		<div class="flex items-center h-screen md:px-4">
 			<div class="relative flex items-center justify-between w-full">
 				<div class="relative">
 					<div class="relative z-20 blend-dodge">
-						<h1 class="font-bold text-gray-100 text-7xl">
+						<h1 class="font-bold text-gray-100 text-3xl md:text-7xl">
 							<span class="mb-2 text-lg font-light text-white">Hi there, I am RK Anik</span><br />
 							Full Stack
 							<span class="text-gradient js">JavaScript</span><br />
 							Developer
 						</h1>
-						<p class="max-w-xl mt-8 text-xl font-normal leading-normal text-gray-400">
+						<p class="max-w-xl mt-8 text-base md:text-xl font-normal leading-normal text-gray-400">
 							I am a full stack Javascript engineer based in Dhaka, Bangladesh. With over 3 years of
 							experience in the field, I am passionate about creating innovative and user-friendly
 							applications using cutting-edge technologies. I believe in delivering top-notch
@@ -60,22 +60,11 @@
 					</div>
 					<OrganicShape class="absolute z-10 -top-28 -left-48" />
 				</div>
-				<div class="relative max-w-4xl">
-					<!-- <svg
-						width="72"
-						height="64"
-						viewBox="0 0 72 64"
-						class="absolute top-0 right-0 text-yellow-300 opacity-50 c-i-a-h-c h-96 w-96 text"
-					>
-						<g>
-							<rect rx="32" fill="none" width="64" height="64" />
-							<rect rx="8" width="16" height="16" fill="current-color" />
-						</g>
-					</svg> -->
+				<div class="relative min-h-[400px] max-w-[32px] md:max-w-4xl">
 					<img
 						alt="RK Anik"
-						class="relative z-10 object-cover object-top max-w-xl transform translate-y-32"
 						src="/img/hero-me-trans.png"
+						class="relative z-10 object-cover object-top max-w-xl transform translate-y-32 hidden md:block"
 					/>
 					<div
 						style="background-image: var(--hero-gradient-background-image)"
