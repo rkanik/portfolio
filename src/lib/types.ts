@@ -39,17 +39,34 @@ export type TProject = Database['public']['Tables']['projects']['Row'] & {
 	projectTechnologies: TProjectTechnology[]
 }
 
-export type Testimonial = Database['public']['Tables']['testimonials']['Row']
+export type TTestimonial = Database['public']['Tables']['testimonials']['Row']
 export type TUserTestimonial = Database['public']['Tables']['userTestimonials']['Row'] & {
-	testimonials: Testimonial
+	testimonials: TTestimonial
+}
+
+export type TEducation = {
+	year: number
+	title: string
+	right?: boolean
+	lines: string[]
+}
+
+export type TExperience = {
+	year: number
+	title: string
+	right?: boolean
+	lines: string[]
 }
 
 export type TProfile = Database['public']['Tables']['profiles']['Row'] & {
-	user: User
+	user?: User
+	educations: TEducation[]
+	experiences: TExperience[]
 }
 
 export type TPublicUser = {
 	id: string
+	profile: TProfile | null
 }
 
 export type TPublicContext = {

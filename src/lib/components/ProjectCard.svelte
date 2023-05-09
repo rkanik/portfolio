@@ -49,7 +49,7 @@
 			</div>
 		</h2>
 
-		<p>{truncate(project.description, { length: 115 })}</p>
+		<p>{truncate(project.description || '', { length: 115 })}</p>
 
 		<div class="mt-2">
 			<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">

@@ -1,12 +1,13 @@
-<script>
-	import Testimonials from '$lib/components/Testimonials.svelte'
+<script lang="ts">
+	import type { TUserTestimonial } from '$lib/types'
+	import TestimonialSection from '$lib/components/testimonial/TestimonialSection.svelte'
+
+	export let data
+	const userTestimonials = (data.userTestimonials.data || []) as TUserTestimonial[]
 </script>
 
-<div class="container flex items-center justify-center min-h-screen mx-auto">
-	<div class="w-full py-16">
-		<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
-		<div class="">
-			<Testimonials />
-		</div>
-	</div>
-</div>
+<svelte:head>
+	<title>Testimonials | RK Anik</title>
+</svelte:head>
+
+<TestimonialSection class="pt-16" {userTestimonials} />

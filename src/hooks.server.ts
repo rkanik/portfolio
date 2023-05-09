@@ -3,21 +3,23 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_USER_ID } from '$
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import type { Handle } from '@sveltejs/kit'
 import type { Database } from './supabase'
-import type { TPublicUser, TSupabase } from '$lib/types'
+import type { TProfile, TPublicUser, TSupabase } from '$lib/types'
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.getContext = async () => {
-		// Public user
-		const publicUser: TPublicUser = {
-			id: PUBLIC_USER_ID
-		}
-
 		// Supabase instance
 		const supabase: TSupabase = createSupabaseServerClient<Database>({
 			event,
 			supabaseUrl: PUBLIC_SUPABASE_URL,
 			supabaseKey: PUBLIC_SUPABASE_ANON_KEY
 		})
+
+		// Public user
+		const profile = await supabase.from('profiles').select('*').eq('id', PUBLIC_USER_ID).single()
+		const publicUser: TPublicUser = {
+			id: PUBLIC_USER_ID,
+			profile: profile.data as TProfile | null
+		}
 
 		// Current session
 		const session = await supabase.auth.getSession()

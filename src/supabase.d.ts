@@ -45,6 +45,8 @@ export interface Database {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          educations: Json[]
+          experiences: Json[]
           full_name: string | null
           id: string
           updated_at: string | null
@@ -54,6 +56,8 @@ export interface Database {
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          educations?: Json[]
+          experiences?: Json[]
           full_name?: string | null
           id: string
           updated_at?: string | null
@@ -63,6 +67,8 @@ export interface Database {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          educations?: Json[]
+          experiences?: Json[]
           full_name?: string | null
           id?: string
           updated_at?: string | null

@@ -7,6 +7,7 @@
 	import BaseModal from './base/BaseModal.svelte'
 	import type { TProject } from '$lib/types'
 	import BaseJson from './base/BaseJson.svelte'
+	import BaseSection from './base/BaseSection.svelte'
 
 	export let projects: any = { data: [] }
 	export let userTechnologies: any = { data: [] }
@@ -54,17 +55,12 @@
 	let currentProject: TProject = null!
 </script>
 
-<div class="container min-h-screen px-4 py-16 mx-auto md:px-0">
-	<h2 class="text-2xl font-bold text-center">Projects Showcase</h2>
-	<p class="max-w-5xl mx-auto mt-4 text-center">
-		Welcome to my Portfolio Projects Showcase, where I highlight my most recent and impressive
-		projects. Each project comes with a brief description and a link to the live demo or GitHub
-		repository. I have worked on these projects individually or as part of a team. Whether you are a
-		potential employer, a client, or a fellow developer, I hope these will give you a sense of my
-		capabilities and the kind of work I am passionate about. Feel free to explore and get in touch
-		if you have any questions or would like to discuss potential collaboration opportunities.
-	</p>
-
+<BaseSection
+	class="py-20"
+	subheader="Projects"
+	title="Here is some of my Projects"
+	description="Welcome to my Portfolio Projects Showcase, where I highlight my most recent and impressive projects. Each project comes with a brief description and a link to the live demo or GitHub repository. I have worked on these projects individually or as part of a team. Whether you are a potential employer, a client, or a fellow developer, I hope these will give you a sense of my capabilities and the kind of work I am passionate about. Feel free to explore and get in touch if you have any questions or would like to discuss potential collaboration opportunities."
+>
 	<div class="mt-8">
 		<div class="flex flex-wrap justify-center -mt-2 -ml-2">
 			{#if Array.isArray(userTechnologies.data)}
@@ -99,7 +95,7 @@
 			</a>
 		</div>
 	{/if}
-</div>
+</BaseSection>
 
 <BaseModal
 	value={!!currentProject}

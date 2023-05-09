@@ -1,12 +1,13 @@
 <script>
-	import EducationAndExperiences from '$lib/components/EducationAndExperiences.svelte'
+	import EducationSection from '$lib/components/education/EducationSection.svelte'
+	import ExperienceSection from '$lib/components/experience/ExperienceSection.svelte'
+
+	export let data
 </script>
 
-<div class="container flex items-center justify-center min-h-screen mx-auto">
-	<div class="w-full py-16">
-		<h2 class="mb-8 text-2xl font-bold text-center">Education And Experiences</h2>
-		<div class="flex items-center justify-center">
-			<EducationAndExperiences />
-		</div>
-	</div>
-</div>
+<svelte:head>
+	<title>Experiences & Educations | RK Anik</title>
+</svelte:head>
+
+<ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />
+<EducationSection educations={data.publicUser.profile?.educations || []} />

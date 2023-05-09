@@ -1,13 +1,16 @@
 <script lang="ts">
 	import AboutMe from '$lib/components/AboutMe.svelte'
-	import EducationAndExperiences from '$lib/components/EducationAndExperiences.svelte'
 	import HeroSection from '$lib/components/HeroSection.svelte'
 	import Projects from '$lib/components/Projects.svelte'
 	import RandomizePosition from '$lib/components/RandomizePosition.svelte'
-	import Testimonials from '$lib/components/Testimonials.svelte'
+	import EducationSection from '$lib/components/education/EducationSection.svelte'
+	import ExperienceSection from '$lib/components/experience/ExperienceSection.svelte'
+	import TestimonialSection from '$lib/components/testimonial/TestimonialSection.svelte'
+	import type { TUserTestimonial } from '$lib/types.js'
 	import Icon from '@iconify/svelte'
 
 	export let data
+	const userTestimonials = (data.userTestimonials.data || []) as TUserTestimonial[]
 </script>
 
 <svelte:head>
@@ -24,24 +27,10 @@
 	</div>
 
 	<Projects max={4} projects={data.projects} userTechnologies={data.userTechnologies} />
+	<TestimonialSection {userTestimonials} />
 
-	<div class="container flex items-center justify-center min-h-screen mx-auto">
-		<div class="w-full py-16">
-			<h2 class="mb-8 text-2xl font-bold text-center">Testimonials</h2>
-			<div class="">
-				<Testimonials />
-			</div>
-		</div>
-	</div>
-
-	<div class="container flex items-center justify-center min-h-screen mx-auto">
-		<div class="w-full py-16">
-			<h2 class="mb-8 text-2xl font-bold text-center">Eduation And Experiences</h2>
-			<div class="flex items-center justify-center">
-				<EducationAndExperiences />
-			</div>
-		</div>
-	</div>
+	<ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />
+	<EducationSection educations={data.publicUser.profile?.educations || []} />
 
 	<div class="container flex items-center justify-center min-h-screen px-4 mx-auto md:px-0">
 		<div class="w-full py-16">
