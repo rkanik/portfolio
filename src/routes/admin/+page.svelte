@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard | RK Anik</title>
+	<title>Dashboard | Rasel Khandkar</title>
 </svelte:head>
 
 <div class="p-5">

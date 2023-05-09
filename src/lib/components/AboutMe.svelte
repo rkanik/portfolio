@@ -11,8 +11,8 @@
 		/>
 	</div>
 	<div class="col-span-12 md:col-span-8">
-		<div>About me</div>
-		<h2 class="mt-4 text-3xl font-bold">Who Am I</h2>
+		<div class="text-sm font-medium tracking-widest uppercase text-secondary">About me</div>
+		<h1 class="mt-4 mb-8 text-5xl font-bold">Who Am I</h1>
 		<div class="mt-4 text-base">
 			<p>
 				Hi there! My name is MD Rasel Khandkar and I am a professional full stack Javascript

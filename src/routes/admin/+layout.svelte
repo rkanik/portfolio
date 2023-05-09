@@ -27,7 +27,7 @@
 
 <svelte:head>
 	{#if !data.session}
-		<title>Login | RK Anik</title>
+		<title>Login | Rasel Khandkar</title>
 	{/if}
 </svelte:head>
 

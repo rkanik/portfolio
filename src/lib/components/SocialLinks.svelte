@@ -4,7 +4,8 @@
 
 	const sites = [
 		{
-			icon: 'mdi:github',
+			// icon: 'mdi:github',
+			icon: 'mingcute:github-line',
 			href: 'https://github.com/rkanik'
 		},
 		{

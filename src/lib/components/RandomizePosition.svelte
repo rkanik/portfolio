@@ -107,7 +107,7 @@
 	})
 </script>
 
-<div bind:this={container} class="relative min-h-[600px]">
+<div bind:this={container} class="relative min-h-[600px] {$$props.class}">
 	{#each elements as element}
 		<div
 			class={cn(
@@ -124,5 +124,5 @@
 			<slot name="item" item={element.item} />
 		</div>
 	{/each}
-	<button on:click={randomize} class="relative z-10">randomize</button>
+	<!-- <button on:click={randomize} class="relative z-10">randomize</button> -->
 </div>

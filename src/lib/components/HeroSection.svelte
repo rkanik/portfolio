@@ -27,14 +27,16 @@
 	})
 </script>
 
-<div class="relative overflow-hidden landing-hero" style={bgColor}>
+<div class="relative overflow-hidden landing-hero min-h-screen" style={bgColor}>
 	<div class="container px-4 mx-auto sm:px-0">
 		<div class="flex items-center h-screen md:px-4">
 			<div class="relative flex items-center justify-between w-full">
 				<div class="relative">
 					<div class="relative z-20 blend-dodge">
 						<h1 class="font-bold text-gray-100 text-3xl md:text-7xl">
-							<span class="mb-2 text-lg font-light text-white">Hi there, I am RK Anik</span><br />
+							<span class="mb-2 text-lg font-light text-white"
+								>Hi there, I am Md. Rasel Khandkar</span
+							><br />
 							Full Stack
 							<span class="text-gradient js">JavaScript</span><br />
 							Developer
@@ -62,7 +64,7 @@
 				</div>
 				<div class="relative min-h-[400px] max-w-[32px] md:max-w-4xl">
 					<img
-						alt="RK Anik"
+						alt="Md. Rasel Khandkar"
 						src="/img/hero-me-trans.png"
 						class="relative z-10 object-cover object-top max-w-xl transform translate-y-32 hidden md:block"
 					/>

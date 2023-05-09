@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Experiences & Educations | RK Anik</title>
+	<title>Experiences & Educations | Rasel Khandkar</title>
 </svelte:head>
 
 <ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />

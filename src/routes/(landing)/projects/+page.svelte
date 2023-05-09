@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Projects | RK Anik</title>
+	<title>Projects | Rasel Khandkar</title>
 </svelte:head>
 
 <Projects projects={data.projects} userTechnologies={data.userTechnologies} />

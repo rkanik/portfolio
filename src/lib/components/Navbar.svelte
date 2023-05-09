@@ -3,10 +3,10 @@
 	import { page } from '$app/stores'
 
 	const items = [
-		{
-			href: '/',
-			label: 'Home'
-		},
+		// {
+		// 	href: '/',
+		// 	label: 'Home'
+		// },
 		{
 			href: '/projects',
 			label: 'Projects'
@@ -77,7 +77,15 @@
 			</ul>
 		</div>
 
-		<div class="hidden lg:flex">
+		<div>
+			<a href="/" class="font-bold text-2xl inline">
+				<span>R</span><span class="text-secondary">.</span><span>K</span><span
+					class="text-secondary">.</span
+				>
+			</a>
+		</div>
+
+		<div class="hidden lg:flex ml-auto">
 			<ul class="px-1 flex items-center space-x-6">
 				{#each items as item}
 					<li>
@@ -99,8 +107,8 @@
 				{/each}
 			</ul>
 		</div>
-		<div class="ml-auto">
-			<button class="btn">Contact me</button>
+		<div class="ml-8">
+			<button class="btn btn-outline btn-secondary rounded-full normal-case">Contact Me</button>
 		</div>
 	</div>
 </div>

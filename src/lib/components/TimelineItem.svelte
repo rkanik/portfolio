@@ -6,7 +6,7 @@
 </script>
 
 <div
-	class={cn('max-w-[50%] border-primary transform py-8 relative', {
+	class={cn('max-w-[50%] border-primary transform py-8 relative ', {
 		'border-r-8 translate-x-1': !right,
 		'ml-auto border-l-8 -translate-x-1': right
 	})}
@@ -22,7 +22,12 @@
 	>
 		{item.year}
 	</div>
-	<div class={cn({ 'pr-12 text-right': !right, 'pl-12': right })}>
+	<div
+		class={cn('bg-base-100 w-max px-4 py-4 lg:px-8 border border-white border-opacity-10', {
+			'mr-12 text-right ml-auto rounded-xl': !right,
+			'ml-12 rounded-xl': right
+		})}
+	>
 		<h4 class="text-xl">{item.title}</h4>
 		{#each item.lines as line}
 			<div class="opacity-70">{@html line}</div>

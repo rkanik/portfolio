@@ -12,7 +12,9 @@
 	export let showThumbnail = true
 </script>
 
-<div class="overflow-hidden card" class:glass>
+<div
+	class="overflow-hidden card card-bordered bg-base-100 border-white border-opacity-10 rounded-xl"
+>
 	{#if showThumbnail}
 		<button class="relative h-48 overflow-hidden" on:click={() => dispatch('click', project)}>
 			<img
@@ -22,7 +24,7 @@
 			/>
 		</button>
 	{/if}
-	<div class="card-body">
+	<div class="card-body border-t border-white border-opacity-10">
 		<h2 class="flex items-center justify-between card-title">
 			<span>{project.name}</span>
 			<div class="flex space-x-2">

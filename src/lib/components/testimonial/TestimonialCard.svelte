@@ -16,7 +16,7 @@
 		icon="material-symbols:format-quote-rounded"
 		class="-ml-2 text-5xl transition-all transform rotate-180 text-opacity-80 text-secondary"
 	/>
-	<p class="relative flex-1 mt-2 text-lg leading-snug">
+	<p class="relative flex-1 mt-2 text-base leading-snug">
 		{testimonial.testimonial}
 	</p>
 

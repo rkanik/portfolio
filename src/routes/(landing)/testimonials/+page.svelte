@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Testimonials | RK Anik</title>
+	<title>Testimonials | Rasel Khandkar</title>
 </svelte:head>
 
 <TestimonialSection class="pt-16" {userTestimonials} />

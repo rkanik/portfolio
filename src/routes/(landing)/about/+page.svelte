@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>About Me | RK Anik</title>
+	<title>About Me | Rasel Khandkar</title>
 </svelte:head>
 
 <div class="container flex items-center justify-center min-h-screen px-4 mx-auto md:px-0">
