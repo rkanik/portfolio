@@ -18,6 +18,10 @@
 		{
 			href: '/about',
 			label: 'About'
+		},
+		{
+			href: '/resume',
+			label: 'Resume'
 		}
 	]
 
@@ -42,7 +46,7 @@
 
 <div
 	style="top:{top};"
-	class="fixed inset-x-0 top-0 z-50 navbar transition-all duration-500 {background}"
+	class="fixed inset-x-0 top-0 z-50 navbar transition-all duration-500 h-20 {background}"
 >
 	<div class="container mx-auto bg-transparent">
 		<div class="dropdown">
@@ -63,7 +67,7 @@
 				</svg>
 			</button>
 			<ul
-				class="p-2 mt-3 menu menu-compact dropdown-content rounded-box w-52 bg-base-100 shadow-2xl"
+				class="p-2 mt-3 shadow-2xl menu menu-compact dropdown-content rounded-box w-52 bg-base-100"
 			>
 				{#each items as item}
 					<li>
@@ -74,15 +78,15 @@
 		</div>
 
 		<div>
-			<a href="/" class="font-bold text-2xl inline">
+			<a href="/" class="inline text-2xl font-bold">
 				<span>R</span><span class="text-secondary">.</span><span>K</span><span
 					class="text-secondary">.</span
 				>
 			</a>
 		</div>
 
-		<div class="hidden lg:flex ml-auto">
-			<ul class="px-1 flex items-center space-x-6">
+		<div class="hidden ml-auto lg:flex">
+			<ul class="flex items-center px-1 space-x-6">
 				{#each items as item}
 					<li>
 						<a
@@ -104,9 +108,7 @@
 			</ul>
 		</div>
 		<div class="ml-8">
-			<a href="/contact" class="btn btn-outline btn-secondary rounded-full normal-case"
-				>Contact Me</a
-			>
+			<a href="/contact" class="rounded-full btn btn-outline btn-secondary">Contact Me</a>
 		</div>
 	</div>
 </div>

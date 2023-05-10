@@ -27,6 +27,7 @@
 		"felte": "^1.2.7",
 		"lodash": "^4.17.21",
 		"nanoid": "^4.0.2",
+		"pdfjs-dist": "^3.6.172",
 		"sortablejs": "^1.15.0",
 		"svelte-dragdroplist": "^1.1.1",
 		"svelte-sortablejs": "^0.0.1",

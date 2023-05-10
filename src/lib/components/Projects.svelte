@@ -8,18 +8,21 @@
 	import type { TProject } from '$lib/types'
 	import BaseJson from './base/BaseJson.svelte'
 	import BaseSection from './base/BaseSection.svelte'
+	import { useContextStoreContext } from '$lib/store/useContextStore'
 
 	export let projects: any = { data: [] }
 	export let userTechnologies: any = { data: [] }
 	export let max: number = projects.data.length
 
-	const supabase = getSupabaseContext()
+	const context = useContextStoreContext()
+	const { supabase } = $context
+
 	const onFetchProjects = async () => {
 		const technologies = (userTechnologies.data || [])
 			?.filter((item: any) => item.active)
 			.map((item: any) => item.technologies?.id)
 
-		const query = $supabase
+		const query = supabase
 			.from('projects')
 			.select(
 				`*,

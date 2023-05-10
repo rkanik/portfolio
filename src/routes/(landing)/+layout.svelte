@@ -26,12 +26,12 @@
 	<Navbar />
 	<ScrollToTop />
 
-	<div>
+	<div class="pt-20">
 		<slot />
 	</div>
 
 	<footer class="p-16 footer footer-center">
-		<a href="/" class="font-bold text-2xl inline">
+		<a href="/" class="inline text-2xl font-bold">
 			<span>R</span><span class="text-secondary">.</span><span>K</span><span class="text-secondary"
 				>.</span
 			>
@@ -48,7 +48,7 @@
 
 		<div class="block">
 			<span>© 2023 Rasel Khandkar | All rights reserved</span> <br />
-			<div class="flex justify-center items-center space-x-2 mt-2">
+			<div class="flex items-center justify-center mt-2 space-x-2">
 				<span>Made with</span>
 				<a href="https://kit.svelte.dev/">
 					<Icon icon="logos:svelte-kit" class="text-xl" />
