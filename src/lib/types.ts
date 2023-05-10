@@ -89,3 +89,5 @@ export type TPagination = {
 	page?: number
 	perPage?: number
 }
+
+export type TEnquiry = Database['public']['Tables']['inquiries']['Row']

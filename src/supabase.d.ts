@@ -41,6 +41,38 @@ export interface Database {
           updatedAt?: string | null
         }
       }
+      inquiries: {
+        Row: {
+          company: string | null
+          createdAt: string
+          email: string
+          id: number
+          message: string
+          name: string
+          updatedAt: string
+          userId: string
+        }
+        Insert: {
+          company?: string | null
+          createdAt?: string
+          email: string
+          id?: number
+          message: string
+          name: string
+          updatedAt?: string
+          userId: string
+        }
+        Update: {
+          company?: string | null
+          createdAt?: string
+          email?: string
+          id?: number
+          message?: string
+          name?: string
+          updatedAt?: string
+          userId?: string
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
