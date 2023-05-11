@@ -91,3 +91,7 @@ export type TPagination = {
 }
 
 export type TEnquiry = Database['public']['Tables']['inquiries']['Row']
+
+export type ClickEvent<T> = MouseEvent & {
+	currentTarget: EventTarget & T
+}

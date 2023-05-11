@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PdfViewer from '$lib/components/PDFViewer.svelte'
+	import src from '$lib/utils/src'
 </script>
 
 <svelte:head>
@@ -7,5 +8,5 @@
 </svelte:head>
 
 <div class="container min-h-screen mx-auto">
-	<PdfViewer />
+	<PdfViewer src={src('users/d91e7069-95a2-430b-8d18-aa423866315c/resume.pdf')} />
 </div>
