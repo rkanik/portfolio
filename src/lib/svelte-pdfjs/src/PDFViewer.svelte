@@ -133,19 +133,34 @@
 	}
 
 	let el: HTMLDivElement
-	let pagesElement: HTMLDivElement
 
+	// Page Number
+	let pagesElement: HTMLDivElement
 	const scrollToPage = (page: number) => {
 		const canvas = pagesElement.querySelector(`.page[data-page="${page}"]`) as HTMLCanvasElement
-
+		pageNumber = page
 		pagesElement.scroll({
 			behavior: 'smooth',
 			top: canvas.offsetTop - pagesElement.offsetTop - 20
 		})
 	}
 
+	const onClickNextPage = () => {
+		if (pageNumber + 1 <= numPages) {
+			scrollToPage(pageNumber+1)
+		}
+	}
+
+	const onClickPreviousPage = () => {
+		if (pageNumber -1 >0) {
+			scrollToPage(pageNumber-1)
+		}
+	}
+
+	let pageNumberSpan: HTMLSpanElement
 	const onInputPageNumber = (e: any) => {
 		const number = +e.target.value
+		pageNumberSpan.innerHTML = number.toString()
 		if (number < 1 || number > numPages) {
 			e.currentTarget.value = pageNumber
 			return
@@ -153,6 +168,25 @@
 		// console.log(e.target, e.currentTarget)
 		scrollToPage(number)
 	}
+	// End Page Number
+
+	// Download
+	import downloadFile from './utils/downloadFile'
+	export let filename: string = 'sample.pdf'
+	const onClickDownload = () => {
+		downloadFile({
+			src,
+			filename
+		})
+	}
+	// End Download
+
+	// Print
+	import printFile from './utils/printFile'
+	const onClickPrint = () => {
+		printFile(src)
+	}
+	// End Print
 
 	onMount(() => {
 		pdfjsLib.getDocument(src).promise.then(async (pdf) => {
@@ -176,21 +210,61 @@
 
 		<div>
 			<div class="flex items-center space-x-1">
-				<input
-					type="number"
-					value={pageNumber}
-					class="text-center w-8 bg-base-300"
-					on:input={onInputPageNumber}
-				/>
-				<span>/</span>
-				<span>{numPages}</span>
+				<slot name="previous" onClick={onClickPreviousPage}>
+					<div class="tooltip tooltip-left w-8 h-8" data-tip="Previous page">
+						<button
+							class="btn btn-circle btn-sm bg-base-300 border-base-300"
+							class:disabled={pageNumber<=1}
+							on:click={onClickPreviousPage}
+						>
+							<Icon icon="material-symbols:chevron-left-rounded" class="text-lg" />
+						</button>
+					</div>
+				</slot>
+
+				<div class="bg-base-300 rounded-full h-8 px-3 space-x-1 flex items-center">
+					<span class="relative min-w-[10px] h-6 px-1">
+						<span bind:this={pageNumberSpan} />
+						<input
+							type="number"
+							value={pageNumber}
+							class="text-center absolute inset-0 bg-base-300"
+							on:input={onInputPageNumber}
+						/>
+					</span>
+					<span>of</span>
+					<span>{numPages}</span>
+				</div>
+
+				<slot name="next" onClick={onClickNextPage}>
+					<div class="tooltip tooltip-right w-8 h-8" data-tip="Next page">
+						<button
+							class="btn btn-circle btn-sm bg-base-300 border-base-300"
+							class:disabled={pageNumber>=numPages}
+							on:click={onClickNextPage}
+						>
+							<Icon icon="material-symbols:chevron-right-rounded" class="text-lg" />
+						</button>
+					</div>
+				</slot>
 			</div>
 		</div>
 
 		<div class="flex items-center space-x-2">
-			<button class="btn btn-circle btn-sm">
-				<Icon icon="mdi:download" class="text-lg" />
-			</button>
+			<slot name="download" onClick={onClickDownload}>
+				<div class="tooltip tooltip-left w-8 h-8" data-tip="Download">
+					<button class="btn btn-circle btn-sm" on:click={onClickDownload}>
+						<Icon icon="mdi:download" class="text-lg" />
+					</button>
+				</div>
+			</slot>
+			<slot name="print" onClick={onClickPrint}>
+				<div class="tooltip tooltip-left w-8 h-8" data-tip="Print">
+					<button class="btn btn-circle btn-sm" on:click={onClickPrint}>
+						<Icon icon="material-symbols:print" class="text-lg" />
+					</button>
+				</div>
+			</slot>
 		</div>
 	</div>
 	<div class="flex flex-1 overflow-hidden">
@@ -230,3 +304,11 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	input[type='number']::-webkit-inner-spin-button,
+	input[type='number']::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+</style>

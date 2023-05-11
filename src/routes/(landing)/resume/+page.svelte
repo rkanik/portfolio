@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PdfViewer from '$lib/components/PDFViewer.svelte'
+	import PdfViewer from '$lib/svelte-pdfjs/src/PDFViewer.svelte'
 	import src from '$lib/utils/src'
 </script>
 
