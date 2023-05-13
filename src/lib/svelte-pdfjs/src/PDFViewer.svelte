@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte'
 
 	import * as pdfjsLib from 'pdfjs-dist'
+	import 'pdfjs-dist/web/pdf_viewer.css'
 
 	import { onMount } from 'svelte'
 
@@ -21,31 +22,33 @@
 	export let pageNumber = 1
 
 	type TPage = {
-		scale?: number
+		scale: number
 		number: number
 		canvas: HTMLCanvasElement
+		container: HTMLDivElement
+		isRendered: boolean
+		textLayout?: HTMLDivElement
 	}
+
+	type TMiniPage = {
+		width: number
+		number: number
+		isRendered: boolean
+		canvas: HTMLCanvasElement
+	}
+
+	type TPageOrNot = TPage | undefined
 
 	let viewport: any
 
 	function renderPage(event: TPage) {
 		// Using promise to fetch the page
 		pdfDoc.getPage(event.number).then(async (page: any) => {
-			let initialViewport = page.getViewport({ scale: 1 })
-
-			let innerScale = scale || 1
+			let innerScale = event.scale || scale || 1
 			let innerViewport = page.getViewport({ scale: innerScale })
 
 			if (!viewport || viewport.scale !== innerScale) {
 				viewport = innerViewport
-			}
-
-			const isMini = event.canvas.getAttribute('data-mini') === 'true'
-			if (isMini) {
-				innerScale =
-					(+(event.canvas.getAttribute('data-width') || 0) || event.canvas.clientWidth) /
-					initialViewport.width
-				innerViewport = page.getViewport({ scale: innerScale })
 			}
 
 			event.canvas.width = innerViewport.width
@@ -56,46 +59,202 @@
 				canvasContext: event.canvas.getContext('2d')
 			})
 
-			event.canvas.removeAttribute('style')
-			event.canvas.setAttribute('data-rendered', 'true')
-
 			await renderTask.promise
+
+			setPage(event.number, {
+				...event,
+				isRendered: true,
+				scale: innerScale
+			})
+
+			// const textLayer = event.canvas.nextElementSibling as HTMLDivElement
+			// if (textLayer) {
+			// 	pdfjsLib.renderTextLayer({
+			// 		textDivs: [],
+			// 		container: textLayer,
+			// 		viewport: innerViewport,
+			// 		textContentSource: await page.getTextContent()
+			// 	})
+			// }
+		})
+	}
+
+	const renderMiniPage = (page: TMiniPage) => {
+		pdfDoc.getPage(page.number).then(async (PDFPage: any) => {
+			let innerViewport = PDFPage.getViewport({ scale: 1 })
+
+			const innerScale = page.width / innerViewport.width
+			innerViewport = PDFPage.getViewport({ scale: innerScale })
+
+			page.canvas.width = innerViewport.width
+			page.canvas.height = innerViewport.height
+
+			const renderTask = PDFPage.render({
+				viewport,
+				canvasContext: page.canvas.getContext('2d')
+			})
+
+			renderTask.promise
 		})
 	}
 
 	let intersectionRatios: number[] = []
 
-	const renderer = (canvas: HTMLCanvasElement) => {
+	type IntersectOptions = {
+		onEnter?: (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void
+		onLeave?: (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void
+		options?: IntersectionObserverInit
+	}
+	const onIntersect = (target: Element, init: IntersectOptions) => {
+		const { options, onEnter = () => {}, onLeave = () => {} } = init
+
+		// instance
 		const observer = new IntersectionObserver(
-			(entries) => {
-				const index = +(canvas.getAttribute('data-page') || 1) - 1
+			(entries, observer) => {
 				if (entries.some((entry) => entry.isIntersecting)) {
-					// Render the page
-					if (canvas.getAttribute('data-rendered') !== 'true') {
-						renderPage({
-							canvas,
-							number: +(canvas.getAttribute('data-page') || 1)
-						})
-					}
-					// unobserve the mini page
-					if (canvas.getAttribute('data-mini') === 'true') {
-						observer.unobserve(canvas)
-					}
-					// Save the intersectionRatio
-					else {
-						intersectionRatios[index] = entries[0].intersectionRatio
-					}
+					return onEnter(entries, observer)
 				}
-				//
-				else {
-					intersectionRatios[index] = 0
-				}
+				return onLeave(entries, observer)
 			},
-			{
-				threshold: [0, 0.5, 1]
-			}
+			//
+			options
 		)
-		observer.observe(canvas)
+
+		// observe
+		observer.observe(target)
+
+		// cleanup
+		return {
+			destroy() {
+				observer.unobserve(target)
+			}
+		}
+	}
+
+	const miniIntersectionObserver = (
+		node: HTMLDivElement,
+		config: {
+			width: number
+			number: number
+		}
+	) => {
+		onIntersect(node, {
+			onEnter(_, observer) {
+				observer.unobserve(node)
+				console.log('miniIntersectionObserver', {
+					isRendered: false,
+					width: config.width,
+					number: config.number,
+					canvas: node.querySelector('canvas') as HTMLCanvasElement
+				})
+				renderMiniPage({
+					isRendered: false,
+					width: config.width,
+					number: config.number,
+					canvas: node.querySelector('canvas') as HTMLCanvasElement
+				})
+			}
+		})
+	}
+
+	let pages: TPage[] = []
+
+	const setPage = (number: number, updater: TPage | ((page?: TPage) => TPage)) => {
+		let clonedPages = [...pages]
+
+		const page = clonedPages.find((page) => {
+			return page.number === number
+		})
+
+		if (!page) {
+			clonedPages[number] = typeof updater === 'function' ? updater(page) : updater
+		}
+
+		clonedPages = clonedPages.map((page) => {
+			if (page.number !== number) return page
+			if (typeof updater === 'function') {
+				return updater(page)
+			}
+			return updater
+		})
+
+		pages = [...clonedPages]
+	}
+
+	const getPage = <P extends TPageOrNot>(
+		number: number,
+		page?: P
+	): P extends undefined ? TPageOrNot : TPage => {
+		const existedPage = pages.find((page) => {
+			return page.number === number
+		})
+
+		if (!existedPage && page) {
+			setPage(number, page)
+			return page
+		}
+
+		return existedPage as any
+	}
+
+	const renderer = (
+		container: HTMLDivElement,
+		config: {
+			number: number
+		}
+	) => {
+		const { number } = config
+
+		onIntersect(container, {
+			onEnter(entries) {
+				//
+				const canvas = container.querySelector('canvas') as HTMLCanvasElement
+				const page = getPage(number, {
+					scale,
+					number,
+					canvas,
+					container,
+					isRendered: false,
+					textLayout: canvas.nextElementSibling as HTMLDivElement | undefined
+				})
+
+				renderPage(page)
+				intersectionRatios[number] = entries[0].intersectionRatio
+			},
+			onLeave() {
+				intersectionRatios[number] = 0
+			}
+		})
+		// const observer = new IntersectionObserver(
+		// 	(entries) => {
+		// 		const index = +(canvas.getAttribute('data-page') || 1) - 1
+		// 		if (entries.some((entry) => entry.isIntersecting)) {
+		// 			// Render the page
+		// 			if (canvas.getAttribute('data-rendered') !== 'true') {
+		// 				renderPage({
+		// 					canvas,
+		// 					number: +(canvas.getAttribute('data-page') || 1)
+		// 				})
+		// 			}
+		// 			// unobserve the mini page
+		// 			if (canvas.getAttribute('data-mini') === 'true') {
+		// 				observer.unobserve(canvas)
+		// 			}
+		// 			// Save the intersectionRatio
+		// 			else {
+		// 				intersectionRatios[index] = entries[0].intersectionRatio
+		// 			}
+		// 		}
+		// 		//
+		// 		else {
+		// 			intersectionRatios[index] = 0
+		// 		}
+		// 	},
+		// 	{
+		// 		threshold: [0, 0.5, 1]
+		// 	}
+		// )
+		// observer.observe(canvas)
 	}
 
 	// Page Number
@@ -191,15 +350,8 @@
 	}
 
 	$: if (pagesElement) {
-		pagesElement
-			.querySelectorAll<HTMLCanvasElement>('canvas.page[data-rendered="true"]')
-			.forEach((canvas) => {
-				renderPage({
-					scale,
-					canvas,
-					number: +(canvas.getAttribute('data-page') || 1)
-				})
-			})
+		const renderedPages = pages.filter((page) => !page.isRendered)
+		renderedPages.forEach((page) => renderPage({ ...page, scale }))
 	}
 	// End zoom
 
@@ -216,6 +368,7 @@
 
 	// Print
 	import printFile from './utils/printFile'
+	import { element } from 'svelte/internal'
 	const onClickPrint = () => {
 		printFile(src)
 	}
@@ -235,7 +388,7 @@
 	class="flex flex-col h-screen overflow-hidden border border-white bg-base-100 border-opacity-10 rounded-xl"
 >
 	<div
-		class="flex-none h-16 border-b border-white border-opacity-10 flex items-center justify-between px-5"
+		class="flex items-center justify-between flex-none h-16 px-5 border-b border-white border-opacity-10"
 	>
 		<div>
 			<div class="text-lg font-medium">Resume.pdf</div>
@@ -244,7 +397,7 @@
 		<div>
 			<div class="flex items-center space-x-1">
 				<slot name="previous" onClick={onClickPreviousPage}>
-					<div class="tooltip tooltip-left w-8 h-8" data-tip="Previous page">
+					<div class="w-8 h-8 tooltip tooltip-left" data-tip="Previous page">
 						<button
 							class="btn btn-circle btn-sm bg-base-300 border-base-300"
 							class:disabled={pageNumber <= 1}
@@ -255,13 +408,13 @@
 					</div>
 				</slot>
 
-				<div class="bg-base-300 rounded-full h-8 px-3 space-x-1 flex items-center">
+				<div class="flex items-center h-8 px-3 space-x-1 rounded-full bg-base-300">
 					<span class="relative min-w-[10px] h-6 px-1">
 						<span bind:this={pageNumberSpan} />
 						<input
 							type="number"
 							value={pageNumber}
-							class="text-center absolute inset-0 bg-base-300"
+							class="absolute inset-0 text-center bg-base-300"
 							on:keyup={onInputPageNumber}
 						/>
 					</span>
@@ -270,7 +423,7 @@
 				</div>
 
 				<slot name="next" onClick={onClickNextPage}>
-					<div class="tooltip tooltip-right w-8 h-8" data-tip="Next page">
+					<div class="w-8 h-8 tooltip tooltip-right" data-tip="Next page">
 						<button
 							class="btn btn-circle btn-sm bg-base-300 border-base-300"
 							class:disabled={pageNumber >= numPages}
@@ -286,7 +439,7 @@
 				</div>
 
 				<slot name="zoomOut" onClick={onClickZoomOut}>
-					<div class="tooltip tooltip-left w-8 h-8" data-tip="Zoom out">
+					<div class="w-8 h-8 tooltip tooltip-left" data-tip="Zoom out">
 						<button
 							class="btn btn-circle btn-sm bg-base-300 border-base-300"
 							class:disabled={pageNumber >= numPages}
@@ -297,11 +450,11 @@
 						</button>
 					</div>
 				</slot>
-				<div class="text-sm bg-base-300 rounded-full h-8 px-3 flex items-center">
+				<div class="flex items-center h-8 px-3 text-sm rounded-full bg-base-300">
 					{Math.round(scale * 100)}%
 				</div>
 				<slot name="zoomIn" onClick={onClickZoomIn}>
-					<div class="tooltip tooltip-right w-8 h-8" data-tip="Zoom in">
+					<div class="w-8 h-8 tooltip tooltip-right" data-tip="Zoom in">
 						<button
 							class="btn btn-circle btn-sm bg-base-300 border-base-300"
 							class:disabled={pageNumber >= numPages}
@@ -317,14 +470,14 @@
 
 		<div class="flex items-center space-x-2">
 			<slot name="download" onClick={onClickDownload}>
-				<div class="tooltip tooltip-left w-8 h-8" data-tip="Download">
+				<div class="w-8 h-8 tooltip tooltip-left" data-tip="Download">
 					<button class="btn btn-circle btn-sm" on:click={onClickDownload}>
 						<Icon icon="mdi:download" class="text-lg" />
 					</button>
 				</div>
 			</slot>
 			<slot name="print" onClick={onClickPrint}>
-				<div class="tooltip tooltip-left w-8 h-8" data-tip="Print">
+				<div class="w-8 h-8 tooltip tooltip-left" data-tip="Print">
 					<button class="btn btn-circle btn-sm" on:click={onClickPrint}>
 						<Icon icon="material-symbols:print" class="text-lg" />
 					</button>
@@ -339,6 +492,10 @@
 		>
 			{#each [...Array(numPages).keys()] as index}
 				<div
+					use:miniIntersectionObserver={{
+						width: 128,
+						number: index + 1
+					}}
 					role="button"
 					data-page={index + 1}
 					class={cn(
@@ -349,26 +506,26 @@
 					)}
 					on:click={() => scrollToPage(index + 1)}
 				>
-					<canvas
-						use:renderer
-						data-mini={true}
-						data-width="128"
-						data-page={index + 1}
-						class="mx-auto"
-					/>
+					<canvas data-mini={true} data-width="128" data-page={index + 1} class="mx-auto" />
 				</div>
 			{/each}
 		</div>
 		<div
 			bind:this={pagesElement}
 			style={viewport
-				? `--viewport-width:${viewport.width}px;--viewport-height:${viewport.height}px`
+				? `--viewport-width:${viewport.width}px;--viewport-height:${viewport.height}px;`
 				: ''}
-			class="flex pages flex-col flex-1 p-8 space-y-8 overflow-auto shadow-xl bg-base-300"
+			class="flex flex-col flex-1 p-8 space-y-8 overflow-auto shadow-xl pages bg-base-300"
 		>
 			{#each [...Array(numPages).keys()] as index}
-				<div class="w-full">
-					<canvas use:renderer data-page={index + 1} class="mx-auto page bg-white" />
+				<div
+					class="w-full"
+					use:renderer={{
+						number: index + 1
+					}}
+				>
+					<canvas data-page={index + 1} class="mx-auto bg-white page" />
+					<!-- <div id="text-layer" class="absolute inset-0 textLayer" style="--scale-factor:{scale};" /> -->
 				</div>
 			{/each}
 		</div>
