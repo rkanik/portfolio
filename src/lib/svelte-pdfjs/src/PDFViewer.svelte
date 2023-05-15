@@ -27,6 +27,7 @@
 		canvas: HTMLCanvasElement
 		container: HTMLDivElement
 		isRendered: boolean
+		isRendering: boolean
 		textLayout?: HTMLDivElement
 	}
 
@@ -41,10 +42,17 @@
 
 	let viewport: any
 
-	function renderPage(event: TPage) {
+	const renderPage = (event: TPage) => {
+		if (event.isRendering) return
+
+		setPage(event.number, (v = event) => ({
+			...v,
+			isRendering: true
+		}))
+
 		// Using promise to fetch the page
 		pdfDoc.getPage(event.number).then(async (page: any) => {
-			let innerScale = event.scale || scale || 1
+			let innerScale = scale || event.scale || 1
 			let innerViewport = page.getViewport({ scale: innerScale })
 
 			if (!viewport || viewport.scale !== innerScale) {
@@ -61,33 +69,34 @@
 
 			await renderTask.promise
 
-			setPage(event.number, {
-				...event,
-				isRendered: true,
-				scale: innerScale
+			event.canvas.setAttribute('data-rendered', 'true')
+			setPage(event.number, (v = event) => {
+				return {
+					...v,
+					isRendered: true,
+					isRendering: false,
+					scale: innerScale
+				}
 			})
 
-			// const textLayer = event.canvas.nextElementSibling as HTMLDivElement
-			// if (textLayer) {
-			// 	pdfjsLib.renderTextLayer({
-			// 		textDivs: [],
-			// 		container: textLayer,
-			// 		viewport: innerViewport,
-			// 		textContentSource: await page.getTextContent()
-			// 	})
-			// }
+			if (event.textLayout) {
+				pdfjsLib.renderTextLayer({
+					textDivs: [],
+					viewport: innerViewport,
+					container: event.textLayout,
+					textContentSource: await page.getTextContent()
+				})
+			}
 		})
 	}
 
 	const renderMiniPage = (page: TMiniPage) => {
 		pdfDoc.getPage(page.number).then(async (PDFPage: any) => {
-			let innerViewport = PDFPage.getViewport({ scale: 1 })
+			const scale = page.width / PDFPage.getViewport({ scale: 1 }).width
+			const viewport = PDFPage.getViewport({ scale })
 
-			const innerScale = page.width / innerViewport.width
-			innerViewport = PDFPage.getViewport({ scale: innerScale })
-
-			page.canvas.width = innerViewport.width
-			page.canvas.height = innerViewport.height
+			page.canvas.width = viewport.width
+			page.canvas.height = viewport.height
 
 			const renderTask = PDFPage.render({
 				viewport,
@@ -141,12 +150,6 @@
 		onIntersect(node, {
 			onEnter(_, observer) {
 				observer.unobserve(node)
-				console.log('miniIntersectionObserver', {
-					isRendered: false,
-					width: config.width,
-					number: config.number,
-					canvas: node.querySelector('canvas') as HTMLCanvasElement
-				})
 				renderMiniPage({
 					isRendered: false,
 					width: config.width,
@@ -162,23 +165,25 @@
 	const setPage = (number: number, updater: TPage | ((page?: TPage) => TPage)) => {
 		let clonedPages = [...pages]
 
-		const page = clonedPages.find((page) => {
-			return page.number === number
+		let page = clonedPages.find((page) => {
+			return page?.number === number
 		})
 
 		if (!page) {
 			clonedPages[number] = typeof updater === 'function' ? updater(page) : updater
 		}
 
-		clonedPages = clonedPages.map((page) => {
-			if (page.number !== number) return page
+		clonedPages = clonedPages.map((item) => {
+			if (item?.number !== number) return item
 			if (typeof updater === 'function') {
-				return updater(page)
+				page = updater(item)
+				return page
 			}
 			return updater
 		})
 
 		pages = [...clonedPages]
+		return page as TPage
 	}
 
 	const getPage = <P extends TPageOrNot>(
@@ -186,7 +191,7 @@
 		page?: P
 	): P extends undefined ? TPageOrNot : TPage => {
 		const existedPage = pages.find((page) => {
-			return page.number === number
+			return page?.number === number
 		})
 
 		if (!existedPage && page) {
@@ -205,56 +210,31 @@
 	) => {
 		const { number } = config
 
+		const canvas = container.querySelector('canvas') as HTMLCanvasElement
+		const newPage = setPage(number, {
+			scale,
+			number,
+			canvas,
+			container,
+			isRendered: false,
+			isRendering: false,
+			textLayout: canvas.nextElementSibling as HTMLDivElement | undefined
+		})
+
 		onIntersect(container, {
 			onEnter(entries) {
 				//
-				const canvas = container.querySelector('canvas') as HTMLCanvasElement
-				const page = getPage(number, {
-					scale,
-					number,
-					canvas,
-					container,
-					isRendered: false,
-					textLayout: canvas.nextElementSibling as HTMLDivElement | undefined
-				})
-
-				renderPage(page)
+				const page = getPage(number, newPage)
+				if (!page.isRendered) {
+					console.log('before render page', entries)
+					renderPage(page)
+				}
 				intersectionRatios[number] = entries[0].intersectionRatio
 			},
 			onLeave() {
 				intersectionRatios[number] = 0
 			}
 		})
-		// const observer = new IntersectionObserver(
-		// 	(entries) => {
-		// 		const index = +(canvas.getAttribute('data-page') || 1) - 1
-		// 		if (entries.some((entry) => entry.isIntersecting)) {
-		// 			// Render the page
-		// 			if (canvas.getAttribute('data-rendered') !== 'true') {
-		// 				renderPage({
-		// 					canvas,
-		// 					number: +(canvas.getAttribute('data-page') || 1)
-		// 				})
-		// 			}
-		// 			// unobserve the mini page
-		// 			if (canvas.getAttribute('data-mini') === 'true') {
-		// 				observer.unobserve(canvas)
-		// 			}
-		// 			// Save the intersectionRatio
-		// 			else {
-		// 				intersectionRatios[index] = entries[0].intersectionRatio
-		// 			}
-		// 		}
-		// 		//
-		// 		else {
-		// 			intersectionRatios[index] = 0
-		// 		}
-		// 	},
-		// 	{
-		// 		threshold: [0, 0.5, 1]
-		// 	}
-		// )
-		// observer.observe(canvas)
 	}
 
 	// Page Number
@@ -262,9 +242,11 @@
 	let miniPagesElement: HTMLDivElement
 	let isScrollingPagesElement = false
 
-	const scrollToPage = (page: number) => {
-		const canvas = pagesElement.querySelector(`.page[data-page="${page}"]`) as HTMLCanvasElement
-		pageNumber = page
+	const scrollToPage = (number: number) => {
+		const page = getPage(number)
+		console.log('scrollToPage', number, page, pages)
+
+		if (!page) return
 
 		let timeout: NodeJS.Timeout
 		const onScroll = () => {
@@ -277,10 +259,11 @@
 
 		pagesElement.addEventListener('scroll', onScroll)
 
+		pageNumber = number
 		isScrollingPagesElement = true
 		pagesElement.scroll({
 			behavior: 'smooth',
-			top: canvas.offsetTop - pagesElement.offsetTop - 20
+			top: page.container.offsetTop - pagesElement.offsetTop - 20
 		})
 	}
 
@@ -297,15 +280,12 @@
 	}
 
 	let pageNumberSpan: HTMLSpanElement
-	const onInputPageNumber = (
-		e: KeyboardEvent & {
-			target: HTMLInputElement
-		}
-	) => {
-		if (e.target && e.key === 'Enter') {
-			const number = +e.target.value
+	const onInputPageNumber = (e: KeyboardEvent) => {
+		const target = e.target as HTMLInputElement
+		if (target && e.key === 'Enter') {
+			const number = +target.value
 			if (number < 1 || number > numPages) {
-				e.target.value = pageNumber.toString()
+				target.value = pageNumber.toString()
 				return
 			}
 			scrollToPage(number)
@@ -328,8 +308,12 @@
 	}
 
 	$: if (!isScrollingPagesElement && intersectionRatios.length > 0) {
-		const maybePageNumber = intersectionRatios.indexOf(Math.max(...intersectionRatios)) + 1
-		if (pageNumber !== maybePageNumber) pageNumber = maybePageNumber
+		const maybePageNumber = intersectionRatios.indexOf(
+			Math.max(...intersectionRatios.filter(Boolean))
+		)
+		if (pageNumber !== maybePageNumber) {
+			pageNumber = maybePageNumber
+		}
 	}
 	// End Page Number
 
@@ -339,19 +323,29 @@
 	export let minScale = 0.25
 	let scaleFactor = 0.2
 
+	const onChangeScale = () => {
+		console.log('onChangeScale')
+		pages.forEach((page) => {
+			if (page?.isRendered) {
+				console.log('onChangeScale:renderPage', page)
+				renderPage({
+					...page,
+					scale
+				})
+			}
+		})
+	}
+
 	const onClickZoomIn = () => {
 		if (scale + scaleFactor > maxScale) return
 		scale = scale + scaleFactor
+		onChangeScale()
 	}
 
 	const onClickZoomOut = () => {
 		if (scale - scaleFactor < minScale) return
 		scale = scale - scaleFactor
-	}
-
-	$: if (pagesElement) {
-		const renderedPages = pages.filter((page) => !page.isRendered)
-		renderedPages.forEach((page) => renderPage({ ...page, scale }))
+		onChangeScale()
 	}
 	// End zoom
 
@@ -368,7 +362,6 @@
 
 	// Print
 	import printFile from './utils/printFile'
-	import { element } from 'svelte/internal'
 	const onClickPrint = () => {
 		printFile(src)
 	}
@@ -497,7 +490,6 @@
 						number: index + 1
 					}}
 					role="button"
-					data-page={index + 1}
 					class={cn(
 						'w-max border-2 p-1',
 						pageNumber === index + 1
@@ -506,7 +498,7 @@
 					)}
 					on:click={() => scrollToPage(index + 1)}
 				>
-					<canvas data-mini={true} data-width="128" data-page={index + 1} class="mx-auto" />
+					<canvas class="mx-auto" />
 				</div>
 			{/each}
 		</div>
@@ -514,18 +506,18 @@
 			bind:this={pagesElement}
 			style={viewport
 				? `--viewport-width:${viewport.width}px;--viewport-height:${viewport.height}px;`
-				: ''}
+				: `--viewport-width:${500}px;--viewport-height:${500 * 1.414}px;`}
 			class="flex flex-col flex-1 p-8 space-y-8 overflow-auto shadow-xl pages bg-base-300"
 		>
 			{#each [...Array(numPages).keys()] as index}
 				<div
-					class="w-full"
 					use:renderer={{
 						number: index + 1
 					}}
+					class="relative mx-auto page"
 				>
-					<canvas data-page={index + 1} class="mx-auto bg-white page" />
-					<!-- <div id="text-layer" class="absolute inset-0 textLayer" style="--scale-factor:{scale};" /> -->
+					<canvas class="mx-auto bg-white page" />
+					<div id="text-layer" class="absolute inset-0 textLayer" style="--scale-factor:{scale};" />
 				</div>
 			{/each}
 		</div>
@@ -542,7 +534,9 @@
 	.pages {
 		--viewport-width: 0;
 		--viewport-height: 0;
-		canvas.page:not([data-rendered='true']) {
+
+		.page,
+		canvas:not([data-rendered='true']) {
 			width: var(--viewport-width);
 			height: var(--viewport-height);
 		}
