@@ -367,6 +367,13 @@
 	}
 	// End Print
 
+	// Sidebar
+	let isSidebarExpanded = true
+	const onToggleSidebar = () => {
+		isSidebarExpanded = !isSidebarExpanded
+	}
+	// End Sidebar
+
 	onMount(() => {
 		pdfjsLib.getDocument(src).promise.then(async (pdf) => {
 			pdfDoc = pdf
@@ -383,7 +390,23 @@
 	<div
 		class="flex items-center justify-between flex-none h-16 px-5 border-b border-white border-opacity-10"
 	>
-		<div>
+		<div class="flex items-center space-x-4">
+			<button class="flex-none btn btn-circle btn-sm" on:click={onToggleSidebar}>
+				<svg
+					fill="none"
+					class="w-4 h-4"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M4 6h16M4 12h8m-8 6h16"
+					/>
+				</svg>
+			</button>
 			<div class="text-lg font-medium">Resume.pdf</div>
 		</div>
 
@@ -481,7 +504,13 @@
 	<div class="flex flex-1 overflow-hidden">
 		<div
 			bind:this={miniPagesElement}
-			class="p-5 border-r border-white border-opacity-10 flex flex-col overflow-auto max-w-[198px] w-full space-y-2"
+			class={cn(
+				'py-5 border-white border-opacity-10 flex flex-col overflow-auto w-full space-y-2 transition-all duration-500',
+				{
+					'max-w-[198px] px-5 border-r': isSidebarExpanded,
+					'max-w-0 px-0 border-none': !isSidebarExpanded
+				}
+			)}
 		>
 			{#each [...Array(numPages).keys()] as index}
 				<div
