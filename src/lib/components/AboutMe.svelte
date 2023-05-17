@@ -42,11 +42,15 @@
 			<br />
 			<p>Let's turn your ideas into reality with my expertise!</p>
 
-			<div class="flex items-center mt-8 space-x-4">
+			<div class="flex flex-col-reverse md:flex-row md:items-center mt-8 space-x-4">
 				<a href="/contact" class="text-base tracking-wide normal-case rounded-full btn btn-primary"
 					>Contact me</a
 				>
-				<SocialLinks class="" btnClass="btn-circle btn-sm" iconClass="text-2xl" />
+				<SocialLinks
+					class="mb-4 md:mt-0 justify-center md:justify-start"
+					btnClass="btn-circle btn-sm"
+					iconClass="text-2xl"
+				/>
 			</div>
 		</div>
 	</div>

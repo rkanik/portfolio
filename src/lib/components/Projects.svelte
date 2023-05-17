@@ -59,7 +59,7 @@
 </script>
 
 <BaseSection
-	class="py-20"
+	class="pb-20"
 	subheader="Projects"
 	title="Here is some of my Projects"
 	description="Welcome to my Portfolio Projects Showcase, where I highlight my most recent and impressive projects. Each project comes with a brief description and a link to the live demo or GitHub repository. I have worked on these projects individually or as part of a team. Whether you are a potential employer, a client, or a fellow developer, I hope these will give you a sense of my capabilities and the kind of work I am passionate about. Feel free to explore and get in touch if you have any questions or would like to discuss potential collaboration opportunities."

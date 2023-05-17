@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
+	import useBreakpoints from '$lib/composable/useBreakpoints'
 
 	const items = [
 		{
@@ -33,6 +34,8 @@
 		top = oldScrollY >= window.scrollY ? '0px' : '-128px'
 		background = window.scrollY > 64 ? 'bg-base-200' : 'bg-transparent'
 	}
+
+	const breakpoints = useBreakpoints()
 
 	onMount(() => {
 		calculateProperties()

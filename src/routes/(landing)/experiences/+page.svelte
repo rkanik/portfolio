@@ -9,5 +9,5 @@
 	<title>Experiences & Educations | Rasel Khandkar</title>
 </svelte:head>
 
-<ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />
+<ExperienceSection experiences={data.publicUser.profile?.experiences || []} />
 <EducationSection educations={data.publicUser.profile?.educations || []} />

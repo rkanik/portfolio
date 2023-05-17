@@ -385,10 +385,10 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	bind:this={el}
-	class="flex flex-col h-screen overflow-hidden border border-white bg-base-100 border-opacity-10 rounded-xl"
+	class="flex flex-col h-[88vh] overflow-hidden border border-white bg-base-100 border-opacity-10 rounded-xl"
 >
 	<div
-		class="flex items-center justify-between flex-none h-16 px-5 border-b border-white border-opacity-10"
+		class="flex items-center justify-between flex-none h-12 px-5 border-b border-white border-opacity-10"
 	>
 		<div class="flex items-center space-x-4">
 			<button class="flex-none btn btn-circle btn-sm" on:click={onToggleSidebar}>

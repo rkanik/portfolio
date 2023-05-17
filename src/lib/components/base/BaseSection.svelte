@@ -9,13 +9,18 @@
 
 <section
 	{id}
-	class={cn('container flex flex-col justify-center min-h-screen mx-auto', $$props.class)}
+	class={cn(
+		'container flex flex-col justify-center min-h-screen mx-auto px-5 md:px-0',
+		$$props.class
+	)}
 >
 	<div class="w-full max-w-4xl mx-auto mt-16">
-		<div class="text-sm font-medium tracking-widest text-center uppercase text-secondary">
+		<div
+			class="text-xs md:text-sm font-medium tracking-widest text-center uppercase text-secondary"
+		>
 			{subheader}
 		</div>
-		<h1 class="mt-4 mb-8 text-5xl font-bold text-center">{title}</h1>
+		<h1 class="mt-2 md:mt-4 mb-4 md:mb-8 text-3xl md:text-5xl font-bold text-center">{title}</h1>
 		{#if description}
 			<p class="m-0 text-base text-center">{description}</p>
 		{/if}

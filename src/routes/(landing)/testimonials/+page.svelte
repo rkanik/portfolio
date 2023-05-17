@@ -10,4 +10,4 @@
 	<title>Testimonials | Rasel Khandkar</title>
 </svelte:head>
 
-<TestimonialSection class="pt-16" {userTestimonials} />
+<TestimonialSection {userTestimonials} />

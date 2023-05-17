@@ -4,6 +4,22 @@
 
 	import Icon from '@iconify/svelte'
 	import Carousel from 'svelte-carousel'
+	import useBreakpoints from '$lib/composable/useBreakpoints'
+
+	const breakpoints = useBreakpoints()
+	let particlesToShow: number = 4
+
+	$: {
+		particlesToShow =
+			(
+				{
+					xs: 1,
+					sm: 1,
+					md: 2,
+					lg: 3
+				} as any
+			)[$breakpoints.name] || 4
+	}
 
 	let carousel: Carousel
 	export let userTestimonials: TUserTestimonial[] = []
@@ -16,7 +32,7 @@
 		autoplay
 		pauseOnFocus
 		infinite={false}
-		particlesToShow={4}
+		{particlesToShow}
 		particlesToScroll={1}
 		let:showPrevPage
 		let:showNextPage
