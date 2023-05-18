@@ -1,14 +1,12 @@
 <script lang="ts">
-	import src from '$lib/utils/src'
 	import Icon from '@iconify/svelte'
 
-	import { getSupabaseContext } from '$lib/store/useSupabase'
 	import ProjectCard from './ProjectCard.svelte'
 	import BaseModal from './base/BaseModal.svelte'
 	import type { TProject } from '$lib/types'
-	import BaseJson from './base/BaseJson.svelte'
 	import BaseSection from './base/BaseSection.svelte'
 	import { useContextStoreContext } from '$lib/store/useContextStore'
+	import ProjectDetails from './project/ProjectDetails.svelte'
 
 	export let projects: any = { data: [] }
 	export let userTechnologies: any = { data: [] }
@@ -55,7 +53,8 @@
 		}
 	}
 
-	let currentProject: TProject = null!
+	// let currentProject: TProject = null!
+	let currentProject: TProject = projects[0]
 </script>
 
 <BaseSection
@@ -100,75 +99,8 @@
 	{/if}
 </BaseSection>
 
-<BaseModal
-	value={!!currentProject}
-	title={currentProject?.name}
-	activator={false}
-	modalBox="max-w-[100%]"
->
+<BaseModal value={!!currentProject} activator={false} hideClose modalBox="max-w-[100%]" let:close>
 	{#if currentProject}
-		<div class="flex min-h-[80vh] space-x-5">
-			<div class="flex-none max-w-sm p-5 overflow-auto bg-base-300 rounded-2xl">
-				<div class="mb-2 font-medium">Description</div>
-				<p>
-					{currentProject.description}
-				</p>
-
-				<div class="mt-2">
-					<div class="mb-2 font-medium">Tools and Technologies</div>
-					<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
-						{#if Array.isArray(currentProject.projectTechnologies)}
-							{#each currentProject.projectTechnologies as item}
-								<div class="badge ml-1 mt-1 pb-0.5 space-x-1 items-center">
-									<Icon icon={item.technologies?.icon} class="text-sm mt-0.5" />
-									<div>{item.technologies?.name}</div>
-								</div>
-							{/each}
-						{/if}
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col flex-1">
-				<div class="flex items-center flex-none p-2 mb-5 rounded-2xl bg-base-300">
-					<div class="px-2 text-base font-medium">Live preview</div>
-
-					<div class="flex ml-auto space-x-1">
-						<div class="tooltip tooltip-left tooltip-primary" data-tip="Enter to fullscreen">
-							<button class="btn btn-circle btn-sm">
-								<Icon class="text-xl" icon="iconamoon:screen-full" />
-							</button>
-						</div>
-						{#if currentProject.sourceCodeUrl}
-							<div class="tooltip tooltip-left tooltip-primary" data-tip="View source code">
-								<a
-									href={currentProject.sourceCodeUrl}
-									target="_blank"
-									rel="noreferrer"
-									class="btn btn-circle btn-sm"
-								>
-									<Icon class="text-xl" icon="material-symbols:code" />
-								</a>
-							</div>
-						{/if}
-						<div class="tooltip tooltip-left tooltip-primary" data-tip="Open in new tab">
-							<a
-								href={currentProject.previewUrl}
-								target="_blank"
-								rel="noreferrer"
-								class="btn btn-circle btn-sm"
-							>
-								<Icon class="text-xl" icon="material-symbols:open-in-new-rounded" />
-							</a>
-						</div>
-					</div>
-				</div>
-				<iframe
-					title={currentProject.name}
-					src={currentProject.previewUrl}
-					frameborder="0"
-					class="flex-1 w-full rounded-2xl"
-				/>
-			</div>
-		</div>
+		<ProjectDetails project={currentProject} on:close={close} />
 	{/if}
 </BaseModal>

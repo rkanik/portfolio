@@ -5,7 +5,7 @@
 	let visible = false
 
 	const onScroll = () => {
-		let v = window.scrollY > 64
+		let v = window.scrollY > 80
 		if (v !== visible) visible = v
 	}
 

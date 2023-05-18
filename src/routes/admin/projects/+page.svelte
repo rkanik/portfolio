@@ -13,6 +13,7 @@
 	import type { BaseFormField, BaseFormFieldOption, TProject } from '$lib/types.js'
 	import cn from '$lib/utils/cn.js'
 	import Project from '$lib/models/ProjectModel.js'
+	import { useContextStoreContext } from '$lib/store/useContextStore.js'
 
 	export let data
 
@@ -94,12 +95,13 @@
 	}
 
 	let modal = false
-	const supabase = getSupabaseContext()
-	const storage = useSupabaseStorage($supabase)
+	// const context = useContextStoreContext()
+	// const supabase = getSupabaseContext()
+	const storage = useSupabaseStorage(data.supabase)
 
 	// List
 	const onFetchProjects = async () => {
-		data.projects = await $supabase
+		data.projects = await data.supabase
 			.from('projects')
 			.select(`*,projectAttachments(*,attachments(*))`)
 			.order('sortOrder', { ascending: true })
@@ -108,12 +110,13 @@
 	const onSubmit = async (event: CustomEvent<typeof form.create.data>) => {
 		event.preventDefault()
 		try {
-			await $supabase.rpc('increment_project_sort_orders', { sort_order_above: 0 })
-			const projectInsertResponse = await $supabase
+			await data.supabase.rpc('increment_project_sort_orders', { sort_order_above: 0 })
+			const projectInsertResponse = await data.supabase
 				.from('projects')
 				.insert({
 					sortOrder: 1,
-					userId: data.session?.user.id,
+					slug: event.detail.name.split(' ').join('-').trim().toLowerCase(),
+					userId: data.session?.user.id as string,
 					name: event.detail.name,
 					description: event.detail.description,
 					previewUrl: event.detail.previewUrl,
@@ -164,7 +167,7 @@
 				})
 			)
 
-			const attachmentsResponse = await $supabase
+			const attachmentsResponse = await data.supabase
 				.from('attachments')
 				.insert(
 					attachments
@@ -186,7 +189,7 @@
 				return
 			}
 
-			const projectAttachmentsResponse = await $supabase.from('projectAttachments').insert(
+			const projectAttachmentsResponse = await data.supabase.from('projectAttachments').insert(
 				attachmentsResponse.data.map((attachment) => {
 					return {
 						attachmentId: attachment.id,
@@ -195,7 +198,7 @@
 				})
 			)
 			if (projectAttachmentsResponse.error) {
-				await $supabase
+				await data.supabase
 					.from('attachments')
 					.delete()
 					.in(
@@ -241,13 +244,13 @@
 			return
 		}
 
-		await $supabase.rpc('update_sort_order', {
+		await data.supabase.rpc('update_sort_order', {
 			row_id: event.detail.id,
 			sort_order: +event.detail.sortOrder
 		})
 
 		isUpdating = true
-		const { error } = await $supabase
+		const { error } = await data.supabase
 			.from('projects')
 			.update({
 				name: event.detail.name,
@@ -274,7 +277,7 @@
 
 	const onToggleStatus = async (event: CustomEvent<TProject>) => {
 		isUpdating = true
-		const { error } = await $supabase
+		const { error } = await data.supabase
 			.from('projects')
 			.update({
 				status: event.detail.status === 'active' ? 'inactive' : 'active'

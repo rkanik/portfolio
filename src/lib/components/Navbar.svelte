@@ -32,7 +32,7 @@
 
 	const calculateProperties = () => {
 		top = oldScrollY >= window.scrollY ? '0px' : '-128px'
-		background = window.scrollY > 64 ? 'bg-base-200' : 'bg-transparent'
+		background = window.scrollY > 80 ? 'bg-base-200' : 'bg-transparent'
 	}
 
 	const breakpoints = useBreakpoints()

@@ -138,6 +138,9 @@ export interface Database {
           id: string
           name: string
           previewUrl: string | null
+          repository: Json | null
+          repositoryOwner: string | null
+          repositoryRepo: string | null
           slug: string
           sortOrder: number
           sourceCodeUrl: string | null
@@ -152,6 +155,9 @@ export interface Database {
           id?: string
           name: string
           previewUrl?: string | null
+          repository?: Json | null
+          repositoryOwner?: string | null
+          repositoryRepo?: string | null
           slug?: string
           sortOrder?: number
           sourceCodeUrl?: string | null
@@ -166,6 +172,9 @@ export interface Database {
           id?: string
           name?: string
           previewUrl?: string | null
+          repository?: Json | null
+          repositoryOwner?: string | null
+          repositoryRepo?: string | null
           slug?: string
           sortOrder?: number
           sourceCodeUrl?: string | null
@@ -197,6 +206,7 @@ export interface Database {
       }
       technologies: {
         Row: {
+          color: string
           created_at: string | null
           description: string | null
           icon: string
@@ -205,6 +215,7 @@ export interface Database {
           url: string | null
         }
         Insert: {
+          color?: string
           created_at?: string | null
           description?: string | null
           icon: string
@@ -213,6 +224,7 @@ export interface Database {
           url?: string | null
         }
         Update: {
+          color?: string
           created_at?: string | null
           description?: string | null
           icon?: string

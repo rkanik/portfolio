@@ -34,7 +34,33 @@ export type TProjectTechnology = Database['public']['Tables']['projectTechnologi
 	technologies: TTechnology
 }
 
+export type TGithubLanguages = {
+	[language: string]: number
+}
+
+export type TGithubContributor = {
+	login: string
+	avatar_url: string
+	html_url: string
+}
+
+export type TGithubRepository = {
+	name: string
+	full_name: string
+	owner: {
+		login: string
+		html_url: string
+		avatar_url: string
+	}
+	html_url: string
+	description: string | null
+	homepage: string | null
+	contributors: TGithubContributor[]
+	languages: TGithubLanguages
+}
+
 export type TProject = Database['public']['Tables']['projects']['Row'] & {
+	repository: TGithubRepository | null
 	projectAttachments: TProjectAttachment[]
 	projectTechnologies: TProjectTechnology[]
 }

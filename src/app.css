@@ -77,3 +77,13 @@ svg {
 .progress::after {
 	animation-duration: 2s !important;
 }
+
+.h-100vh {
+	height: 100vh;
+	height: calc(var(--vh, 1vh) * 100);
+}
+
+.min-h-100vh {
+	min-height: 100vh;
+	min-height: calc(var(--vh, 1vh) * 100);
+}

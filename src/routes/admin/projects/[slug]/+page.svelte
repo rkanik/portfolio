@@ -19,6 +19,7 @@
 	import dataURLtoFile from '$lib/utils/dataURLtoFile.js'
 	import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage.js'
 	import type { TAttachment, TProjectAttachment } from '$lib/types.js'
+	import Github from '$lib/utils/Github.js'
 
 	export let data
 	const { project, supabase, userTechnologies } = data
@@ -202,6 +203,37 @@
 		}
 	}
 
+	const onRefreshRepository = async () => {
+		if (!project) return
+
+		if (project.repository) {
+			console.log('repository', project.repository)
+			return
+		}
+
+		if (!project.sourceCodeUrl) return
+
+		const repositoryPath = project.sourceCodeUrl.split('/').slice(-2).join('/')
+		const repository = await Github.getRepository(repositoryPath)
+
+		console.log('repository', repository)
+
+		const { data, error } = await supabase
+			.from('projects')
+			.update({ repository })
+			.eq('id', project.id)
+			.single()
+
+		console.log('onRefreshRepository', error, data)
+	}
+
+	$: {
+		if (!$values.previewUrl && $values.previewUrl !== null) {
+			console.log('setData')
+			setData('previewUrl', null)
+		}
+	}
+
 	let mounted = false
 	onMount(() => {
 		mounted = true
@@ -281,6 +313,12 @@
 				remove={onRemoveAttachment}
 				attachments={project?.projectAttachments.map((item) => item.attachments) || []}
 			/>
+		</div>
+
+		<div class="">
+			<div class="mt-8 bg-base-100 p-5 rounded-xl">
+				<button class="btn btn-primary" on:click={onRefreshRepository}> Refresh Repository </button>
+			</div>
 		</div>
 
 		<div class="mt-4 form-control">

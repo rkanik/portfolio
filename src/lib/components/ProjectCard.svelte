@@ -8,26 +8,51 @@
 	const dispatch = createEventDispatcher()
 
 	export let project: TProject = null!
-	export let glass = true
 	export let showThumbnail = true
 </script>
 
 <div
-	class="overflow-hidden card card-bordered bg-base-100 border-white border-opacity-10 rounded-xl"
+	class="relative overflow-hidden border-white card card-bordered bg-base-100 border-opacity-10 rounded-xl"
 >
+	<a
+		target="_blank"
+		rel="noreferrer"
+		href="https://encoderit.net/"
+		class="flex items-center space-x-1 absolute top-2 left-2 z-10 bg-white rounded-full pr-3 bg-opacity-50 backdrop-blur"
+	>
+		<div class="avatar">
+			<div class="w-7 rounded-full bg-white">
+				<img
+					alt="EIT"
+					src="https://encoderit.net/wp-content/themes/encoderit/assets/images/favicon.ico"
+					class="p-1"
+				/>
+			</div>
+		</div>
+		<div class="text-sm font-slab font-medium text-black">Encoder IT</div>
+	</a>
+
 	{#if showThumbnail}
-		<button class="relative h-48 overflow-hidden" on:click={() => dispatch('click', project)}>
+		<a href="/projects/{project.slug}" class="relative h-56 overflow-hidden">
 			<img
 				alt={project.name}
 				src={src(project.projectAttachments?.[0]?.attachments?.thumbnail)}
 				class="object-cover w-full h-full transition-transform duration-500 ease-in-out transform scale-100 hover:scale-125"
 			/>
-		</button>
+		</a>
 	{/if}
-	<div class="card-body border-t border-white border-opacity-10">
+	<div class="border-t border-white card-body border-opacity-10">
 		<h2 class="flex items-center justify-between card-title">
-			<span>{project.name}</span>
+			<a
+				href="/projects/{project.slug}"
+				class="hover:underline underline-offset-3 decoration-secondary"
+			>
+				<span>{project.name}</span>
+			</a>
 			<div class="flex space-x-2">
+				<button class="btn btn-sm btn-circle" on:click={() => dispatch('click', project)}>
+					<Icon icon="material-symbols:info-outline-rounded" class="text-xl" />
+				</button>
 				{#if project.sourceCodeUrl}
 					<a
 						class="btn btn-sm btn-circle"

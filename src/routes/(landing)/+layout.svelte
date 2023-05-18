@@ -2,7 +2,9 @@
 	import '../../app.css'
 
 	import { onMount } from 'svelte'
+	import { page } from '$app/stores'
 	import { invalidate } from '$app/navigation'
+
 	import Navbar from '$lib/components/Navbar.svelte'
 	import ScrollToTop from '$lib/components/ScrollToTop.svelte'
 	import SocialLinks from '$lib/components/SocialLinks.svelte'
@@ -26,7 +28,7 @@
 	<Navbar />
 	<ScrollToTop />
 
-	<div class="pt-20">
+	<div class={$page.url.pathname !== '/' ? 'pt-20' : ''}>
 		<slot />
 	</div>
 

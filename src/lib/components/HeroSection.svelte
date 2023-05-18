@@ -1,12 +1,13 @@
 <script>
+	import '$lib/assets/css/rainbow.css'
+
 	import { onMount } from 'svelte'
 	import { darkColors } from '$lib/const'
 
 	import random from '$lib/utils/random'
 	import OrganicShape from './OrganicShape.svelte'
-	import Icon from '@iconify/svelte'
-	import '$lib/assets/css/rainbow.css'
 	import SocialLinks from './SocialLinks.svelte'
+	import cn from '$lib/utils/cn'
 
 	const colors = darkColors
 
@@ -27,13 +28,16 @@
 	})
 </script>
 
-<div class="relative overflow-hidden landing-hero min-h-screen" style={bgColor}>
+<div
+	style={bgColor}
+	class={cn('relative min-h-screen overflow-hidden landing-hero', $$props.class)}
+>
 	<div class="container px-4 mx-auto sm:px-0">
 		<div class="flex items-center h-screen md:px-4">
 			<div class="relative flex items-center justify-between w-full">
 				<div class="relative">
 					<div class="relative z-20 blend-dodge">
-						<h1 class="font-bold text-gray-100 text-3xl md:text-7xl">
+						<h1 class="text-3xl font-bold text-gray-100 md:text-7xl">
 							<span class="mb-2 text-lg font-light text-white"
 								>Hi there, I am Md. Rasel Khandkar</span
 							><br />
@@ -41,7 +45,7 @@
 							<span class="text-gradient js">JavaScript</span><br />
 							Developer
 						</h1>
-						<p class="max-w-xl mt-8 text-base md:text-xl font-normal leading-normal text-gray-400">
+						<p class="max-w-xl mt-8 text-base font-normal leading-normal text-gray-400 md:text-xl">
 							I am a full stack Javascript engineer based in Dhaka, Bangladesh. With over 3 years of
 							experience in the field, I am passionate about creating innovative and user-friendly
 							applications using cutting-edge technologies. I believe in delivering top-notch
@@ -66,7 +70,7 @@
 					<img
 						alt="Md. Rasel Khandkar"
 						src="/img/hero-me-trans.png"
-						class="relative z-10 object-cover object-top max-w-xl transform translate-y-32 hidden md:block"
+						class="relative z-10 hidden object-cover object-top max-w-xl transform translate-y-32 md:block"
 					/>
 					<div
 						style="background-image: var(--hero-gradient-background-image)"

@@ -22,7 +22,7 @@
 </svelte:head>
 
 <div class="overflow-hidden">
-	<HeroSection />
+	<HeroSection class="pt-20" />
 
 	<div class="container flex items-center justify-center min-h-screen px-4 mx-auto md:px-0">
 		<div class="w-full py-16">

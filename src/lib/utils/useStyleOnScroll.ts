@@ -8,7 +8,7 @@ const useStyleOnScroll = (el: HTMLDivElement) => {
 
 		window.onscroll = () => {
 			const top = oldScrollY > window.scrollY ? '0px' : '-128px'
-			const classes = window.scrollY < 64 ? 'bg-transparent' : 'bg-base-200'
+			const classes = window.scrollY < 80 ? 'bg-transparent' : 'bg-base-200'
 
 			if (el.style.top !== top) el.style.top = top
 
