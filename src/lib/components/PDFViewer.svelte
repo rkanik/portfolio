@@ -10,18 +10,18 @@
 	const {
 		scale,
 		viewport,
+		numPages,
 		pageNumber,
 		pageNumbers,
 		pageRenderer,
 		thumbnailRenderer,
 		goToNextPage,
 		goToPreviousPage,
+		setPageNumber,
 		zoomIn,
 		zoomOut,
 		download,
-		print,
-		numPages
-		// setPageNumber,
+		print
 	} = usePDF({
 		src,
 		initialScale: 1.5,
@@ -32,7 +32,7 @@
 	const onInputPageNumber = (e: KeyboardEvent) => {
 		const target = e.target as HTMLInputElement
 		if (target && e.key === 'Enter') {
-			// setPageNumber(+target.value)
+			setPageNumber(+target.value)
 		}
 	}
 
@@ -164,21 +164,23 @@
 			)}
 		>
 			{#each $pageNumbers as number}
-				<a
+				<!-- svelte-ignore a11y-interactive-supports-focus -->
+				<div
 					use:thumbnailRenderer={{
 						number,
 						width: 128
 					}}
-					href="#page-{number}"
+					role="button"
 					class={cn(
 						'w-max border-2 p-1',
 						number === $pageNumber
 							? 'border-secondary'
 							: 'border-transparent hover:border-secondary opacity-60'
 					)}
+					on:click={() => setPageNumber(number)}
 				>
 					<canvas class="mx-auto" />
-				</a>
+				</div>
 			{/each}
 		</div>
 		<div
@@ -189,7 +191,7 @@
 			class="flex flex-col flex-1 p-8 space-y-8 overflow-auto shadow-xl pages bg-base-300"
 		>
 			{#each $pageNumbers as number}
-				<div use:pageRenderer={{ number }} id="page-{number}" class="relative mx-auto page">
+				<div use:pageRenderer={{ number }} class="relative mx-auto page">
 					<canvas />
 					<div
 						id="text-layer"
