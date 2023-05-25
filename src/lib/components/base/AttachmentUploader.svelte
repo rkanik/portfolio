@@ -23,7 +23,7 @@
 	import type { PostgrestError, PostgrestSingleResponse } from '@supabase/supabase-js'
 	import uniqueId from 'lodash/uniqueId'
 	import { createEventDispatcher } from 'svelte'
-	import SvelteSortable from 'svelte-sortablejs'
+	// import SvelteSortable from 'svelte-sortablejs'
 	import BaseImage from './BaseImage.svelte'
 	import cn from '$lib/utils/cn'
 
@@ -198,7 +198,7 @@
 		{/if}
 	</div>
 
-	<SvelteSortable
+	<!-- <SvelteSortable
 		list={innerAttachments}
 		setList={(e) => (innerAttachments = e)}
 		class="grid grid-cols-3 gap-4 mt-4"
@@ -234,5 +234,5 @@
 		>
 			<Icon icon="material-symbols:add" class="opacity-50 text-7xl" />
 		</button>
-	</SvelteSortable>
+	</SvelteSortable> -->
 </div>
