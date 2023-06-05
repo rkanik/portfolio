@@ -1,15 +1,14 @@
 <script lang="ts">
-	import type { FileObject } from '$lib/modules/Storage'
 	import BaseModal from './base/BaseModal.svelte'
-	import StorageManager from './StorageManager.svelte'
+	import StorageManager2, { type OnSelectHandler } from './StorageManager2.svelte'
 
 	export let value = false
-	export let onSelect: (files: FileObject[]) => void = () => {
+	export let onSelect: OnSelectHandler = () => {
 		//
 	}
 
-	export let bucket = ''
 	export let folder = ''
+	export let bucket = 'uploads'
 
 	let isInitialized = false
 	$: if (value && !isInitialized) {
@@ -24,6 +23,6 @@
 		</slot>
 	</svelte:fragment>
 	{#if isInitialized}
-		<StorageManager {bucket} {folder} {onSelect} class="p-0" />
+		<StorageManager2 {bucket} {folder} {onSelect} class="p-0" />
 	{/if}
 </BaseModal>

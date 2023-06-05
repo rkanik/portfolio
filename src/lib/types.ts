@@ -1,3 +1,4 @@
+import type { Readable, Writable } from 'svelte/store'
 import type { Database } from '../supabase'
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 
@@ -84,6 +85,8 @@ export type TExperience = {
 	lines: string[]
 }
 
+export type TUser = User
+
 export type TProfile = Database['public']['Tables']['profiles']['Row'] & {
 	user?: User
 	educations: TEducation[]
@@ -121,3 +124,7 @@ export type TEnquiry = Database['public']['Tables']['inquiries']['Row']
 export type ClickEvent<T> = MouseEvent & {
 	currentTarget: EventTarget & T
 }
+
+export type Store<T> = Writable<T> | Readable<T>
+
+export type MaybeGetter<T, A = undefined> = T | Store<T> | ((...args: A[]) => T)

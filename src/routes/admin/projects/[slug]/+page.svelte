@@ -23,9 +23,13 @@
 	import src from '$lib/utils/src.js'
 	import StoragePicker from '$lib/components/StoragePicker.svelte'
 	import type { FileObject } from '$lib/modules/Storage.js'
+	import { page } from '$app/stores'
+	import type { OnSelectHandler } from '$lib/components/StorageManager2.svelte'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import BaseImage from '$lib/components/base/BaseImage.svelte'
 
 	export let data
-	const { user, project, supabase, userTechnologies } = data
+	let { user, project, supabase, userTechnologies } = data
 
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
@@ -116,97 +120,6 @@
 		}
 	})
 
-	// const storage = useSupabaseStorage(supabase)
-
-	// const onUpload: UploadFunction = async (file) => {
-	// 	if (!project) return [new Error('Project not found'), null]
-
-	// 	const base64 = await resizeImage(file, { maxWidth: 3 })
-	// 	const file400 = dataURLtoFile(await resizeImage(file, { maxWidth: 400 }), file.name)
-	// 	const file1200 = dataURLtoFile(await resizeImage(file, { maxWidth: 1200 }), file.name)
-
-	// 	const [src, thumbnail] = await storage.uploadMany(
-	// 		[
-	// 			{
-	// 				path: 'projects',
-	// 				bucket: 'uploads',
-	// 				file: file1200
-	// 			},
-	// 			{
-	// 				path: 'projects',
-	// 				bucket: 'uploads',
-	// 				file: file400
-	// 			}
-	// 		].filter((v) => v.file) as SupabaseFile[]
-	// 	)
-
-	// 	const response = await supabase
-	// 		.from('attachments')
-	// 		.insert({
-	// 			base64,
-	// 			name: file.name,
-	// 			mimeType: file.type,
-	// 			src: src.data?.path as string,
-	// 			thumbnail: thumbnail.data?.path
-	// 		})
-	// 		.select()
-
-	// 	if (response.error) {
-	// 		console.log('response:error', response)
-	// 		return [response.error, null]
-	// 	}
-
-	// 	const projectAttachmentsResponse = await supabase
-	// 		.from('projectAttachments')
-	// 		.insert({
-	// 			projectId: project?.id,
-	// 			attachmentId: response.data[0].id
-	// 		})
-	// 		.select('*,attachments(*)')
-
-	// 	if (projectAttachmentsResponse.error) {
-	// 		await supabase
-	// 			.from('attachments')
-	// 			.delete()
-	// 			.in(
-	// 				'id',
-	// 				response.data.map((v) => v.id)
-	// 			)
-	// 		return [projectAttachmentsResponse.error, null]
-	// 	}
-
-	// 	return [null, projectAttachmentsResponse.data[0].attachments as TAttachment]
-	// }
-
-	// const onRemoveAttachment: RemoveFunction = async (attachment) => {
-	// 	const { error: storageError } = await storage.remove(
-	// 		[attachment.src, attachment.thumbnail].filter(Boolean).map((v) => `uploads/${v}`)
-	// 	)
-	// 	if (storageError) {
-	// 		return {
-	// 			data: null,
-	// 			error: new Error('Error while removing attachments from Storage.')
-	// 		}
-	// 	}
-
-	// 	const { error: databaseError } = await supabase
-	// 		.from('attachments')
-	// 		.delete()
-	// 		.eq('id', attachment.id)
-
-	// 	if (databaseError) {
-	// 		return {
-	// 			data: null,
-	// 			error: new Error('Error while removing attachments from the database.')
-	// 		}
-	// 	}
-
-	// 	return {
-	// 		error: null,
-	// 		data: attachment
-	// 	}
-	// }
-
 	const onRefreshRepository = async () => {
 		if (!project) return
 
@@ -231,35 +144,57 @@
 		console.log('onRefreshRepository', error, data)
 	}
 
-	const onSelectedFiles = async (files: FileObject[]) => {
+	const fetchProject = async () => {
+		if (!user) return
+
+		const { data, error } = await supabase
+			.from('projects')
+			.select(
+				`*,
+         projectAttachments(
+            *,attachments(*)
+         ),
+         projectTechnologies(
+            *,technologies(*)
+         )`
+			)
+			.eq('slug', $page.params.slug)
+			.eq('userId', user.id)
+			.single()
+
+		if (!error) {
+			project = data
+		}
+	}
+
+	let storageModal = false
+	const onSelectAttachments: OnSelectHandler = async (attachments, { reset: clearSelected }) => {
 		if (!project) return
 
-		const response = await supabase
-			.from('attachments')
-			.insert({
-				base64,
-				name: file.name,
-				mimeType: file.type,
-				src: src.data?.path as string,
-				thumbnail: thumbnail.data?.path
-			})
-			.select()
+		storageModal = false
+		clearSelected()
 
-		await supabase
-			.from('projectAttachments')
-			.insert(
-				files.map((file) => ({
-					projectId: project?.id,
-					attachmentId: response.data[0].id
-				}))
-			)
-			.select('*,attachments(*)')
+		await supabase.from('projectAttachments').insert(
+			attachments.map((attachment) => ({
+				projectId: project.id,
+				attachmentId: attachment.id
+			}))
+		)
+
+		fetchProject()
 	}
 
 	$: {
 		if (!$values.previewUrl && $values.previewUrl !== null) {
 			console.log('setData')
 			setData('previewUrl', null)
+		}
+	}
+
+	const onDeleteProjectAttachment = (projectAttachment: TProjectAttachment) => async () => {
+		if (confirm(`Are you sure to delete this attachment?`)) {
+			await supabase.from('projectAttachments').delete().eq('id', projectAttachment.id)
+			fetchProject()
 		}
 	}
 
@@ -281,19 +216,27 @@
 		<div class="grid 2xl:grid-cols-5 gap-4">
 			{#if project}
 				{#each project.projectAttachments as projectAttachment}
-					<div>
-						<img
-							class="h-32 w-full object-center object-cover rounded"
-							alt={projectAttachment.attachments.thumbnail}
-							src={src(projectAttachment.attachments.thumbnail)}
+					{@const src = getPublicUrl(projectAttachment.attachments)}
+					<div class="relative">
+						<button
+							class="btn btn-circle btn-error btn-sm absolute top-1 right-1"
+							on:click={onDeleteProjectAttachment(projectAttachment)}
+						>
+							<Icon class="text-base" icon="mdi-delete-outline" />
+						</button>
+						<BaseImage
+							class="h-36 w-full object-top object-cover rounded"
+							lazySrc={src}
+							alt={projectAttachment.attachments.name}
+							src={projectAttachment.attachments.base64 || src}
 						/>
 					</div>
 				{/each}
-				<StoragePicker bucket="uploads" folder="users/{user?.id || ''}" onSelect={onSelectedFiles}>
+				<StoragePicker bind:value={storageModal} onSelect={onSelectAttachments}>
 					<svelte:fragment slot="activator" let:onClick>
 						<button
 							on:click={onClick}
-							class="h-32 grid place-items-center bg-base-100 rounded shadow"
+							class="h-36 grid place-items-center bg-base-100 rounded shadow"
 						>
 							<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
 						</button>

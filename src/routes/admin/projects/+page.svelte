@@ -14,6 +14,8 @@
 	import cn from '$lib/utils/cn.js'
 	import Project from '$lib/models/ProjectModel.js'
 	import { useContextStoreContext } from '$lib/store/useContextStore.js'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl.js'
+	import BaseImage from '$lib/components/base/BaseImage.svelte'
 
 	export let data
 
@@ -351,12 +353,15 @@
 						{/each}
 					</div>
 				{:else if header.value === 'project'}
+					{@const attachment = item.projectAttachments[0]?.attachments}
+					{@const src = getPublicUrl(attachment)}
 					<div class="flex items-center py-2 space-x-4">
-						<div class="flex-none">
-							<img
-								alt={item.projectAttachments[0]?.attachments.name || ''}
-								src={src(item.projectAttachments[0]?.attachments.thumbnail)}
-								class="object-cover w-12 h-12 rounded"
+						<div class="flex-none w-12 h-12">
+							<BaseImage
+								lazySrc={src}
+								alt={attachment?.name || ''}
+								src={attachment?.base64 || src}
+								class="object-cover h-full w-full object-top rounded"
 							/>
 						</div>
 						<div>

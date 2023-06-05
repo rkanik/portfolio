@@ -21,7 +21,8 @@
 		{ path: '/admin', name: 'Dashboard' },
 		{ path: '/admin/projects', name: 'Projects' },
 		{ path: '/admin/testimonials', name: 'Testimonials' },
-		{ path: '/admin/uploads', name: 'Uploads' }
+		{ path: '/admin/uploads', name: 'Uploads' },
+		{ path: '/admin/storage', name: 'Storage' }
 	]
 </script>
 

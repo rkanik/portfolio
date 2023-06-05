@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { TProject } from '$lib/types'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 	import src from '$lib/utils/src'
 	import Icon from '@iconify/svelte'
 	import truncate from 'lodash/truncate'
 	import { createEventDispatcher } from 'svelte'
+	import BaseImage from './base/BaseImage.svelte'
 
 	const dispatch = createEventDispatcher()
 
@@ -33,11 +35,14 @@
 	</a>
 
 	{#if showThumbnail}
+		{@const attachment = project.projectAttachments[0]?.attachments}
+		{@const src = getPublicUrl(attachment, 'medium')}
 		<a href="/projects/{project.slug}" class="relative h-56 overflow-hidden">
-			<img
+			<BaseImage
+				lazySrc={src}
 				alt={project.name}
-				src={src(project.projectAttachments?.[0]?.attachments?.thumbnail)}
-				class="object-cover w-full h-full transition-transform duration-500 ease-in-out transform scale-100 hover:scale-125"
+				src={attachment?.base64 || src}
+				class="object-cover object-top w-full h-full transition-transform duration-500 ease-in-out transform scale-100 hover:scale-125"
 			/>
 		</a>
 	{/if}

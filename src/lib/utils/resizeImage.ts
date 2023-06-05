@@ -42,7 +42,10 @@ export const resizeImage = (file: File, options?: Options) => {
 			ctx = canvas.getContext('2d')
 			if (ctx) ctx.drawImage(img, 0, 0, width, height)
 
-			return resolve(canvas.toDataURL(file.type))
+			const dataURL = canvas.toDataURL(file.type)
+			console.log('dataURL', dataURL)
+
+			return resolve(dataURL)
 		})
 	})
 }
