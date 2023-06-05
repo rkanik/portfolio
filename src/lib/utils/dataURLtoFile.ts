@@ -1,5 +1,6 @@
-const dataURLtoFile = (dataURL?: string | null, filename = Date.now().toString()) => {
+const dataURLtoFile = (dataURL?: string | null | File, filename = Date.now().toString()) => {
 	if (!dataURL) return null
+	if (dataURL instanceof File) return dataURL
 
 	const arr = dataURL.split(','),
 		mime = arr[0].match(/:(.*?);/)?.[1],

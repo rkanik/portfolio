@@ -5,9 +5,9 @@ type Options = {
 
 export type ResizeImage = typeof resizeImage
 export const resizeImage = (file: File, options?: Options) => {
-	return new Promise<string | null>((resolve) => {
+	return new Promise<string>((resolve, reject) => {
 		if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-			return resolve(null)
+			return reject('Your browser does not support File API')
 		}
 
 		const img = document.createElement('img')

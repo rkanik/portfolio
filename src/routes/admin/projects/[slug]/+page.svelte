@@ -4,25 +4,28 @@
 
 	import { createForm } from 'felte'
 	import { validator } from '@felte/validator-zod'
-	import { getSupabaseContext } from '$lib/store/useSupabase'
+	// import { getSupabaseContext } from '$lib/store/useSupabase'
 
 	import TextField from '$lib/components/base/TextField.svelte'
 	import TextArea from '$lib/components/base/TextArea.svelte'
 	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
-	import AttachmentUploader, {
-		type RemoveFunction,
-		type UploadFunction
-	} from '$lib/components/base/AttachmentUploader.svelte'
+	// import AttachmentUploader, {
+	// 	type RemoveFunction,
+	// 	type UploadFunction
+	// } from '$lib/components/base/AttachmentUploader.svelte'
 	import { resizeImage } from '$lib/utils/resizeImage.js'
 	import dataURLtoFile from '$lib/utils/dataURLtoFile.js'
 	import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage.js'
 	import type { TAttachment, TProjectAttachment } from '$lib/types.js'
 	import Github from '$lib/utils/Github.js'
+	import src from '$lib/utils/src.js'
+	import StoragePicker from '$lib/components/StoragePicker.svelte'
+	import type { FileObject } from '$lib/modules/Storage.js'
 
 	export let data
-	const { project, supabase, userTechnologies } = data
+	const { user, project, supabase, userTechnologies } = data
 
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
@@ -93,6 +96,7 @@
 						})
 						.map((v) => v.technologies.id)
 				)
+
 			await supabase.from('projectTechnologies').insert(
 				values.technologies
 					.filter((tech) => {
@@ -112,96 +116,96 @@
 		}
 	})
 
-	const storage = useSupabaseStorage(supabase)
+	// const storage = useSupabaseStorage(supabase)
 
-	const onUpload: UploadFunction = async (file) => {
-		if (!project) return [new Error('Project not found'), null]
+	// const onUpload: UploadFunction = async (file) => {
+	// 	if (!project) return [new Error('Project not found'), null]
 
-		const base64 = await resizeImage(file, { maxWidth: 3 })
-		const file400 = dataURLtoFile(await resizeImage(file, { maxWidth: 400 }), file.name)
-		const file1200 = dataURLtoFile(await resizeImage(file, { maxWidth: 1200 }), file.name)
+	// 	const base64 = await resizeImage(file, { maxWidth: 3 })
+	// 	const file400 = dataURLtoFile(await resizeImage(file, { maxWidth: 400 }), file.name)
+	// 	const file1200 = dataURLtoFile(await resizeImage(file, { maxWidth: 1200 }), file.name)
 
-		const [src, thumbnail] = await storage.uploadMany(
-			[
-				{
-					path: 'projects',
-					bucket: 'uploads',
-					file: file1200
-				},
-				{
-					path: 'projects',
-					bucket: 'uploads',
-					file: file400
-				}
-			].filter((v) => v.file) as SupabaseFile[]
-		)
+	// 	const [src, thumbnail] = await storage.uploadMany(
+	// 		[
+	// 			{
+	// 				path: 'projects',
+	// 				bucket: 'uploads',
+	// 				file: file1200
+	// 			},
+	// 			{
+	// 				path: 'projects',
+	// 				bucket: 'uploads',
+	// 				file: file400
+	// 			}
+	// 		].filter((v) => v.file) as SupabaseFile[]
+	// 	)
 
-		const response = await supabase
-			.from('attachments')
-			.insert({
-				base64,
-				name: file.name,
-				mimeType: file.type,
-				src: src.data?.path as string,
-				thumbnail: thumbnail.data?.path
-			})
-			.select()
+	// 	const response = await supabase
+	// 		.from('attachments')
+	// 		.insert({
+	// 			base64,
+	// 			name: file.name,
+	// 			mimeType: file.type,
+	// 			src: src.data?.path as string,
+	// 			thumbnail: thumbnail.data?.path
+	// 		})
+	// 		.select()
 
-		if (response.error) {
-			console.log('response:error', response)
-			return [response.error, null]
-		}
+	// 	if (response.error) {
+	// 		console.log('response:error', response)
+	// 		return [response.error, null]
+	// 	}
 
-		const projectAttachmentsResponse = await supabase
-			.from('projectAttachments')
-			.insert({
-				projectId: project?.id,
-				attachmentId: response.data[0].id
-			})
-			.select('*,attachments(*)')
+	// 	const projectAttachmentsResponse = await supabase
+	// 		.from('projectAttachments')
+	// 		.insert({
+	// 			projectId: project?.id,
+	// 			attachmentId: response.data[0].id
+	// 		})
+	// 		.select('*,attachments(*)')
 
-		if (projectAttachmentsResponse.error) {
-			await supabase
-				.from('attachments')
-				.delete()
-				.in(
-					'id',
-					response.data.map((v) => v.id)
-				)
-			return [projectAttachmentsResponse.error, null]
-		}
+	// 	if (projectAttachmentsResponse.error) {
+	// 		await supabase
+	// 			.from('attachments')
+	// 			.delete()
+	// 			.in(
+	// 				'id',
+	// 				response.data.map((v) => v.id)
+	// 			)
+	// 		return [projectAttachmentsResponse.error, null]
+	// 	}
 
-		return [null, projectAttachmentsResponse.data[0].attachments as TAttachment]
-	}
+	// 	return [null, projectAttachmentsResponse.data[0].attachments as TAttachment]
+	// }
 
-	const onRemoveAttachment: RemoveFunction = async (attachment) => {
-		const { error: storageError } = await storage.remove(
-			[attachment.src, attachment.thumbnail].filter(Boolean).map((v) => `uploads/${v}`)
-		)
-		if (storageError) {
-			return {
-				data: null,
-				error: new Error('Error while removing attachments from Storage.')
-			}
-		}
+	// const onRemoveAttachment: RemoveFunction = async (attachment) => {
+	// 	const { error: storageError } = await storage.remove(
+	// 		[attachment.src, attachment.thumbnail].filter(Boolean).map((v) => `uploads/${v}`)
+	// 	)
+	// 	if (storageError) {
+	// 		return {
+	// 			data: null,
+	// 			error: new Error('Error while removing attachments from Storage.')
+	// 		}
+	// 	}
 
-		const { error: databaseError } = await supabase
-			.from('attachments')
-			.delete()
-			.eq('id', attachment.id)
+	// 	const { error: databaseError } = await supabase
+	// 		.from('attachments')
+	// 		.delete()
+	// 		.eq('id', attachment.id)
 
-		if (databaseError) {
-			return {
-				data: null,
-				error: new Error('Error while removing attachments from the database.')
-			}
-		}
+	// 	if (databaseError) {
+	// 		return {
+	// 			data: null,
+	// 			error: new Error('Error while removing attachments from the database.')
+	// 		}
+	// 	}
 
-		return {
-			error: null,
-			data: attachment
-		}
-	}
+	// 	return {
+	// 		error: null,
+	// 		data: attachment
+	// 	}
+	// }
 
 	const onRefreshRepository = async () => {
 		if (!project) return
@@ -227,6 +231,31 @@
 		console.log('onRefreshRepository', error, data)
 	}
 
+	const onSelectedFiles = async (files: FileObject[]) => {
+		if (!project) return
+
+		const response = await supabase
+			.from('attachments')
+			.insert({
+				base64,
+				name: file.name,
+				mimeType: file.type,
+				src: src.data?.path as string,
+				thumbnail: thumbnail.data?.path
+			})
+			.select()
+
+		await supabase
+			.from('projectAttachments')
+			.insert(
+				files.map((file) => ({
+					projectId: project?.id,
+					attachmentId: response.data[0].id
+				}))
+			)
+			.select('*,attachments(*)')
+	}
+
 	$: {
 		if (!$values.previewUrl && $values.previewUrl !== null) {
 			console.log('setData')
@@ -241,7 +270,40 @@
 </script>
 
 <div class="w-full max-w-4xl py-16 mx-auto">
-	<form use:form class="flex flex-col space-y-2">
+	<div>
+		<h1 class="text-2xl font-medium">
+			{project?.name}
+		</h1>
+	</div>
+
+	<div class="mt-4">
+		<div>Attachments</div>
+		<div class="grid 2xl:grid-cols-5 gap-4">
+			{#if project}
+				{#each project.projectAttachments as projectAttachment}
+					<div>
+						<img
+							class="h-32 w-full object-center object-cover rounded"
+							alt={projectAttachment.attachments.thumbnail}
+							src={src(projectAttachment.attachments.thumbnail)}
+						/>
+					</div>
+				{/each}
+				<StoragePicker bucket="uploads" folder="users/{user?.id || ''}" onSelect={onSelectedFiles}>
+					<svelte:fragment slot="activator" let:onClick>
+						<button
+							on:click={onClick}
+							class="h-32 grid place-items-center bg-base-100 rounded shadow"
+						>
+							<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
+						</button>
+					</svelte:fragment>
+				</StoragePicker>
+			{/if}
+		</div>
+	</div>
+
+	<form use:form class="flex flex-col space-y-2 mt-4">
 		<TextField
 			required
 			name="name"
@@ -306,14 +368,14 @@
 			</svelte:fragment>
 		</Autocomplete>
 
-		<div>
+		<!-- <div>
 			<AttachmentUploader
 				class="mt-4"
 				upload={onUpload}
 				remove={onRemoveAttachment}
 				attachments={project?.projectAttachments.map((item) => item.attachments) || []}
 			/>
-		</div>
+		</div> -->
 
 		<div class="">
 			<div class="mt-8 bg-base-100 p-5 rounded-xl">

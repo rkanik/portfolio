@@ -12,33 +12,45 @@ export interface Database {
       attachments: {
         Row: {
           base64: string | null
+          bucket: string
           createdAt: string | null
+          folder: string
           id: string
+          medium: string | null
           mimeType: string | null
           name: string
           src: string
           thumbnail: string | null
           updatedAt: string | null
+          userId: string
         }
         Insert: {
           base64?: string | null
+          bucket?: string
           createdAt?: string | null
+          folder?: string
           id?: string
+          medium?: string | null
           mimeType?: string | null
           name: string
           src: string
           thumbnail?: string | null
           updatedAt?: string | null
+          userId?: string
         }
         Update: {
           base64?: string | null
+          bucket?: string
           createdAt?: string | null
+          folder?: string
           id?: string
+          medium?: string | null
           mimeType?: string | null
           name?: string
           src?: string
           thumbnail?: string | null
           updatedAt?: string | null
+          userId?: string
         }
       }
       inquiries: {

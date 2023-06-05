@@ -2,10 +2,23 @@ import { nanoid } from 'nanoid'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 export type SupabaseFile = {
+	file: File
 	path: string
 	bucket?: string
-	file: File
+	filename?: string
 }
+
+export type StorageUploadResponse =
+	| {
+			data: {
+				path: string
+			}
+			error: null
+	  }
+	| {
+			data: null
+			error: Error
+	  }
 
 const useSupabaseStorage = (supabase: SupabaseClient) => {
 	return {
@@ -21,14 +34,18 @@ const useSupabaseStorage = (supabase: SupabaseClient) => {
 			)
 		},
 		async upload(item: SupabaseFile) {
-			const { file, path, bucket = 'uploads' } = item
+			const { file, filename, path, bucket = 'uploads' } = item
 			const ext = file.name.split('.').pop() || '.jpg'
 			const { error, data } = await supabase.storage
 				.from(bucket)
-				.upload(`${path}/${nanoid().toLowerCase()}.${ext}`, file, {
-					upsert: true,
-					cacheControl: '3600'
-				})
+				.upload(
+					filename ? path + '/' + filename : `${path}/${nanoid().toLowerCase()}.${ext}`,
+					file,
+					{
+						upsert: true,
+						cacheControl: '3600'
+					}
+				)
 			return { file, error, data }
 		},
 		async uploadMany(files: SupabaseFile[]) {
