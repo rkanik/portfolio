@@ -1,11 +1,13 @@
 <script lang="ts">
-	import cn from '$lib/utils/cn'
-	import src from '$lib/utils/src'
+	import type { Maybe, TAttachment } from '$lib/types'
+	import type { OnSelectHandlerSingle } from '../StorageManager2.svelte'
 
-	export let value: {
-		src?: string
-		file?: File
-	}
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+
+	import cn from '$lib/utils/cn'
+	import StoragePicker from '../StoragePicker.svelte'
+
+	export let value: TAttachment
 	export let name: string
 	export let setFields: any
 
@@ -13,12 +15,16 @@
 	export let errors: string[] = []
 	export let required: boolean = false
 	export let id = Math.random().toString(36).slice(-10)
+	export let attachment: Maybe<TAttachment> = undefined
 
-	const onInput = (e: any) => {
-		setFields(name, {
-			file: e.target.files[0],
-			src: URL.createObjectURL(e.target.files[0])
-		})
+	const onSelect: OnSelectHandlerSingle = (v, { reset }) => {
+		attachment = v
+		setFields(name, v.id)
+		reset()
+	}
+
+	$: {
+		console.log('Avatar picker', value)
 	}
 </script>
 
@@ -33,18 +39,23 @@
 			</span>
 		</label>
 	{/if}
-	<div class="avatar">
-		<input
-			type="file"
-			id="avatar"
-			accept="images/*"
-			class="opacity-0 absolute inset-0"
-			on:input={onInput}
-		/>
-		<div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-			<img src={src(value.src)} alt="testimonial avatar" />
-		</div>
-	</div>
+
+	<StoragePicker {onSelect} multiple={false}>
+		<svelte:fragment slot="activator" let:onClick>
+			<button
+				class="avatar"
+				on:click={(e) => {
+					e.stopPropagation()
+					onClick()
+				}}
+			>
+				<div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+					<img src={getPublicUrl(attachment)} alt="testimonial avatar" />
+				</div>
+			</button>
+		</svelte:fragment>
+	</StoragePicker>
+
 	{#if errors.length > 0}
 		<label for={id} class="label">
 			<span class="label-text-alt text-error">

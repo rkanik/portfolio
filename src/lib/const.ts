@@ -1,3 +1,7 @@
+export const anonymous = () => {
+	//
+}
+
 export const darkColors = [
 	'#222831',
 	'#202040',

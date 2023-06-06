@@ -1,33 +1,48 @@
 <script lang="ts">
+	import type { Maybe, TTestimonial } from '$lib/types'
+
 	import { createForm } from 'felte'
+	import { createEventDispatcher } from 'svelte'
 	import { validator } from '@felte/validator-zod'
 	import { useContextStoreContext } from '$lib/store/useContextStore'
 	import { useTestimonialModule, type CreateSchema } from '$lib/modules/testimonial'
 
 	import BaseForm from '../base/BaseForm.svelte'
-	import { createEventDispatcher } from 'svelte'
+	import { anonymous } from '$lib/const'
+
+	export let value: Maybe<TTestimonial> = undefined
+	export let onClose = anonymous
 
 	let loading = false
+
+	let isUpdate = false
+	$: isUpdate = !!(value && value.id)
 
 	const dispatch = createEventDispatcher()
 	const context = useContextStoreContext()
 	const Testimonial = useTestimonialModule($context)
 
+	const toInitialValues = (v: Maybe<TTestimonial>) => {
+		return {
+			name: v?.name || '',
+			company: v?.company || '',
+			testimonial: v?.testimonial || '',
+			rating: v?.rating || 0,
+			date: v?.date ? new Date(v.date) : null,
+			avatar: v?.avatar?.id
+		}
+	}
+
 	const form = createForm<CreateSchema>({
-		initialValues: {
-			name: '',
-			company: '',
-			testimonial: '',
-			date: null,
-			avatar: {
-				src: null,
-				file: null
-			}
-		},
+		initialValues: toInitialValues(value),
 		extend: validator({ schema: Testimonial.createSchema }),
 		async onSubmit(values) {
 			loading = true
-			const res = await Testimonial.create(values)
+
+			const res = await (isUpdate
+				? Testimonial.update((value as TTestimonial).id, values)
+				: Testimonial.create(values))
+
 			loading = false
 
 			if (res.error) {
@@ -35,25 +50,23 @@
 				return
 			}
 			form.reset()
-			dispatch('created', res.data)
+
+			dispatch(isUpdate ? 'updated' : 'created', res.data)
 		}
 	})
-
-	const { data: values } = form
-	$: {
-		console.log($values)
-	}
 </script>
 
 <BaseForm
 	{form}
 	{loading}
+	{onClose}
 	fields={[
 		{
 			type: 'avatar',
 			name: 'avatar',
 			label: 'Avatar',
-			class: 'col-span-2'
+			class: 'col-span-2',
+			attachment: value?.avatar
 		},
 		{
 			type: 'text',
@@ -66,7 +79,6 @@
 		{
 			type: 'text',
 			name: 'company',
-			required: true,
 			label: 'Company',
 			placeholder: 'Enter company name',
 			class: 'col-span-12'

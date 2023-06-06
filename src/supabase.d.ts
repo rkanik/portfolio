@@ -247,9 +247,8 @@ export interface Database {
       }
       testimonials: {
         Row: {
-          attachments: Json[]
           avatar: string | null
-          company: string
+          company: string | null
           createdAt: string
           date: string | null
           id: number
@@ -258,11 +257,11 @@ export interface Database {
           status: string
           testimonial: string
           updatedAt: string
+          userId: string
         }
         Insert: {
-          attachments?: Json[]
           avatar?: string | null
-          company: string
+          company?: string | null
           createdAt?: string
           date?: string | null
           id?: number
@@ -271,11 +270,11 @@ export interface Database {
           status?: string
           testimonial: string
           updatedAt?: string
+          userId?: string
         }
         Update: {
-          attachments?: Json[]
           avatar?: string | null
-          company?: string
+          company?: string | null
           createdAt?: string
           date?: string | null
           id?: number
@@ -284,6 +283,7 @@ export interface Database {
           status?: string
           testimonial?: string
           updatedAt?: string
+          userId?: string
         }
       }
       userTechnologies: {

@@ -1,14 +1,18 @@
 <script lang="ts">
+	import type { Maybe, TTestimonial } from '$lib/types'
+
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
-	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
-	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
-	import Icon from '@iconify/svelte'
-	import src from '$lib/utils/src'
-	import d from '$lib/utils/dayjs'
-	import cn from '$lib/utils/cn'
-	import get from 'lodash/get'
 	import BaseModal from '$lib/components/base/BaseModal.svelte'
+	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
 	import TestimonialForm from '$lib/components/forms/TestimonialForm.svelte'
+	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
+
+	import get from 'lodash/get'
+	import cn from '$lib/utils/cn'
+	import d from '$lib/utils/dayjs'
+
+	import { useTimeoutFn } from 'sveltuse'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 
 	export let data
 
@@ -16,11 +20,34 @@
 		testimonials: { error, data: testimonials }
 	} = data
 
-	$: {
-		console.log(testimonials)
-	}
-
 	let modal = false
+
+	// let modalVisible = false
+	// let modalVisibleTimeout = useTimeoutFn(() => {
+	// 	console.log('useTimeoutFn')
+	// 	modalVisible = false
+	// 	currentTestimonial = undefined
+	// }, 750)
+
+	// $: {
+	// 	console.log('TestimonialForm:modal', modal)
+	// 	if (modal === true) {
+	// 		modalVisible = true
+	// 		console.log('modalVisibleTimeout.stop')
+	// 		modalVisibleTimeout.stop()
+	// 	}
+	// 	if (modal === false) {
+	// 		console.log('modalVisibleTimeout.start')
+	// 		modalVisibleTimeout.start()
+	// 	}
+	// }
+
+	let currentTestimonial: Maybe<TTestimonial>
+
+	const onInitUpdate = (event: CustomEvent<TTestimonial>) => {
+		currentTestimonial = { ...event.detail }
+		modal = true
+	}
 </script>
 
 <svelte:head>
@@ -34,30 +61,29 @@
 	<div class="container px-4 py-4 mx-auto md:px-0 md:py-5">
 		<div class="flex items-center justify-between py-2">
 			<h1 class="text-2xl font-medium">Testimonials</h1>
-
 			<BaseModal
+				let:close
 				bind:value={modal}
-				title="Create new project"
+				title={currentTestimonial ? 'Update Testimonial' : 'Create new Testimonial'}
 				activator={{ class: 'btn btn-sm btn-primary', text: 'New Testimonial' }}
 			>
-				<TestimonialForm
-					on:created={(e) => {
-						modal = false
-						testimonials.data = [e.detail, ...testimonials.data]
-					}}
-				/>
+				{#if modal}
+					<TestimonialForm
+						value={currentTestimonial}
+						onClose={close}
+						on:created={(e) => {
+							modal = false
+							testimonials.data = [e.detail, ...testimonials.data]
+						}}
+						on:updated={(e) => {
+							modal = false
+							testimonials.data = testimonials.data.map((item) => {
+								return item.id === e.detail.id ? e.detail : item
+							})
+						}}
+					/>
+				{/if}
 			</BaseModal>
-
-			<!-- 
-
-			<BaseModal bind:value={updateModal} title="Update Project" activator={false}>
-				<BaseFormOld
-					bind:data={currentProject}
-					fields={form.update.fields}
-					on:submit={onUpdate}
-					on:cancel={onResetUpdate}
-				/>
-			</BaseModal> -->
 		</div>
 		<div class="w-full mt-5 overflow-x-auto">
 			<BaseDataTable
@@ -82,11 +108,15 @@
 						<div class="flex items-center py-2 space-x-4">
 							<div class="avatar placeholder">
 								<div class="bg-neutral-focus text-neutral-content rounded-full w-8">
-									<span class="text-xs uppercase">{item.testimonials.name.substring(0, 2)}</span>
+									{#if item.avatar}
+										<img alt={item.avatar?.name} src={getPublicUrl(item.avatar)} />
+									{:else}
+										<span class="text-xs uppercase">{item.name.substring(0, 2)}</span>
+									{/if}
 								</div>
 							</div>
 							<div>
-								<div class="whitespace-nowrap">{item.testimonials.name}</div>
+								<div class="whitespace-nowrap">{item.name}</div>
 							</div>
 						</div>
 					{:else if header.value === 'rating'}
@@ -96,14 +126,14 @@
 									type="radio"
 									name={`rating-${item.id}`}
 									class="mask mask-star bg-orange-400"
-									checked={index === item.testimonials.rating - 1}
+									checked={index === item.rating - 1}
 									disabled
 								/>
 							{/each}
 						</div>
 					{:else if header.value === 'company'}
 						<div class="whitespace-nowrap">
-							{item.testimonials.company}
+							{item.company}
 						</div>
 					{:else if header.value === 'createdAt'}
 						<div class="whitespace-nowrap">
@@ -115,15 +145,15 @@
 						</div>
 					{:else if header.value === 'testimonial'}
 						<div class="max-w-sm truncate">
-							{item.testimonials.testimonial}
+							{item.testimonial}
 						</div>
 					{:else if header.value === 'status'}
 						<div
 							class={cn('badge', {
-								'badge-primary': item.testimonials.status === 'active'
+								'badge-primary': item.status === 'active'
 							})}
 						>
-							{item.testimonials.status}
+							{item.status}
 						</div>
 					{:else}
 						<div>
@@ -139,7 +169,7 @@
 							{ text: 'View', event: 'view', icon: 'ic:baseline-remove-red-eye' },
 							{
 								text: 'Update',
-								href: `/admin/projects/${item.slug}`,
+								event: 'update',
 								icon: 'ph:pencil'
 							},
 							{
@@ -150,9 +180,8 @@
 							{ divider: true },
 							{ text: 'Delete', event: 'delete', icon: 'ic:outline-delete' }
 						]}
+						on:update={onInitUpdate}
 					/>
-					<!-- on:update={onInitUpdate}
-					on:status={onToggleStatus} -->
 				</div>
 			</BaseDataTable>
 		</div>

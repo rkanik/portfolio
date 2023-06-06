@@ -24,7 +24,10 @@
 	import StoragePicker from '$lib/components/StoragePicker.svelte'
 	import type { FileObject } from '$lib/modules/Storage.js'
 	import { page } from '$app/stores'
-	import type { OnSelectHandler } from '$lib/components/StorageManager2.svelte'
+	import type {
+		OnSelectHandler,
+		OnSelectHandlerMultiple
+	} from '$lib/components/StorageManager2.svelte'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
 
@@ -170,7 +173,10 @@
 	}
 
 	let storageModal = false
-	const onSelectAttachments: OnSelectHandler = async (attachments, { reset: clearSelected }) => {
+	const onSelectAttachments: OnSelectHandlerMultiple = async (
+		attachments,
+		{ reset: clearSelected }
+	) => {
 		if (!project) return
 
 		storageModal = false

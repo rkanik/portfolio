@@ -22,10 +22,12 @@
 
 	const onShow = () => {
 		value = true
+		console.log('base-modal:onShow')
 	}
 
 	const onHide = () => {
 		value = false
+		console.log('base-modal:onHide')
 	}
 
 	const setBodyOverflow = (overflow: CSSStyleDeclaration['overflow']) => {
@@ -35,6 +37,7 @@
 	}
 
 	$: {
+		console.log('base-modal', value)
 		setBodyOverflow(value ? 'hidden' : 'auto')
 	}
 
@@ -51,7 +54,7 @@
 
 <BaseTeleport to="body">
 	<div class="base-modal">
-		<input bind:checked={value} type="checkbox" class="modal-toggle" />
+		<input bind:checked={value} readonly type="checkbox" class="modal-toggle" />
 		<div class="modal overflow-auto block py-12">
 			<div class={cn('relative modal-box max-h-max mx-auto', modalBox)}>
 				{#if !hideClose}

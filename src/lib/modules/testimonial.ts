@@ -1,4 +1,4 @@
-import type { TPagination, TPublicContext, TUserTestimonial } from '$lib/types'
+import type { TId, TPagination, TPublicContext, TTestimonial, TUserTestimonial } from '$lib/types'
 import { z } from 'zod'
 
 type ListFilter = TPagination & {
@@ -27,10 +27,7 @@ const createSchema = z.object({
 	testimonial: z.string().min(1, 'Required.'),
 	rating: z.number().min(1).max(5),
 	date: z.instanceof(Date).nullable(),
-	avatar: z.object({
-		src: z.string().nullable(),
-		file: z.instanceof(typeof File !== 'undefined' ? File : Object).nullable()
-	})
+	avatar: z.string().nullable().optional()
 })
 
 export type CreateSchema = z.infer<typeof createSchema>
@@ -46,7 +43,7 @@ export const useTestimonialModule = (context: TPublicContext) => {
 					data: {
 						page: 1,
 						perPage: 10,
-						data: [] as TUserTestimonial[]
+						data: [] as TTestimonial[]
 					},
 					error: new Error('Unauthorized')
 				}
@@ -54,8 +51,8 @@ export const useTestimonialModule = (context: TPublicContext) => {
 
 			const { from, to, limit, ...pagination } = getRange(filter)
 			const res = await supabase
-				.from('userTestimonials')
-				.select('*,testimonials(*)')
+				.from('testimonials')
+				.select('*, avatar(*)')
 				.eq('userId', user.id)
 				.range(from, to)
 				.limit(limit)
@@ -65,7 +62,7 @@ export const useTestimonialModule = (context: TPublicContext) => {
 				data: {
 					...pagination,
 					count: res.count,
-					data: res.data as TUserTestimonial[]
+					data: res.data as TTestimonial[]
 				},
 				error: res.error
 			}
@@ -86,10 +83,11 @@ export const useTestimonialModule = (context: TPublicContext) => {
 						rating: data.rating,
 						company: data.company,
 						testimonial: data.testimonial,
-						date: data.date?.toISOString()
+						date: data.date?.toISOString(),
+						avatar: data.avatar
 					}
 				])
-				.select('*')
+				.select('*,avatar(*)')
 				.single()
 
 			if (testimonial.error) {
@@ -99,21 +97,42 @@ export const useTestimonialModule = (context: TPublicContext) => {
 				}
 			}
 
-			const userTestimonial = await supabase
-				.from('userTestimonials')
-				.insert([{ testimonialId: testimonial.data.id, userId: user.id }])
-				.select('*,testimonials(*)')
-				.single()
-
-			if (userTestimonial.error) {
+			return {
+				data: testimonial.data as TTestimonial,
+				error: null
+			}
+		},
+		async update(id: TId, data: CreateSchema) {
+			if (!user) {
 				return {
 					data: null,
-					error: new Error(userTestimonial.error.message)
+					error: new Error('Unauthorized')
+				}
+			}
+
+			const testimonial = await supabase
+				.from('testimonials')
+				.update({
+					name: data.name,
+					rating: data.rating,
+					company: data.company,
+					testimonial: data.testimonial,
+					date: data.date?.toISOString(),
+					avatar: data.avatar
+				})
+				.eq('id', id)
+				.select('*,avatar(*)')
+				.single()
+
+			if (testimonial.error) {
+				return {
+					data: null,
+					error: new Error(testimonial.error.message)
 				}
 			}
 
 			return {
-				data: userTestimonial.data as TUserTestimonial,
+				data: testimonial.data as TTestimonial,
 				error: null
 			}
 		}

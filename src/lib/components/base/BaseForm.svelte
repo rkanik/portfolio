@@ -31,6 +31,7 @@
 
 	type TAvatarField = TBaseField & {
 		type: 'avatar'
+		attachment?: Maybe<TAttachment>
 	}
 
 	export type TField = TTextField | TDateField | TRatingField | TTextAreaField | TAvatarField
@@ -42,10 +43,13 @@
 	import TextField from './TextField.svelte'
 	import DatePicker from './DatePicker.svelte'
 	import AvatarPicker from './AvatarPicker.svelte'
+	import { anonymous } from '$lib/const'
+	import type { Maybe, TAttachment } from '$lib/types'
 
 	export let form: TForm
 	export let fields: TField[] = []
 	export let loading: boolean = false
+	export let onClose = anonymous
 
 	const { errors, form: useForm, data: values } = form
 </script>
@@ -98,6 +102,7 @@
 			<AvatarPicker
 				name={field.name}
 				label={field.label}
+				attachment={field.attachment}
 				required={field.required}
 				setFields={form.setFields}
 				class={field.class || 'col-span-12'}
@@ -107,7 +112,7 @@
 		{/if}
 	{/each}
 	<div class="col-span-12 flex items-center justify-end space-x-2 mt-3">
-		<button type="button" class="btn btn-ghost normal-case">Cancel</button>
+		<button type="button" class="btn btn-ghost normal-case" on:click={onClose}>Cancel</button>
 		<button type="submit" class="btn btn-primary normal-case px-8" class:loading> Save </button>
 	</div>
 </form>

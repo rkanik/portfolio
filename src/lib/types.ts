@@ -6,6 +6,8 @@ export type BaseFormFieldOption = {
 	[key: string]: any
 }
 
+export type Maybe<T> = T | null | undefined
+
 export type BaseFormField = {
 	name: string
 	type: 'text' | 'number' | 'tel' | 'email' | 'file' | 'textarea' | 'combobox'
@@ -21,6 +23,10 @@ export type BaseFormField = {
 }
 
 export type TSupabase = SupabaseClient<Database>
+
+export type TId = string | number
+
+export type AnyFn = () => void
 
 export type TAttachment = Database['public']['Tables']['attachments']['Row']
 export type TProjectAttachment = Database['public']['Tables']['projectAttachments']['Row'] & {
@@ -66,7 +72,10 @@ export type TProject = Database['public']['Tables']['projects']['Row'] & {
 	projectTechnologies: TProjectTechnology[]
 }
 
-export type TTestimonial = Database['public']['Tables']['testimonials']['Row']
+export type TTestimonial = Database['public']['Tables']['testimonials']['Row'] & {
+	avatar: TAttachment | null
+}
+
 export type TUserTestimonial = Database['public']['Tables']['userTestimonials']['Row'] & {
 	testimonials: TTestimonial
 }

@@ -1,11 +1,20 @@
 <script lang="ts" context="module">
 	import type { TAttachment, TSupabase, TUser } from '$lib/types'
 
-	export type OnSelectHandler = (
+	export type SelectHandlerOptions = {
+		reset: () => void
+	}
+
+	export type OnSelectHandler = OnSelectHandlerMultiple | OnSelectHandlerSingle
+
+	export type OnSelectHandlerSingle = (
+		attachment: TAttachment,
+		options: SelectHandlerOptions
+	) => void
+
+	export type OnSelectHandlerMultiple = (
 		attachments: TAttachment[],
-		options: {
-			reset: () => void
-		}
+		options: SelectHandlerOptions
 	) => void
 </script>
 
@@ -21,6 +30,7 @@
 
 	export let folder = ''
 	export let bucket = 'uploads'
+	export let multiple: boolean = true
 	export let title = 'Storage Manager'
 
 	let supabase: TSupabase
@@ -55,7 +65,6 @@
 	}
 
 	$: if (bucket && folder) {
-		console.log('getAttachments')
 		getAttachments()
 	}
 
@@ -74,7 +83,10 @@
 			})
 			return
 		}
-		selectedIds = [...selectedIds, attachment.id]
+
+		if (multiple) {
+			selectedIds = [...selectedIds, attachment.id]
+		} else selectedIds = [attachment.id]
 	}
 
 	const files = useArray<{
@@ -179,7 +191,8 @@
 	}
 
 	const onClickSelect = () => {
-		onSelect(getSelectedAttachments(), {
+		const attachments = getSelectedAttachments()
+		onSelect((multiple ? attachments : attachments[0]) as any, {
 			reset() {
 				selectedIds = []
 			}
