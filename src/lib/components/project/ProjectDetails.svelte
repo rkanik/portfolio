@@ -40,6 +40,10 @@
 			}
 		})
 	}
+
+	const toArray = <T>(v: T): T => {
+		return (Array.isArray(v) ? v : []) as T
+	}
 </script>
 
 <div class="flex min-h-[80vh] space-x-5">
@@ -165,7 +169,7 @@
 				<div>
 					<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Contributors</div>
 					<div class="flex flex-wrap -ml-1 mt-2">
-						{#each project.repository.contributors as contributor}
+						{#each toArray(project.repository.contributors) as contributor}
 							<div class="tooltip" data-tip={`@${contributor.login}`}>
 								<a href={contributor.html_url} target="_blank" rel="noreferrer" class="ml-1 mt-1">
 									<div class="avatar">
@@ -183,7 +187,7 @@
 					<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Languages</div>
 					<div class="mt-2">
 						<div class="flex w-full h-2 bg-base-100 rounded-full overflow-hidden">
-							{#each languages as language}
+							{#each toArray(languages) as language}
 								<div
 									class="h-2"
 									style="width: {language.percentage}%;background-color:{language.color}"
@@ -192,7 +196,7 @@
 						</div>
 
 						<div class="mt-2 flex flex-wrap -ml-2">
-							{#each languages as language}
+							{#each toArray(languages) as language}
 								<div class="flex items-center space-x-2 ml-2 mt-2">
 									<div class="h-2 w-2 rounded-full" style="background-color:{language.color}" />
 									<div class="text-sm font-medium">{language.language}</div>

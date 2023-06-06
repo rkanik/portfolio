@@ -2,20 +2,21 @@
 	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
 	import BaseFormOld from '$lib/components/base/BaseFormOld.svelte'
 	import BaseModal from '$lib/components/base/BaseModal.svelte'
-	import { getSupabaseContext } from '$lib/store/useSupabase'
-	import dataURLtoFile from '$lib/utils/dataURLtoFile'
+	// import { getSupabaseContext } from '$lib/store/useSupabase'
+	// import dataURLtoFile from '$lib/utils/dataURLtoFile'
 	import d from '$lib/utils/dayjs.js'
-	import src from '$lib/utils/src'
-	import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage'
-	import { resizeImage } from '$lib/utils/resizeImage'
+	// import src from '$lib/utils/src'
+	// import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage'
+	// import { resizeImage } from '$lib/utils/resizeImage'
 	import Icon from '@iconify/svelte'
 	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
-	import type { BaseFormField, BaseFormFieldOption, TProject } from '$lib/types.js'
+	import type { BaseFormField, TProject } from '$lib/types.js'
 	import cn from '$lib/utils/cn.js'
-	import Project from '$lib/models/ProjectModel.js'
-	import { useContextStoreContext } from '$lib/store/useContextStore.js'
+	// import Project from '$lib/models/ProjectModel.js'
+	// import { useContextStoreContext } from '$lib/store/useContextStore.js'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl.js'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
+	import { goto } from '$app/navigation'
 
 	export let data
 
@@ -25,73 +26,14 @@
 			type: 'text',
 			label: 'Name',
 			placeholder: 'Enter the name of the project'
-		},
-		{
-			name: 'description',
-			type: 'textarea',
-			label: 'Description',
-			placeholder: 'Write project description...'
-		},
-		{
-			name: 'previewUrl',
-			type: 'text',
-			label: 'Preview URL',
-			prefix: 'https://',
-			placeholder: 'Live preview url of the project'
-		},
-		{
-			name: 'sourceCodeUrl',
-			type: 'text',
-			label: 'Source code URL',
-			prefix: 'https://',
-			placeholder: 'Open source code url like github or gitlab.'
-		},
-		{
-			name: 'attachments',
-			type: 'file',
-			multiple: true,
-			accept: 'image/*',
-			label: 'Attachments',
-			placeholder: 'Choose attachments'
-		},
-		{
-			name: 'tagList',
-			type: 'combobox',
-			label: 'Tags',
-			placeholder: 'Write tags...',
-			options: []
 		}
 	]
 
 	const form = {
-		update: {
-			fields: [...fields, { name: 'sortOrder', type: 'text', label: 'Sort Order' }],
-			modal: false,
-			data: {
-				name: '',
-				description: '',
-				previewUrl: '',
-				sourceCodeUrl: '',
-				tagList: [],
-				attachments: []
-			} as any
-		},
 		create: {
 			fields,
 			data: {
-				name: '',
-				description: '',
-				previewUrl: '',
-				sourceCodeUrl: '',
-				tagList: [],
-				attachments: []
-			} as {
-				name: string
-				description: string
-				previewUrl: string
-				sourceCodeUrl: string
-				tagList: { text: string; value: string }[]
-				attachments: FileList | File[]
+				name: ''
 			}
 		}
 	}
@@ -99,7 +41,7 @@
 	let modal = false
 	// const context = useContextStoreContext()
 	// const supabase = getSupabaseContext()
-	const storage = useSupabaseStorage(data.supabase)
+	// const storage = useSupabaseStorage(data.supabase)
 
 	// List
 	const onFetchProjects = async () => {
@@ -113,104 +55,30 @@
 		event.preventDefault()
 		try {
 			await data.supabase.rpc('increment_project_sort_orders', { sort_order_above: 0 })
-			const projectInsertResponse = await data.supabase
+			const { data: project, error } = await data.supabase
 				.from('projects')
 				.insert({
 					sortOrder: 1,
-					slug: event.detail.name.split(' ').join('-').trim().toLowerCase(),
-					userId: data.session?.user.id as string,
 					name: event.detail.name,
-					description: event.detail.description,
-					previewUrl: event.detail.previewUrl,
-					sourceCodeUrl: event.detail.sourceCodeUrl
+					userId: data.user?.id as string,
+					slug: event.detail.name.split(' ').join('-').trim().toLowerCase()
+					// description: event.detail.description,
+					// previewUrl: event.detail.previewUrl,
+					// sourceCodeUrl: event.detail.sourceCodeUrl
 					// tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(',')
 				})
-				.select()
+				.select('*')
+				.single()
 
-			if (projectInsertResponse.error) {
-				console.log('projectInsertResponse:error', projectInsertResponse)
+			// modal = false
+			// onFetchProjects()
+
+			if (error) {
+				console.log('onSubmit', { error })
 				return
 			}
 
-			const resizedFiles = await Promise.all(
-				Array.from(event.detail.attachments).map(async (file) => {
-					return {
-						file,
-						file400: dataURLtoFile(await resizeImage(file, { maxWidth: 400 }), file.name),
-						file1200: dataURLtoFile(await resizeImage(file, { maxWidth: 1200 }), file.name),
-						base64: await resizeImage(file, { maxWidth: 3 })
-					}
-				})
-			)
-
-			const attachments = await Promise.all(
-				resizedFiles.map(async (item) => {
-					const [src, thumbnail] = await storage.uploadMany(
-						[
-							item.file1200 && {
-								path: 'projects',
-								bucket: 'uploads',
-								file: item.file1200
-							},
-							item.file400 && {
-								path: 'projects',
-								bucket: 'uploads',
-								file: item.file400
-							}
-						].filter(Boolean) as SupabaseFile[]
-					)
-					return {
-						name: item.file.name,
-						mimeType: item.file.type,
-						src: src.data?.path,
-						thumbnail: thumbnail.data?.path,
-						base64: item.base64
-					}
-				})
-			)
-
-			const attachmentsResponse = await data.supabase
-				.from('attachments')
-				.insert(
-					attachments
-						.filter((v) => !!v.src)
-						.map((attachment) => {
-							return {
-								name: attachment.name,
-								base64: attachment.base64,
-								src: attachment.src as string,
-								thumbnail: attachment.thumbnail,
-								mimeType: attachment.mimeType
-							}
-						})
-				)
-				.select()
-
-			if (attachmentsResponse.error) {
-				console.log('attachmentsResponse:error', attachmentsResponse)
-				return
-			}
-
-			const projectAttachmentsResponse = await data.supabase.from('projectAttachments').insert(
-				attachmentsResponse.data.map((attachment) => {
-					return {
-						attachmentId: attachment.id,
-						projectId: projectInsertResponse.data[0].id
-					}
-				})
-			)
-			if (projectAttachmentsResponse.error) {
-				await data.supabase
-					.from('attachments')
-					.delete()
-					.in(
-						'id',
-						attachmentsResponse.data.map((v) => v.id)
-					)
-			}
-
-			modal = false
-			onFetchProjects()
+			goto(`/admin/projects/${project.slug}`)
 		} catch (error) {
 			console.log('onSubmit', error)
 		}
@@ -218,64 +86,6 @@
 
 	// Update
 	let isUpdating = false
-	let updateModal = false
-	let currentProject:
-		| (TProject & {
-				tagList: any[]
-		  })
-		| {} = {}
-
-	const onInitUpdate = (event: CustomEvent<TProject>) => {
-		updateModal = true
-		currentProject = {
-			...event.detail
-			// tagList:
-			// 	event.detail.tags?.split(',').map((tag) => {
-			// 		return { text: tag, value: tag }
-			// 	}) || []
-		}
-	}
-
-	const onResetUpdate = () => {
-		updateModal = false
-		currentProject = {}
-	}
-
-	const onUpdate = async (event: CustomEvent<typeof currentProject>) => {
-		if (!('name' in event.detail)) {
-			return
-		}
-
-		await data.supabase.rpc('update_sort_order', {
-			row_id: event.detail.id,
-			sort_order: +event.detail.sortOrder
-		})
-
-		isUpdating = true
-		const { error } = await data.supabase
-			.from('projects')
-			.update({
-				name: event.detail.name,
-				description: event.detail.description,
-				previewUrl: event.detail.previewUrl,
-				sourceCodeUrl: event.detail.sourceCodeUrl
-				// tags: event.detail.tagList
-				// 	.map((tag) => {
-				// 		return tag.value.toLowerCase()
-				// 	})
-				// 	.join(',')
-			})
-			.eq('id', event.detail.id)
-		isUpdating = false
-
-		if (error) {
-			console.log('onUpdate:error', error)
-			return
-		}
-
-		onFetchProjects()
-		onResetUpdate()
-	}
 
 	const onToggleStatus = async (event: CustomEvent<TProject>) => {
 		isUpdating = true
@@ -314,15 +124,6 @@
 				fields={form.create.fields}
 				on:submit={onSubmit}
 				on:cancel={() => (modal = false)}
-			/>
-		</BaseModal>
-
-		<BaseModal bind:value={updateModal} title="Update Project" activator={false}>
-			<BaseFormOld
-				bind:data={currentProject}
-				fields={form.update.fields}
-				on:submit={onUpdate}
-				on:cancel={onResetUpdate}
 			/>
 		</BaseModal>
 	</div>
@@ -423,7 +224,6 @@
 						{ divider: true },
 						{ text: 'Delete', event: 'delete', icon: 'ic:outline-delete' }
 					]}
-					on:update={onInitUpdate}
 					on:status={onToggleStatus}
 				/>
 			</div>

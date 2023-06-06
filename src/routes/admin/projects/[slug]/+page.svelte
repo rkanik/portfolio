@@ -75,6 +75,8 @@
 		async onSubmit(values, context) {
 			if (!project) return
 
+			console.log('onSubmit', { values })
+
 			setIsSubmitting(true)
 			const { data, error } = await supabase
 				.from('projects')

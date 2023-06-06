@@ -106,7 +106,7 @@
 			item.update({ isLoading: true })
 
 			const url = item._.objectURL
-			const ext = item._.file.name.split('.').pop()
+			let ext = item._.file.name.split('.').pop()
 
 			const name = url.split('/').pop() as string
 			const name800 = name + '--800p'
@@ -115,6 +115,8 @@
 			const file = dataURLtoFile(await resizeImage(item._.file, { maxWidth: 1600 }))
 			const file800 = dataURLtoFile(await resizeImage(item._.file, { maxWidth: 800 }))
 			const file400 = dataURLtoFile(await resizeImage(item._.file, { maxWidth: 400 }))
+
+			if (file?.type.includes('webp')) ext = 'webp'
 
 			const { data: fileObject } = await supabase.storage
 				.from(bucket)
