@@ -240,15 +240,13 @@
 						/>
 					</div>
 				{/each}
-				<StoragePicker bind:value={storageModal} onSelect={onSelectAttachments}>
-					<svelte:fragment slot="activator" let:onClick>
-						<button
-							on:click={onClick}
-							class="h-36 grid place-items-center bg-base-100 rounded shadow"
-						>
-							<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
-						</button>
-					</svelte:fragment>
+				<StoragePicker bind:modal={storageModal} onSelect={onSelectAttachments}>
+					<button
+						on:click={() => (storageModal = true)}
+						class="h-36 grid place-items-center bg-base-100 rounded shadow"
+					>
+						<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
+					</button>
 				</StoragePicker>
 			{/if}
 		</div>

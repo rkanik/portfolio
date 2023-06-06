@@ -2,19 +2,19 @@
 	import AboutMe from '$lib/components/AboutMe.svelte'
 	import HeroSection from '$lib/components/HeroSection.svelte'
 	import Projects from '$lib/components/Projects.svelte'
-	import RandomizePosition from '$lib/components/RandomizePosition.svelte'
+	// import RandomizePosition from '$lib/components/RandomizePosition.svelte'
 	import BaseSection from '$lib/components/base/BaseSection.svelte'
 	import EducationSection from '$lib/components/education/EducationSection.svelte'
 	import ExperienceSection from '$lib/components/experience/ExperienceSection.svelte'
 	import TestimonialSection from '$lib/components/testimonial/TestimonialSection.svelte'
-	import type { TUserTestimonial } from '$lib/types.js'
+	import type { TTestimonial } from '$lib/types.js'
 	import Icon from '@iconify/svelte'
 
-	import rocketImage from '$lib/assets/img/rocket-small.webp'
+	// import rocketImage from '$lib/assets/img/rocket-small.webp'
 	import ContactMeSection from '$lib/components/contact/ContactMeSection.svelte'
 
 	export let data
-	const userTestimonials = (data.userTestimonials.data || []) as TUserTestimonial[]
+	const testimonials = (data.testimonials.data || []) as TTestimonial[]
 </script>
 
 <svelte:head>
@@ -31,7 +31,7 @@
 	</div>
 
 	<Projects max={4} projects={data.projects} userTechnologies={data.userTechnologies} />
-	<TestimonialSection {userTestimonials} />
+	<TestimonialSection {testimonials} />
 
 	<ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />
 	<EducationSection educations={data.publicUser.profile?.educations || []} />

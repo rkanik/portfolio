@@ -1,12 +1,12 @@
 export const load = async ({ locals: { getContext } }) => {
 	const { supabase, publicUser } = await getContext()
 
-	const userTestimonials = await supabase
-		.from('userTestimonials')
-		.select('*,testimonials(*)')
+	const testimonials = await supabase
+		.from('testimonials')
+		.select('*,avatar(*)')
 		.eq('userId', publicUser.id)
 
 	return {
-		userTestimonials
+		testimonials
 	}
 }

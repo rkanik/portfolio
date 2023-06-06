@@ -4,7 +4,6 @@
 	import { createForm } from 'felte'
 	import { createEventDispatcher } from 'svelte'
 	import { validator } from '@felte/validator-zod'
-	import { useContextStoreContext } from '$lib/store/useContextStore'
 	import { useTestimonialModule, type CreateSchema } from '$lib/modules/testimonial'
 
 	import BaseForm from '../base/BaseForm.svelte'
@@ -19,8 +18,8 @@
 	$: isUpdate = !!(value && value.id)
 
 	const dispatch = createEventDispatcher()
-	const context = useContextStoreContext()
-	const Testimonial = useTestimonialModule($context)
+
+	const Testimonial = useTestimonialModule()
 
 	const toInitialValues = (v: Maybe<TTestimonial>) => {
 		return {

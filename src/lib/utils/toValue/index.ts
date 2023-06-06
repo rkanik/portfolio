@@ -6,7 +6,7 @@ import getStoreValue from '../getStoreValue'
 /**
  * Get the value of value/writable/readable/getter.
  */
-export default function toValue<T, A = undefined>(r: MaybeGetter<T, A>, ...args: A[]): T {
+function toValue<T, A = undefined>(r: MaybeGetter<T, A>, ...args: A[]): T {
 	if (typeof r === 'function') {
 		return toValue((r as any)(...args))
 	}
@@ -17,3 +17,6 @@ export default function toValue<T, A = undefined>(r: MaybeGetter<T, A>, ...args:
 
 	return r
 }
+
+export { toValue }
+export default toValue

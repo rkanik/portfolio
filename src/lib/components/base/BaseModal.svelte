@@ -10,7 +10,7 @@
 				text?: string
 		  }
 
-	export let value: boolean = false
+	export let value: boolean
 	export let title: string | undefined = undefined
 	export let activator: Activator = {
 		class: 'btn',
@@ -19,15 +19,14 @@
 	export let hideClose = false
 
 	export let modalBox = ''
+	export let modalClass = 'overflow-auto'
 
 	const onShow = () => {
 		value = true
-		console.log('base-modal:onShow')
 	}
 
 	const onHide = () => {
 		value = false
-		console.log('base-modal:onHide')
 	}
 
 	const setBodyOverflow = (overflow: CSSStyleDeclaration['overflow']) => {
@@ -37,7 +36,6 @@
 	}
 
 	$: {
-		console.log('base-modal', value)
 		setBodyOverflow(value ? 'hidden' : 'auto')
 	}
 
@@ -48,17 +46,23 @@
 
 {#if activator !== false}
 	<slot name="activator" onClick={onShow}>
-		<button class={activator.class || 'btn'} on:click={onShow}>{activator.text || 'Open'}</button>
+		<button type="button" class={activator.class || 'btn'} on:click={onShow}>
+			{activator.text || 'Open'}
+		</button>
 	</slot>
 {/if}
 
 <BaseTeleport to="body">
 	<div class="base-modal">
 		<input bind:checked={value} readonly type="checkbox" class="modal-toggle" />
-		<div class="modal overflow-auto block py-12">
+		<div class={cn('modal block py-12', modalClass)}>
 			<div class={cn('relative modal-box max-h-max mx-auto', modalBox)}>
 				{#if !hideClose}
-					<button class="absolute btn btn-sm btn-circle right-2 top-2" on:click={onHide}>
+					<button
+						type="button"
+						class="absolute btn btn-sm btn-circle right-2 top-2"
+						on:click={onHide}
+					>
 						✕
 					</button>
 				{/if}

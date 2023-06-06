@@ -2,7 +2,8 @@
 	import BaseModal from './base/BaseModal.svelte'
 	import StorageManager2, { type OnSelectHandler } from './StorageManager2.svelte'
 
-	export let value = false
+	export let modal: boolean
+	export let selected: string[] = []
 	export let multiple: boolean = true
 	export let onSelect: OnSelectHandler = () => {
 		//
@@ -12,7 +13,7 @@
 		onSelect(v, {
 			reset() {
 				reset()
-				value = false
+				modal = false
 			}
 		})
 	}
@@ -21,22 +22,25 @@
 	export let bucket = 'uploads'
 
 	let isInitialized = false
-	$: if (value && !isInitialized) {
+	$: if (modal && !isInitialized) {
 		isInitialized = true
-	}
-
-	$: {
-		console.log('StoragePicker:modal', value)
 	}
 </script>
 
-<BaseModal bind:value modalBox="!max-w-full">
-	<svelte:fragment slot="activator" let:onClick>
-		<slot name="activator" {onClick}>
-			<button class="btn btn-primary">Storage Picker</button>
+<BaseModal bind:value={modal} modalBox="!max-w-full">
+	<svelte:fragment slot="activator">
+		<slot>
+			<button type="button" class="btn btn-primary">Storage Picker</button>
 		</slot>
 	</svelte:fragment>
 	{#if isInitialized}
-		<StorageManager2 {bucket} {folder} {multiple} onSelect={onSelectInner} class="p-0" />
+		<StorageManager2
+			bind:selected
+			{bucket}
+			{folder}
+			{multiple}
+			class="p-0"
+			onSelect={onSelectInner}
+		/>
 	{/if}
 </BaseModal>

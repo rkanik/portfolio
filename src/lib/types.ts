@@ -76,10 +76,6 @@ export type TTestimonial = Database['public']['Tables']['testimonials']['Row'] &
 	avatar: TAttachment | null
 }
 
-export type TUserTestimonial = Database['public']['Tables']['userTestimonials']['Row'] & {
-	testimonials: TTestimonial
-}
-
 export type TEducation = {
 	year: number
 	title: string

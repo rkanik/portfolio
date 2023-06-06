@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TUserTestimonial } from '$lib/types'
+	import type { TTestimonial } from '$lib/types'
 	import { browser } from '$app/environment'
 
 	import Icon from '@iconify/svelte'
@@ -22,7 +22,7 @@
 	}
 
 	let carousel: Carousel
-	export let userTestimonials: TUserTestimonial[] = []
+	export let testimonials: TTestimonial[] = []
 </script>
 
 {#if browser}
@@ -48,16 +48,16 @@
 		</button>
 		<button
 			slot="next"
-			disabled={currentPageIndex === userTestimonials.length - 3}
+			disabled={currentPageIndex === testimonials.length - 3}
 			class="absolute right-0 btn btn-circle btn-outline btn-sm -bottom-5"
 			on:click={showNextPage}
 		>
 			<Icon icon="material-symbols:chevron-right-rounded" class="text-lg" />
 		</button>
 
-		{#each userTestimonials as userTestimonial, index}
+		{#each testimonials as testimonial}
 			<div class="h-full p-4">
-				<slot name="item" {userTestimonial} />
+				<slot name="item" {testimonial} />
 			</div>
 		{/each}
 	</Carousel>

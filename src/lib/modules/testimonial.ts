@@ -1,12 +1,14 @@
-import type { TId, TPagination, TPublicContext, TTestimonial, TUserTestimonial } from '$lib/types'
+import type { TId, TPagination, TTestimonial } from '$lib/types'
+
 import { z } from 'zod'
+import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 type ListFilter = TPagination & {
 	//
 }
 
 const getRange = (v?: TPagination) => {
-	const { page = 1, perPage = 10 } = v || {}
+	const { page = 1, perPage = 50 } = v || {}
 
 	const from = (page - 1) * perPage
 	const to = from + perPage
@@ -32,8 +34,8 @@ const createSchema = z.object({
 
 export type CreateSchema = z.infer<typeof createSchema>
 
-export const useTestimonialModule = (context: TPublicContext) => {
-	const { user, supabase } = context
+export const useTestimonialModule = () => {
+	const { user, supabase } = useGlobalPageData()
 
 	return {
 		createSchema,
@@ -133,6 +135,24 @@ export const useTestimonialModule = (context: TPublicContext) => {
 
 			return {
 				data: testimonial.data as TTestimonial,
+				error: null
+			}
+		},
+		async delete(...ids: TId[]) {
+			const testimonial = await supabase
+				.from('testimonials')
+				.delete()
+				.in('id', ids)
+				.select('*,avatar(*)')
+
+			if (testimonial.error) {
+				return {
+					data: [],
+					error: new Error(testimonial.error.message)
+				}
+			}
+			return {
+				data: testimonial.data as TTestimonial[],
 				error: null
 			}
 		}

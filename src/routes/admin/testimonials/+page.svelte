@@ -13,6 +13,8 @@
 
 	import { useTimeoutFn } from 'sveltuse'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import { useTestimonialModule } from '$lib/modules/testimonial.js'
+	import TestimonialCard from '$lib/components/testimonial/TestimonialCard.svelte'
 
 	export let data
 
@@ -22,31 +24,53 @@
 
 	let modal = false
 
-	// let modalVisible = false
-	// let modalVisibleTimeout = useTimeoutFn(() => {
-	// 	console.log('useTimeoutFn')
-	// 	modalVisible = false
-	// 	currentTestimonial = undefined
-	// }, 750)
+	let modalVisible = false
+	let modalVisibleTimeout = useTimeoutFn(() => {
+		modalVisible = false
+		currentTestimonial = undefined
+	}, 750)
 
-	// $: {
-	// 	console.log('TestimonialForm:modal', modal)
-	// 	if (modal === true) {
-	// 		modalVisible = true
-	// 		console.log('modalVisibleTimeout.stop')
-	// 		modalVisibleTimeout.stop()
-	// 	}
-	// 	if (modal === false) {
-	// 		console.log('modalVisibleTimeout.start')
-	// 		modalVisibleTimeout.start()
-	// 	}
-	// }
+	$: {
+		if (modal) {
+			modalVisible = true
+			modalVisibleTimeout.stop()
+		} else {
+			modalVisibleTimeout.start()
+		}
+	}
 
 	let currentTestimonial: Maybe<TTestimonial>
 
 	const onInitUpdate = (event: CustomEvent<TTestimonial>) => {
 		currentTestimonial = { ...event.detail }
 		modal = true
+	}
+
+	const Testimonial = useTestimonialModule()
+
+	const onInitDelete = async (event: CustomEvent<TTestimonial>) => {
+		if (confirm('Are you sure to confirm this testimonial')) {
+			const { error, data } = await Testimonial.delete(event.detail.id)
+
+			if (error) {
+				console.log('onInitDelete', { error })
+				return
+			}
+
+			testimonials.data = testimonials.data.filter((item) => {
+				return !data.some((v) => v.id === item.id)
+			})
+		}
+	}
+
+	let viewModal = false
+	$: if (!viewModal) {
+		currentTestimonial = undefined
+	}
+
+	const onInitView = (event: CustomEvent<TTestimonial>) => {
+		currentTestimonial = { ...event.detail }
+		viewModal = true
 	}
 </script>
 
@@ -64,10 +88,11 @@
 			<BaseModal
 				let:close
 				bind:value={modal}
+				modalBox="overflow-visible"
 				title={currentTestimonial ? 'Update Testimonial' : 'Create new Testimonial'}
 				activator={{ class: 'btn btn-sm btn-primary', text: 'New Testimonial' }}
 			>
-				{#if modal}
+				{#if modalVisible}
 					<TestimonialForm
 						value={currentTestimonial}
 						onClose={close}
@@ -172,18 +197,31 @@
 								event: 'update',
 								icon: 'ph:pencil'
 							},
-							{
-								event: 'status',
-								text: item.status === 'active' ? 'Disable Project' : 'Enable',
-								icon: 'material-symbols:do-not-disturb-on-outline'
-							},
+							// {
+							// 	event: 'status',
+							// 	text: item.status === 'active' ? 'Disable Project' : 'Enable',
+							// 	icon: 'material-symbols:do-not-disturb-on-outline'
+							// },
 							{ divider: true },
 							{ text: 'Delete', event: 'delete', icon: 'ic:outline-delete' }
 						]}
+						on:view={onInitView}
 						on:update={onInitUpdate}
+						on:delete={onInitDelete}
 					/>
 				</div>
 			</BaseDataTable>
 		</div>
+
+		<BaseModal
+			bind:value={viewModal}
+			title="Testimonial"
+			activator={false}
+			modalBox="overflow-visible"
+		>
+			{#if currentTestimonial}
+				<TestimonialCard testimonial={currentTestimonial} />
+			{/if}
+		</BaseModal>
 	</div>
 {/if}

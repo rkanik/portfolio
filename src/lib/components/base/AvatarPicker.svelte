@@ -7,8 +7,8 @@
 	import cn from '$lib/utils/cn'
 	import StoragePicker from '../StoragePicker.svelte'
 
-	export let value: TAttachment
 	export let name: string
+	export let value: string
 	export let setFields: any
 
 	export let label: string = ''
@@ -23,9 +23,7 @@
 		reset()
 	}
 
-	$: {
-		console.log('Avatar picker', value)
-	}
+	let modal = false
 </script>
 
 <div class={cn('form-control', $$props.class)}>
@@ -40,20 +38,12 @@
 		</label>
 	{/if}
 
-	<StoragePicker {onSelect} multiple={false}>
-		<svelte:fragment slot="activator" let:onClick>
-			<button
-				class="avatar"
-				on:click={(e) => {
-					e.stopPropagation()
-					onClick()
-				}}
-			>
-				<div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-					<img src={getPublicUrl(attachment)} alt="testimonial avatar" />
-				</div>
-			</button>
-		</svelte:fragment>
+	<StoragePicker bind:modal selected={[value].filter(Boolean)} {onSelect} multiple={false}>
+		<button type="button" class="avatar" on:click={() => (modal = true)}>
+			<div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+				<img src={getPublicUrl(attachment)} alt="testimonial avatar" />
+			</div>
+		</button>
 	</StoragePicker>
 
 	{#if errors.length > 0}

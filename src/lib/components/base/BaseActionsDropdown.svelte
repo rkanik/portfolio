@@ -33,17 +33,21 @@
 </script>
 
 <BaseDropdown {...$$props}>
-	<button slot="activator" class="btn btn-sm btn-circle">
+	<button slot="activator" type="button" class="btn btn-sm btn-circle">
 		<Icon icon="material-symbols:more-vert" class="text-lg" />
 	</button>
-	<ul class="p-2 border shadow menu bg-base-200 rounded-box w-52">
+	<ul class="p-2 border shadow menu bg-gray-600 rounded-lg w-52 border-gray-500">
 		{#each actions as action}
 			{#if 'divider' in action}
-				<div class="mx-2 my-0 divider" />
+				<hr class="mx-2 my-0 inline-block !border-gray-500" />
 			{:else}
 				<!-- svelte-ignore a11y-invalid-attribute -->
 				<li>
-					<a href={action.href || '#'} class="text-sm font-normal" on:click={onClick(action)}>
+					<a
+						href={action.href || 'javascript:void(0)'}
+						class="text-sm font-normal"
+						on:click={onClick(action)}
+					>
 						<Icon icon={action.icon} class="text-xl" />
 						<span>{action.text}</span>
 					</a>

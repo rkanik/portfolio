@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { TUserTestimonial } from '$lib/types'
+	import type { TTestimonial } from '$lib/types'
 	import cn from '$lib/utils/cn'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 	import src from '$lib/utils/src'
 	import Icon from '@iconify/svelte'
-	import truncate from 'lodash/truncate'
+	import BaseImage from '../base/BaseImage.svelte'
 
-	export let userTestimonial: TUserTestimonial
-	const { testimonials: testimonial } = userTestimonial
+	export let testimonial: TTestimonial
 </script>
 
 <div
@@ -31,11 +31,20 @@
 	</div>
 
 	<div class="flex mt-4 space-x-4">
-		<div class="flex-none mt-1 avatar">
+		<div class="flex-none mt-1 avatar placeholder">
 			<div
-				class="w-10 h-10 rounded-full ring ring-secondary ring-opacity-75 ring-offset-base-100 ring-offset-2"
+				class="w-10 h-10 bg-base-300 text-neutral-content rounded-full ring ring-secondary ring-opacity-75 ring-offset-base-100 ring-offset-2"
 			>
-				<img alt={testimonial.name} src={src(testimonial.avatar)} />
+				{#if testimonial.avatar}
+					{@const src = getPublicUrl(testimonial.avatar)}
+					<BaseImage
+						lazySrc={src}
+						alt={testimonial.avatar?.name}
+						src={testimonial.avatar.base64 || src}
+					/>
+				{:else}
+					<span class="text-sm font-medium uppercase">{testimonial.name.substring(0, 2)}</span>
+				{/if}
 			</div>
 		</div>
 		<div class="flex-1">

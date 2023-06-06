@@ -74,19 +74,19 @@
 			?.data?.publicUrl
 	}
 
-	let selectedIds: string[] = []
+	export let selected: string[] = []
 	const onToggle = (attachment: TAttachment) => (e: any) => {
 		e.stopPropagation()
-		if (selectedIds.includes(attachment.id)) {
-			selectedIds = selectedIds.filter((v: any) => {
+		if (selected.includes(attachment.id)) {
+			selected = selected.filter((v: any) => {
 				return v !== attachment.id
 			})
 			return
 		}
 
 		if (multiple) {
-			selectedIds = [...selectedIds, attachment.id]
-		} else selectedIds = [attachment.id]
+			selected = [...selected, attachment.id]
+		} else selected = [attachment.id]
 	}
 
 	const files = useArray<{
@@ -185,7 +185,7 @@
 	const getSelectedAttachments = () => {
 		return $attachments
 			.filter((attachment) => {
-				return selectedIds.includes(attachment._.id)
+				return selected.includes(attachment._.id)
 			})
 			.map((v) => v._)
 	}
@@ -194,7 +194,7 @@
 		const attachments = getSelectedAttachments()
 		onSelect((multiple ? attachments : attachments[0]) as any, {
 			reset() {
-				selectedIds = []
+				selected = []
 			}
 		})
 	}
@@ -231,7 +231,7 @@
 				)
 
 			getAttachments()
-			selectedIds = []
+			selected = []
 		}
 	}
 </script>
@@ -262,7 +262,7 @@
 
 	<div class="navbar bg-base-100 min-h-[48px] flex justify-between rounded">
 		<div>
-			{#if !selectedIds.length}
+			{#if !selected.length}
 				<div class="text-2xl font-medium">
 					{title}
 				</div>
@@ -271,17 +271,17 @@
 					<button
 						class="btn btn-circle btn-sm"
 						on:click={() => {
-							selectedIds = []
+							selected = []
 						}}
 					>
 						<Icon class="text-xl" icon="mdi-close" />
 					</button>
-					<span>{selectedIds.length} selected</span>
+					<span>{selected.length} selected</span>
 				</div>
 			{/if}
 		</div>
 
-		{#if !selectedIds.length}
+		{#if !selected.length}
 			<button class="btn btn-primary btn-sm relative" class:disabled={!bucket || !folder}>
 				Upload
 				<input
@@ -294,7 +294,7 @@
 			</button>
 		{/if}
 
-		{#if selectedIds.length > 0}
+		{#if selected.length > 0}
 			<div class="flex items-center space-x-2">
 				<!-- Delete -->
 				<button class="btn btn-outline btn-circle btn-error btn-sm" on:click={onDeleteSelected}>
@@ -321,20 +321,20 @@
 				<div
 					class={cn(
 						'absolute top-0.5 right-0.5 rounded-[9px] w-6 h-6 bg-black flex items-center justify-center',
-						selectedIds.length > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+						selected.length > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
 					)}
 				>
 					<input
 						type="checkbox"
 						class="checkbox checkbox-primary checkbox-sm border-solid border-2"
-						checked={selectedIds.includes(attachment._.id)}
+						checked={selected.includes(attachment._.id)}
 						on:input={onToggle(attachment._)}
 					/>
 				</div>
 				<button
 					class={cn(
-						selectedIds.length > 0 ? 'absolute inset-0' : '',
-						selectedIds.includes(attachment._.id) ? 'bg-primary bg-opacity-20' : ''
+						selected.length > 0 ? 'absolute inset-0' : '',
+						selected.includes(attachment._.id) ? 'bg-primary bg-opacity-20' : ''
 					)}
 					on:click={onToggle(attachment._)}
 				/>

@@ -1,4 +1,4 @@
-import type { TPagination, TPublicContext, TUserTestimonial } from '$lib/types'
+import type { TPagination, TPublicContext } from '$lib/types'
 
 type ListFilter = TPagination & {
 	bucket?: string
