@@ -83,6 +83,16 @@
 		isLoading: boolean
 	}>([])
 
+	const getBase64Image = async (file: File) => {
+		let base64 = ''
+		let maxWidth = 3
+		while (!base64 || base64 === 'data:,') {
+			base64 = await resizeImage(file, { maxWidth })
+			maxWidth += 3
+		}
+		return base64
+	}
+
 	const onInputFiles = (e: any) => {
 		files.set(
 			[...e.target.files].map((file) => ({
@@ -93,8 +103,6 @@
 		)
 
 		$files.forEach(async (item) => {
-			try {
-			} catch (error) {}
 			item.update({ isLoading: true })
 
 			const url = item._.objectURL
@@ -131,7 +139,7 @@
 					src: (fileObject?.path || '').split('/').pop() || '',
 					medium: (fileObject800?.path || '').split('/').pop(),
 					thumbnail: (fileObject400?.path || '').split('/').pop(),
-					base64: await resizeImage(item._.file, { maxWidth: 3 })
+					base64: await getBase64Image(item._.file)
 				})
 				.select('*')
 				.single()
@@ -160,19 +168,56 @@
 		//
 	}
 
+	const getSelectedAttachments = () => {
+		return $attachments
+			.filter((attachment) => {
+				return selectedIds.includes(attachment._.id)
+			})
+			.map((v) => v._)
+	}
+
 	const onClickSelect = () => {
-		onSelect(
-			$attachments
-				.filter((attachment) => {
-					return selectedIds.includes(attachment._.id)
-				})
-				.map((v) => v._),
-			{
-				reset() {
-					selectedIds = []
-				}
+		onSelect(getSelectedAttachments(), {
+			reset() {
+				selectedIds = []
 			}
-		)
+		})
+	}
+
+	// data:,
+	const onDeleteSelected = async () => {
+		if (confirm('Are you sure to delete these attachments')) {
+			const attachments = getSelectedAttachments()
+
+			await supabase.storage.from(bucket).remove(
+				attachments.reduce<string[]>((carry, attachment) => {
+					return carry.concat(
+						[attachment.thumbnail, attachment.medium, attachment.src]
+							.filter(Boolean)
+							.map((name) => {
+								/** @TODO - Legacy code, have to remove it later */
+								if (name?.startsWith('projects/')) return name
+
+								// Concat folder path the file name
+								return `${attachment.folder}/${name}`
+							})
+					)
+				}, [])
+			)
+
+			await supabase
+				.from('attachments')
+				.delete()
+				.in(
+					'id',
+					attachments.map((attachment) => {
+						return attachment.id
+					})
+				)
+
+			getAttachments()
+			selectedIds = []
+		}
 	}
 </script>
 
@@ -236,14 +281,12 @@
 
 		{#if selectedIds.length > 0}
 			<div class="flex items-center space-x-2">
-				<button
-					class="btn btn-outline btn-circle btn-error btn-sm"
-					on:click={() => {
-						selectedIds = []
-					}}
-				>
+				<!-- Delete -->
+				<button class="btn btn-outline btn-circle btn-error btn-sm" on:click={onDeleteSelected}>
 					<Icon class="text-lg" icon="mdi-delete-outline" />
 				</button>
+
+				<!-- Select -->
 				<button
 					class="btn btn-accent btn-outline rounded-full btn-sm normal-case"
 					on:click={onClickSelect}
