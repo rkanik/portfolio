@@ -17,6 +17,7 @@
 
 	type TDateField = TBaseField & {
 		type: 'date'
+		value?: Maybe<Date>
 		placeholder?: string
 	}
 
@@ -56,58 +57,36 @@
 
 <form use:useForm class="grid grid-cols-12 gap-1">
 	{#each fields as field}
+		{@const props = {
+			name: field.name,
+			label: field.label,
+			required: field.required,
+			class: field.class || 'col-span-12',
+			errors: $errors[field.name] || []
+		}}
 		{#if field.type === 'text' || field.type === 'email' || field.type === 'password' || field.type === 'tel'}
-			<TextField
-				name={field.name}
-				label={field.label}
-				required={field.required}
-				placeholder={field.placeholder}
-				class={field.class || 'col-span-12'}
-				errors={$errors[field.name] || []}
-			/>
+			<TextField {...props} placeholder={field.placeholder} />
 		{/if}
 		{#if field.type === 'textarea'}
-			<TextArea
-				name={field.name}
-				label={field.label}
-				required={field.required}
-				placeholder={field.placeholder}
-				class={field.class || 'col-span-12'}
-				errors={$errors[field.name] || []}
-			/>
+			<TextArea {...props} placeholder={field.placeholder} />
 		{/if}
 		{#if field.type === 'date'}
 			<DatePicker
-				name={field.name}
-				label={field.label}
-				required={field.required}
+				{...props}
+				value={$values[field.name]}
 				setFields={form.setFields}
 				placeholder={field.placeholder}
-				class={field.class || 'col-span-12'}
-				errors={$errors[field.name] || []}
 			/>
 		{/if}
 		{#if field.type === 'rating'}
-			<Rating
-				name={field.name}
-				label={field.label}
-				required={field.required}
-				setFields={form.setFields}
-				class={field.class || 'col-span-12'}
-				value={$values[field.name]}
-				errors={$errors[field.name] || []}
-			/>
+			<Rating {...props} setFields={form.setFields} value={$values[field.name]} />
 		{/if}
 		{#if field.type === 'avatar'}
 			<AvatarPicker
-				name={field.name}
-				label={field.label}
+				{...props}
 				attachment={field.attachment}
-				required={field.required}
 				setFields={form.setFields}
-				class={field.class || 'col-span-12'}
 				value={$values[field.name]}
-				errors={$errors[field.name] || []}
 			/>
 		{/if}
 	{/each}

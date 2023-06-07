@@ -22,7 +22,8 @@
 		{ path: '/admin/projects', name: 'Projects' },
 		{ path: '/admin/testimonials', name: 'Testimonials' },
 		{ path: '/admin/uploads', name: 'Uploads' },
-		{ path: '/admin/storage', name: 'Storage' }
+		{ path: '/admin/storage', name: 'Storage' },
+		{ path: '/admin/sortable', name: 'Sortable' },
 	]
 </script>
 

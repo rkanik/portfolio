@@ -254,6 +254,7 @@ export interface Database {
           id: number
           name: string
           rating: number
+          sortOrder: number
           status: string
           testimonial: string
           updatedAt: string
@@ -267,6 +268,7 @@ export interface Database {
           id?: number
           name: string
           rating: number
+          sortOrder: number
           status?: string
           testimonial: string
           updatedAt?: string
@@ -280,6 +282,7 @@ export interface Database {
           id?: number
           name?: string
           rating?: number
+          sortOrder?: number
           status?: string
           testimonial?: string
           updatedAt?: string

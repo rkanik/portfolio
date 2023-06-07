@@ -1,7 +1,7 @@
 import type { TId, TPagination, TTestimonial } from '$lib/types'
 
 import { z } from 'zod'
-import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
+import { useGlobalPageData, type TGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 type ListFilter = TPagination & {
 	//
@@ -34,8 +34,8 @@ const createSchema = z.object({
 
 export type CreateSchema = z.infer<typeof createSchema>
 
-export const useTestimonialModule = () => {
-	const { user, supabase } = useGlobalPageData()
+export const useTestimonialModule = (context?: TGlobalPageData) => {
+	const { user, supabase } = context || useGlobalPageData()
 
 	return {
 		createSchema,
@@ -58,7 +58,7 @@ export const useTestimonialModule = () => {
 				.eq('userId', user.id)
 				.range(from, to)
 				.limit(limit)
-				.order('createdAt', { ascending: false })
+				.order('sortOrder', { ascending: true })
 
 			return {
 				data: {
@@ -77,6 +77,12 @@ export const useTestimonialModule = () => {
 				}
 			}
 
+			const firstTestimonial = await supabase
+				.from('testimonials')
+				.select('*')
+				.order('sortOrder', { ascending: true })
+				.single()
+
 			const testimonial = await supabase
 				.from('testimonials')
 				.insert([
@@ -86,7 +92,8 @@ export const useTestimonialModule = () => {
 						company: data.company,
 						testimonial: data.testimonial,
 						date: data.date?.toISOString(),
-						avatar: data.avatar
+						avatar: data.avatar,
+						sortOrder: (firstTestimonial.data?.sortOrder ?? 1) - 1
 					}
 				])
 				.select('*,avatar(*)')

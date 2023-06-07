@@ -3,6 +3,7 @@
 
 	import { onMount } from 'svelte'
 	import { DateInput } from 'date-picker-svelte'
+	import type { Maybe } from '$lib/types'
 
 	export let name: string
 	export let setFields: any
@@ -23,9 +24,11 @@
 		inputElement?.setAttribute('class', 'input w-full input-bordered border-solid')
 	})
 
-	let date: Date | null | undefined = null
+	export let value: Maybe<Date> = null
+	let innerValue: Maybe<Date> = value
+
 	$: {
-		setFields(name, date)
+		setFields(name, innerValue)
 	}
 </script>
 
@@ -40,7 +43,7 @@
 			</span>
 		</label>
 	{/if}
-	<DateInput bind:value={date} {placeholder} format="dd-MM-yyyy" />
+	<DateInput bind:value={innerValue} {placeholder} format="dd-MM-yyyy" />
 	{#if errors.length > 0}
 		<label for={id} class="label">
 			<span class="label-text-alt text-error">

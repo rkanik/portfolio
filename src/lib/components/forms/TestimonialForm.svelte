@@ -53,6 +53,11 @@
 			dispatch(isUpdate ? 'updated' : 'created', res.data)
 		}
 	})
+
+	// const { data } = form
+	// $: {
+	// 	console.log({ $data })
+	// }
 </script>
 
 <BaseForm

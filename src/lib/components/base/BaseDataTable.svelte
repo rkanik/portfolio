@@ -1,4 +1,9 @@
 <script lang="ts">
+	import type { Optional } from '$lib/types'
+	import type { SortableOptions } from 'sortablejs'
+	import type { OnUpdatedHandler } from '$lib/utils/useSortable'
+	import Sortable from '$lib/utils/useSortable/Sortable.svelte'
+
 	type DataTableHeader = {
 		text: string
 		value: string | ((item: any, header: DataTableHeader) => string)
@@ -8,6 +13,10 @@
 	export let selectable = true
 	export let items: any[] = []
 	export let headers: DataTableHeader[] = []
+
+	export let sortable = false
+	export let sortableOptions: SortableOptions = { disabled: !sortable, animation: 150 }
+	export let onSortableUpdated: Optional<OnUpdatedHandler> = undefined
 </script>
 
 <table class="table w-full base-data-table table-compact">
@@ -29,7 +38,7 @@
 			{/if}
 		</tr>
 	</thead>
-	<tbody>
+	<Sortable bind:items tag="tbody" options={sortableOptions} onUpdated={onSortableUpdated}>
 		{#each items as item}
 			<tr>
 				{#if selectable}
@@ -61,7 +70,7 @@
 				{/if}
 			</tr>
 		{/each}
-	</tbody>
+	</Sortable>
 </table>
 
 <style lang="scss">

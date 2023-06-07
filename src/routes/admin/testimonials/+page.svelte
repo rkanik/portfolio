@@ -5,6 +5,7 @@
 	import BaseModal from '$lib/components/base/BaseModal.svelte'
 	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
 	import TestimonialForm from '$lib/components/forms/TestimonialForm.svelte'
+	import TestimonialCard from '$lib/components/testimonial/TestimonialCard.svelte'
 	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
 
 	import get from 'lodash/get'
@@ -14,11 +15,11 @@
 	import { useTimeoutFn } from 'sveltuse'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 	import { useTestimonialModule } from '$lib/modules/testimonial.js'
-	import TestimonialCard from '$lib/components/testimonial/TestimonialCard.svelte'
 
 	export let data
 
 	const {
+		supabase,
 		testimonials: { error, data: testimonials }
 	} = data
 
@@ -72,6 +73,40 @@
 		currentTestimonial = { ...event.detail }
 		viewModal = true
 	}
+
+	const onSortableUpdated = async (index: number) => {
+		const testimonial = testimonials.data[index]
+
+		const prevSortOrder =
+			index > 0
+				? testimonials.data[index - 1].sortOrder
+				: testimonials.data[index + 1].sortOrder - 1
+
+		const nextSortOrder =
+			index < testimonials.data.length - 1
+				? testimonials.data[index + 1].sortOrder
+				: testimonials.data[index - 1].sortOrder + 1
+
+		testimonial.sortOrder = Math.fround((prevSortOrder + nextSortOrder) / 2)
+
+		const { error, data: updatedTestimonial } = await supabase
+			.from('testimonials')
+			.update({ sortOrder: testimonial.sortOrder })
+			.eq('id', testimonial.id)
+			.select('*,avatar(*)')
+			.single()
+
+		if (error) {
+			console.log('onSortableUpdated', { error })
+			return
+		}
+
+		testimonials.data = testimonials.data.map((item) => {
+			return item.id === updatedTestimonial.id
+				? { ...item, sortOrder: updatedTestimonial.sortOrder }
+				: item
+		})
+	}
 </script>
 
 <svelte:head>
@@ -112,9 +147,12 @@
 		</div>
 		<div class="w-full mt-5 overflow-x-auto">
 			<BaseDataTable
+				{onSortableUpdated}
 				actions
-				items={testimonials.data}
+				sortable
+				bind:items={testimonials.data}
 				headers={[
+					{ text: 'Order', value: 'sortOrder' },
 					{ text: 'Name', value: 'name' },
 					{ text: 'Company', value: 'company' },
 					{ text: 'Testimonial', value: 'testimonial' },
