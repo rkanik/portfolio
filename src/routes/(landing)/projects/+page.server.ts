@@ -17,5 +17,9 @@ export const load = async ({ locals: { getContext } }) => {
 			)
 			.eq('status', 'active')
 			.order('sortOrder', { ascending: true })
+			.order('sortOrder', {
+				ascending: true,
+				foreignTable: 'projectAttachments'
+			})
 	}
 }

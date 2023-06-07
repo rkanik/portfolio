@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { Optional } from '$lib/types'
+	import type { Optional } from '$lib/types.js'
 	import type { SortableOptions } from 'sortablejs'
-	import type { OnUpdatedHandler } from '$lib/utils/useSortable'
-	import Sortable from '$lib/utils/useSortable/Sortable.svelte'
+	import type { OnUpdatedHandler } from 'sveltuse'
+
+	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
 
 	type DataTableHeader = {
 		text: string
@@ -38,7 +39,7 @@
 			{/if}
 		</tr>
 	</thead>
-	<Sortable bind:items tag="tbody" options={sortableOptions} onUpdated={onSortableUpdated}>
+	<SvelteSortable bind:items tag="tbody" options={sortableOptions} onUpdated={onSortableUpdated}>
 		{#each items as item}
 			<tr>
 				{#if selectable}
@@ -70,7 +71,7 @@
 				{/if}
 			</tr>
 		{/each}
-	</Sortable>
+	</SvelteSortable>
 </table>
 
 <style lang="scss">

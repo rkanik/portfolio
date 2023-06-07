@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { writable } from 'svelte/store'
-	import Sortable from '$lib/utils/useSortable/Sortable.svelte'
+	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
+
+	// import { SvelteSortable } from 'sveltuse/components'
+	// import { SvelteSortable } from 'sveltuse/dist/components'
+	// import SvelteSortable from 'sveltuse/SvelteSortable.svelte'
 
 	let items = [...Array(5).keys()].map((index) => ({
 		name: `Item ${index + 1}`
@@ -15,7 +19,7 @@
 
 <div class="container mx-auto py-12 grid grid-cols-2 gap-8">
 	<div class="flex flex-col space-y-8">
-		<Sortable
+		<SvelteSortable
 			bind:items
 			tag="ul"
 			class="flex flex-col space-y-2"
@@ -26,9 +30,9 @@
 					{item.name}
 				</li>
 			{/each}
-		</Sortable>
+		</SvelteSortable>
 
-		<Sortable
+		<SvelteSortable
 			items={items2}
 			tag="ul"
 			class="flex flex-col space-y-2"
@@ -39,7 +43,7 @@
 					{item.name}
 				</li>
 			{/each}
-		</Sortable>
+		</SvelteSortable>
 	</div>
 
 	<div class="grid grid-cols-2 gap-4">

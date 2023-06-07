@@ -33,9 +33,11 @@
 </script>
 
 <BaseDropdown {...$$props}>
-	<button slot="activator" type="button" class="btn btn-sm btn-circle">
-		<Icon icon="material-symbols:more-vert" class="text-lg" />
-	</button>
+	<svelte:fragment slot="activator" let:onClick>
+		<button type="button" class="btn btn-sm btn-circle" on:click={onClick}>
+			<Icon icon="material-symbols:more-vert" class="text-lg" />
+		</button>
+	</svelte:fragment>
 	<ul class="p-2 border shadow menu bg-gray-600 rounded-lg w-52 border-gray-500">
 		{#each actions as action}
 			{#if 'divider' in action}

@@ -5,22 +5,6 @@ type ListFilter = TPagination & {
 	folder?: string
 }
 
-const getRange = (v?: TPagination) => {
-	const { page = 1, perPage = 10 } = v || {}
-
-	const from = (page - 1) * perPage
-	const to = from + perPage
-
-	return {
-		page,
-		perPage,
-		nextPage: page + 1,
-		from,
-		to,
-		limit: perPage
-	}
-}
-
 export type Bucket = {
 	id: string
 	name: string

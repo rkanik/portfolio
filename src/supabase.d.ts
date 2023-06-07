@@ -123,24 +123,21 @@ export interface Database {
       projectAttachments: {
         Row: {
           attachmentId: string
-          createdAt: string | null
-          id: string
+          id: number
           projectId: string
-          updatedAt: string | null
+          sortOrder: number
         }
         Insert: {
           attachmentId: string
-          createdAt?: string | null
-          id?: string
+          id?: number
           projectId: string
-          updatedAt?: string | null
+          sortOrder: number
         }
         Update: {
           attachmentId?: string
-          createdAt?: string | null
-          id?: string
+          id?: number
           projectId?: string
-          updatedAt?: string | null
+          sortOrder?: number
         }
       }
       projects: {

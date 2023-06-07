@@ -14,7 +14,8 @@
 
 	import { useTimeoutFn } from 'sveltuse'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
-	import { useTestimonialModule } from '$lib/modules/testimonial.js'
+	import { useTestimonialModule } from '$lib/modules/testimonial'
+	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder/index.js'
 
 	export let data
 
@@ -75,19 +76,7 @@
 	}
 
 	const onSortableUpdated = async (index: number) => {
-		const testimonial = testimonials.data[index]
-
-		const prevSortOrder =
-			index > 0
-				? testimonials.data[index - 1].sortOrder
-				: testimonials.data[index + 1].sortOrder - 1
-
-		const nextSortOrder =
-			index < testimonials.data.length - 1
-				? testimonials.data[index + 1].sortOrder
-				: testimonials.data[index - 1].sortOrder + 1
-
-		testimonial.sortOrder = Math.fround((prevSortOrder + nextSortOrder) / 2)
+		const { item: testimonial } = getAverageSortOrder(testimonials.data, index)
 
 		const { error, data: updatedTestimonial } = await supabase
 			.from('testimonials')
@@ -152,7 +141,6 @@
 				sortable
 				bind:items={testimonials.data}
 				headers={[
-					{ text: 'Order', value: 'sortOrder' },
 					{ text: 'Name', value: 'name' },
 					{ text: 'Company', value: 'company' },
 					{ text: 'Testimonial', value: 'testimonial' },

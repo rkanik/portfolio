@@ -30,9 +30,17 @@
 	} from '$lib/components/StorageManager2.svelte'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
+	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
+	import { getNewSortOrder } from '$lib/utils/getNewSortOrder/index.js'
+	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder/index.js'
+	import { useProjects } from '$lib/modules/Projects.js'
 
 	export let data
 	let { user, project, supabase, userTechnologies } = data
+
+	$: {
+		project = data.project
+	}
 
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
@@ -149,27 +157,12 @@
 		console.log('onRefreshRepository', error, data)
 	}
 
+	const Projects = useProjects()
 	const fetchProject = async () => {
-		if (!user) return
-
-		const { data, error } = await supabase
-			.from('projects')
-			.select(
-				`*,
-         projectAttachments(
-            *,attachments(*)
-         ),
-         projectTechnologies(
-            *,technologies(*)
-         )`
-			)
-			.eq('slug', $page.params.slug)
-			.eq('userId', user.id)
-			.single()
-
-		if (!error) {
-			project = data
-		}
+		const { error, data } = await Projects.get({
+			slug: $page.params.slug
+		})
+		if (!error) project = data
 	}
 
 	let storageModal = false
@@ -182,10 +175,17 @@
 		storageModal = false
 		clearSelected()
 
+		const sortOrder = await getNewSortOrder({
+			add: 1,
+			ascending: false,
+			table: 'projectAttachments'
+		})
+
 		await supabase.from('projectAttachments').insert(
-			attachments.map((attachment) => ({
+			attachments.map((attachment, index) => ({
 				projectId: project.id,
-				attachmentId: attachment.id
+				attachmentId: attachment.id,
+				sortOrder: sortOrder + index
 			}))
 		)
 
@@ -206,6 +206,31 @@
 		}
 	}
 
+	const onChangeProjectAttachmentSortOrder = async (newIndex: number) => {
+		const { item: projectAttachment } = getAverageSortOrder(
+			project?.projectAttachments || [],
+			newIndex
+		)
+
+		const { error, data: updatedProjectAttachment } = await supabase
+			.from('projectAttachments')
+			.update({ sortOrder: projectAttachment.sortOrder })
+			.eq('id', projectAttachment.id)
+			.select('*,attachments(*)')
+			.single()
+
+		if (error) {
+			console.log('onChangeProjectAttachmentSortOrder', { error })
+			return
+		}
+
+		project.projectAttachments = project.projectAttachments.map((item) => {
+			return item.id === updatedProjectAttachment.id
+				? { ...item, sortOrder: updatedProjectAttachment.sortOrder }
+				: item
+		})
+	}
+
 	let mounted = false
 	onMount(() => {
 		mounted = true
@@ -221,11 +246,16 @@
 
 	<div class="mt-4">
 		<div>Attachments</div>
-		<div class="grid 2xl:grid-cols-5 gap-4">
-			{#if project}
+		{#if project}
+			<SvelteSortable
+				bind:items={project.projectAttachments}
+				options={{ animation: 150, draggable: '.attachment' }}
+				onUpdated={onChangeProjectAttachmentSortOrder}
+				class="grid 2xl:grid-cols-5 gap-4"
+			>
 				{#each project.projectAttachments as projectAttachment}
 					{@const src = getPublicUrl(projectAttachment.attachments)}
-					<div class="relative">
+					<div class="relative attachment">
 						<button
 							class="btn btn-circle btn-error btn-sm absolute top-1 right-1"
 							on:click={onDeleteProjectAttachment(projectAttachment)}
@@ -248,8 +278,8 @@
 						<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
 					</button>
 				</StoragePicker>
-			{/if}
-		</div>
+			</SvelteSortable>
+		{/if}
 	</div>
 
 	<form use:form class="flex flex-col space-y-2 mt-4">

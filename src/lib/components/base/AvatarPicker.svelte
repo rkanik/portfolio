@@ -2,7 +2,7 @@
 	import type { Maybe, TAttachment } from '$lib/types'
 	import type { OnSelectHandlerSingle } from '../StorageManager2.svelte'
 
-	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl.js'
 
 	import cn from '$lib/utils/cn'
 	import StoragePicker from '../StoragePicker.svelte'

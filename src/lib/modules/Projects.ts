@@ -1,4 +1,4 @@
-import type { TId, TPagination, TTestimonial } from '$lib/types'
+import type { TId, TPagination, TProject, TProjectAttachment, TTestimonial } from '$lib/types'
 
 import { z } from 'zod'
 import { useGlobalPageData, type TGlobalPageData } from '$lib/utils/useGlobalPageData'
@@ -6,6 +6,10 @@ import { getSupabasePagination } from '$lib/utils/getSupabasePagination'
 
 type ListFilter = TPagination & {
 	//
+}
+
+type Filter = {
+	slug?: string
 }
 
 const createSchema = z.object({
@@ -19,7 +23,7 @@ const createSchema = z.object({
 
 export type CreateSchema = z.infer<typeof createSchema>
 
-export const useTestimonialModule = (context?: TGlobalPageData) => {
+export const useProjects = (context?: TGlobalPageData) => {
 	const { user, supabase } = context || useGlobalPageData()
 
 	return {
@@ -53,6 +57,45 @@ export const useTestimonialModule = (context?: TGlobalPageData) => {
 				},
 				error: res.error
 			}
+		},
+		async get(filter?: Filter) {
+			if (!user) {
+				return {
+					error: new Error('Unauthorized'),
+					data: null
+				}
+			}
+
+			const query = supabase
+				.from('projects')
+				.select(
+					`*,
+					projectTechnologies(
+						*,technologies(*)
+					)`
+				)
+				.eq('userId', user.id)
+
+			if (filter?.slug) {
+				query.eq('slug', filter.slug)
+			}
+
+			query.single()
+
+			const { error, data } = await query
+			if (error) return { error, data }
+
+			const project = data as unknown as TProject
+
+			const projectAttachments = await supabase
+				.from('projectAttachments')
+				.select('*,attachments(*)')
+				.eq('projectId', project.id)
+				.order('sortOrder', { ascending: true })
+
+			project.projectAttachments = (projectAttachments.data ?? []) as TProjectAttachment[]
+
+			return { error, data: project }
 		},
 		async create(data: CreateSchema) {
 			if (!user) {
