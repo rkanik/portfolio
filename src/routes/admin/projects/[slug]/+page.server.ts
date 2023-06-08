@@ -1,5 +1,6 @@
+import type { TTechnology } from '$lib/types'
+
 import { useProjects } from '$lib/modules/Projects'
-import type { TUserTechnology } from '$lib/types'
 
 export const load = async ({ params, locals: { getContext } }) => {
 	const context = await getContext()
@@ -12,23 +13,25 @@ export const load = async ({ params, locals: { getContext } }) => {
 	const fallback = {
 		error,
 		project: null,
-		userTechnologies: []
+		technologies: [] as TTechnology[]
 	}
 
 	if (!context.user || error) {
 		return { ...fallback }
 	}
 
-	const userTechnologies = ((
-		await context.supabase
-			.from('userTechnologies')
-			.select('id,technologies(id,icon,name)')
-			.eq('userId', context.user.id)
-	)?.data || []) as TUserTechnology[]
+	const technologies = (
+		(
+			await context.supabase
+				.from('userTechnologies')
+				.select('id,technologies(id,icon,name)')
+				.eq('userId', context.user.id)
+		)?.data || []
+	).map((v) => v.technologies) as TTechnology[]
 
 	return {
 		error,
 		project,
-		userTechnologies
+		technologies
 	}
 }

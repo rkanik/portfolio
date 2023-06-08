@@ -52,6 +52,7 @@ export interface Database {
           updatedAt?: string | null
           userId?: string
         }
+        Relationships: []
       }
       inquiries: {
         Row: {
@@ -84,6 +85,14 @@ export interface Database {
           updatedAt?: string
           userId?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -119,6 +128,7 @@ export interface Database {
           username?: string | null
           website?: string | null
         }
+        Relationships: []
       }
       projectAttachments: {
         Row: {
@@ -139,6 +149,20 @@ export interface Database {
           projectId?: string
           sortOrder?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: "projectAttachments_attachmentId_fkey"
+            columns: ["attachmentId"]
+            referencedRelation: "attachments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projectAttachments_projectId_fkey"
+            columns: ["projectId"]
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       projects: {
         Row: {
@@ -192,26 +216,51 @@ export interface Database {
           updatedAt?: string | null
           userId?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "projects_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       projectTechnologies: {
         Row: {
-          created_at: string | null
           id: number
+          isVisible: boolean | null
           projectId: string
+          sortOrder: number
           technologyId: string
         }
         Insert: {
-          created_at?: string | null
           id?: number
+          isVisible?: boolean | null
           projectId: string
+          sortOrder?: number
           technologyId: string
         }
         Update: {
-          created_at?: string | null
           id?: number
+          isVisible?: boolean | null
           projectId?: string
+          sortOrder?: number
           technologyId?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "projectTechnologies_projectId_fkey"
+            columns: ["projectId"]
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projectTechnologies_technologyId_fkey"
+            columns: ["technologyId"]
+            referencedRelation: "technologies"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       technologies: {
         Row: {
@@ -241,6 +290,7 @@ export interface Database {
           name?: string
           url?: string | null
         }
+        Relationships: []
       }
       testimonials: {
         Row: {
@@ -285,6 +335,20 @@ export interface Database {
           updatedAt?: string
           userId?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_avatar_fkey"
+            columns: ["avatar"]
+            referencedRelation: "attachments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "testimonials_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       userTechnologies: {
         Row: {
@@ -305,6 +369,20 @@ export interface Database {
           technologyId?: string
           userId?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "userTechnologies_technologyId_fkey"
+            columns: ["technologyId"]
+            referencedRelation: "technologies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "userTechnologies_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       userTestimonials: {
         Row: {
@@ -328,6 +406,20 @@ export interface Database {
           updatedAt?: string
           userId?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "userTestimonials_testimonialId_fkey"
+            columns: ["testimonialId"]
+            referencedRelation: "testimonials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "userTestimonials_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

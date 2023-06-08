@@ -1,28 +1,20 @@
+import type { TProject } from '$lib/types'
+
+import { useProjects } from '$lib/modules/Projects'
+import { toPaginated } from '$lib/utils/toPaginated'
+
 export const load = async ({ locals: { getContext } }) => {
-	const { user, supabase } = await getContext()
-
-	if (!user) {
+	const ctx = await getContext()
+	if (!ctx.user)
 		return {
-			projects: {
-				data: [],
-				error: new Error('Unauthorized')
-			}
+			error: null,
+			projects: toPaginated<TProject>()
 		}
-	}
 
-	return {
-		projects: await supabase
-			.from('projects')
-			.select(
-				`*,
-				projectAttachments(
-					*,attachments(*)
-				),
-				projectTechnologies(
-					*,technologies(*)
-				)`
-			)
-			.eq('userId', user.id)
-			.order('sortOrder', { ascending: true })
-	}
+	const Projects = useProjects(ctx)
+	const { error, data: projects } = await Projects.list({
+		userId: ctx.user.id
+	})
+
+	return { error, projects }
 }

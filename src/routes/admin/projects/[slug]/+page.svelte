@@ -1,46 +1,33 @@
 <script lang="ts">
+	import type { Maybe, TProjectAttachment } from '$lib/types'
+	import type { OnSelectHandlerMultiple } from '$lib/components/StorageManager2.svelte'
+
+	import { onMount } from 'svelte'
+	import { createForm } from 'felte'
+	import { page } from '$app/stores'
+	import { validator } from '@felte/validator-zod'
+	import { useProjects } from '$lib/modules/Projects'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import { getNewSortOrder } from '$lib/utils/getNewSortOrder'
+	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder'
+
 	import z from 'zod'
 	import cn from '$lib/utils/cn'
 
-	import { createForm } from 'felte'
-	import { validator } from '@felte/validator-zod'
-	// import { getSupabaseContext } from '$lib/store/useSupabase'
-
-	import TextField from '$lib/components/base/TextField.svelte'
-	import TextArea from '$lib/components/base/TextArea.svelte'
-	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
 	import Icon from '@iconify/svelte'
-	import { onMount } from 'svelte'
-	// import AttachmentUploader, {
-	// 	type RemoveFunction,
-	// 	type UploadFunction
-	// } from '$lib/components/base/AttachmentUploader.svelte'
-	import { resizeImage } from '$lib/utils/resizeImage.js'
-	import dataURLtoFile from '$lib/utils/dataURLtoFile.js'
-	import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage.js'
-	import type { TAttachment, TProjectAttachment } from '$lib/types.js'
-	import Github from '$lib/utils/Github.js'
-	import src from '$lib/utils/src.js'
-	import StoragePicker from '$lib/components/StoragePicker.svelte'
-	import type { FileObject } from '$lib/modules/Storage.js'
-	import { page } from '$app/stores'
-	import type {
-		OnSelectHandler,
-		OnSelectHandlerMultiple
-	} from '$lib/components/StorageManager2.svelte'
-	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import Github from '$lib/utils/Github'
+	import TextField from '$lib/components/base/TextField.svelte'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
+	import StoragePicker from '$lib/components/StoragePicker.svelte'
+	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
 	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
-	import { getNewSortOrder } from '$lib/utils/getNewSortOrder/index.js'
-	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder/index.js'
-	import { useProjects } from '$lib/modules/Projects.js'
+	import { useStates } from 'sveltuse'
+	import { goto } from '$app/navigation'
+	import ProjectFormBasic from '$lib/components/project/ProjectFormBasic.svelte'
+	import ProjectFormTechnologies from '$lib/components/project/ProjectFormTechnologies.svelte'
 
 	export let data
-	let { user, project, supabase, userTechnologies } = data
-
-	$: {
-		project = data.project
-	}
+	let { project, supabase, technologies } = data
 
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
@@ -49,6 +36,7 @@
 
 	const projectSchema = z.object({
 		name: z.string().min(1, 'Required.'),
+		slug: z.string().min(1, 'Required.'),
 		description: z.string().nullable(),
 		previewUrl: nullableURL,
 		sourceCodeUrl: nullableURL,
@@ -78,6 +66,7 @@
 		extend: validator({ schema: projectSchema }),
 		initialValues: {
 			name: project?.name || '',
+			slug: project?.slug || '',
 			description: project?.description || null,
 			previewUrl: project?.previewUrl || null,
 			sourceCodeUrl: project?.sourceCodeUrl || null,
@@ -93,8 +82,9 @@
 				.from('projects')
 				.update({
 					name: values.name,
-					description: values.description,
+					slug: values.name.split(' ').join('-').trim().toLowerCase(),
 					previewUrl: values.previewUrl,
+					description: values.description,
 					sourceCodeUrl: values.sourceCodeUrl,
 					status: values.status ? 'active' : 'disabled'
 				})
@@ -231,6 +221,20 @@
 		})
 	}
 
+	// ==> TAB
+	const tabs = ['Basic', 'Technologies', 'Images', 'Preview', 'Repository'] as const
+	const initialTab = (): typeof tabs[number] => {
+		const queryTab = $page.url.searchParams.get('tab') as Maybe<typeof tabs[number]>
+		if (queryTab && tabs.includes(queryTab)) return queryTab
+		return 'Basic'
+	}
+	const currentTab = useStates(tabs, initialTab())
+	const setCurrentTab = (tab: typeof tabs[number]) => () => {
+		currentTab.set(tab)
+		goto(`/admin/projects/${project?.slug || ''}?tab=${tab}`)
+	}
+	// <== TAB
+
 	let mounted = false
 	onMount(() => {
 		mounted = true
@@ -238,148 +242,96 @@
 </script>
 
 <div class="w-full max-w-4xl py-16 mx-auto">
-	<div>
-		<h1 class="text-2xl font-medium">
-			{project?.name}
-		</h1>
-	</div>
-
-	<div class="mt-4">
-		<div>Attachments</div>
-		{#if project}
-			<SvelteSortable
-				bind:items={project.projectAttachments}
-				options={{ animation: 150, draggable: '.attachment' }}
-				onUpdated={onChangeProjectAttachmentSortOrder}
-				class="grid 2xl:grid-cols-5 gap-4"
-			>
-				{#each project.projectAttachments as projectAttachment}
-					{@const src = getPublicUrl(projectAttachment.attachments)}
-					<div class="relative attachment">
-						<button
-							class="btn btn-circle btn-error btn-sm absolute top-1 right-1"
-							on:click={onDeleteProjectAttachment(projectAttachment)}
-						>
-							<Icon class="text-base" icon="mdi-delete-outline" />
-						</button>
-						<BaseImage
-							class="h-36 w-full object-top object-cover rounded"
-							lazySrc={src}
-							alt={projectAttachment.attachments.name}
-							src={projectAttachment.attachments.base64 || src}
-						/>
-					</div>
-				{/each}
-				<StoragePicker bind:modal={storageModal} onSelect={onSelectAttachments}>
-					<button
-						on:click={() => (storageModal = true)}
-						class="h-36 grid place-items-center bg-base-100 rounded shadow"
-					>
-						<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
-					</button>
-				</StoragePicker>
-			</SvelteSortable>
-		{/if}
-	</div>
-
-	<form use:form class="flex flex-col space-y-2 mt-4">
-		<TextField
-			required
-			name="name"
-			label="Project Name"
-			placeholder="Enter project name"
-			errors={$errors.name || []}
-		/>
-		<TextArea
-			name="description"
-			label="Description"
-			placeholder="Briefly explain the project."
-			errors={$errors.description || []}
-		/>
-		<TextField
-			name="previewUrl"
-			label="Preview URL"
-			placeholder="Preview url.."
-			errors={$errors.previewUrl || []}
-		/>
-		<TextField
-			name="sourceCodeUrl"
-			label="Source Code URL"
-			placeholder="Preview url.."
-			errors={$errors.sourceCodeUrl || []}
-		/>
-
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<Autocomplete
-			name="technologies"
-			options={userTechnologies}
-			optionText="technologies.name"
-			optionValue="technologies.id"
-			label="Tolls and Technologies"
-			placeholder="Select tools and technologies..."
-			value={project?.projectTechnologies || []}
-			on:change={(e) => setFields('technologies', e.detail)}
-		>
-			<svelte:fragment slot="selection" let:item let:remove>
-				{#if mounted}
-					<button class="flex items-center mt-1 ml-1 space-x-2 normal-case rounded-full btn btn-sm">
-						<Icon icon={item.technologies.icon} class="text-sm" />
-						<span>{item.technologies.name}</span>
-						<button on:click={remove}>
-							<Icon icon="iconamoon:sign-times-circle-fill" />
-						</button>
-					</button>
-				{/if}
-			</svelte:fragment>
-
-			<svelte:fragment slot="item" let:item let:selected let:focused let:onClick>
-				<li on:click={onClick}>
-					<span
-						class={cn('rounded-lg', {
-							'bg-black bg-opacity-20': focused,
-							'bg-purple-500 bg-opacity-10 text-white': selected
-						})}
-					>
-						<Icon icon={item.technologies.icon} class="text-lg" />
-						<span class="text-base font-medium">{item.technologies.name}</span>
-					</span>
-				</li>
-			</svelte:fragment>
-		</Autocomplete>
-
-		<!-- <div>
-			<AttachmentUploader
-				class="mt-4"
-				upload={onUpload}
-				remove={onRemoveAttachment}
-				attachments={project?.projectAttachments.map((item) => item.attachments) || []}
-			/>
-		</div> -->
-
-		<div class="">
-			<div class="mt-8 bg-base-100 p-5 rounded-xl">
-				<button class="btn btn-primary" on:click={onRefreshRepository}> Refresh Repository </button>
-			</div>
-		</div>
-
-		<div class="mt-4 form-control">
-			<label class="cursor-pointer label">
-				<span class="flex flex-col label-text">
-					<span class="text-base font-medium">Status</span>
-					<span class="text-sm opacity-70">
-						Enable or disable the project. If disabled it will not be publicly visible.
-					</span>
-				</span>
-				<input
-					name="status"
-					type="checkbox"
-					class={cn('toggle border-solid', { 'toggle-success': $values.status })}
-				/>
-			</label>
+	{#if project}
+		<div>
+			<h1 class="text-2xl font-medium">
+				{project?.name}
+			</h1>
 		</div>
 
 		<div class="mt-4">
-			<button type="submit" class={cn('btn btn-primary', { loading: $isSubmitting })}>Save</button>
+			<div class="tabs tabs-boxed">
+				{#each tabs as tab}
+					<button class="tab" class:tab-active={$currentTab === tab} on:click={setCurrentTab(tab)}>
+						{tab}
+					</button>
+				{/each}
+			</div>
 		</div>
-	</form>
+
+		{#if $currentTab === 'Basic'}
+			<ProjectFormBasic bind:project />
+		{:else if $currentTab === 'Technologies'}
+			<ProjectFormTechnologies bind:project class="mt-4" {technologies} />
+		{:else if $currentTab === 'Images'}
+			<div class="mt-4">
+				<h2 class="font-medium text-lg">Project Images</h2>
+				<div class="opacity-70">
+					Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates voluptate eveniet
+					ratione ut dicta! Earum ratione a molestiae pariatur, eius sed laudantium non, ipsam
+					quidem facere odio ipsum obcaecati distinctio.
+				</div>
+
+				{#if project}
+					<SvelteSortable
+						bind:items={project.projectAttachments}
+						options={{ animation: 150, draggable: '.attachment' }}
+						onUpdated={onChangeProjectAttachmentSortOrder}
+						class="grid 2xl:grid-cols-5 gap-4 mt-4"
+					>
+						{#each project.projectAttachments as projectAttachment}
+							{@const src = getPublicUrl(projectAttachment.attachments)}
+							<div class="relative attachment">
+								<button
+									class="btn btn-circle btn-error btn-sm absolute top-1 right-1"
+									on:click={onDeleteProjectAttachment(projectAttachment)}
+								>
+									<Icon class="text-base" icon="mdi-delete-outline" />
+								</button>
+								<BaseImage
+									class="h-36 w-full object-top object-cover rounded"
+									lazySrc={src}
+									alt={projectAttachment.attachments.name}
+									src={projectAttachment.attachments.base64 || src}
+								/>
+							</div>
+						{/each}
+						<StoragePicker bind:modal={storageModal} onSelect={onSelectAttachments}>
+							<button
+								on:click={() => (storageModal = true)}
+								class="h-36 grid place-items-center bg-base-100 rounded shadow"
+							>
+								<Icon class="text-7xl text-white text-opacity-20" icon="mdi-plus" />
+							</button>
+						</StoragePicker>
+					</SvelteSortable>
+				{/if}
+			</div>
+		{:else if $currentTab === 'Preview'}
+			<TextField
+				name="previewUrl"
+				label="Preview URL"
+				placeholder="Preview url.."
+				errors={$errors.previewUrl || []}
+			/>
+			{#if values.previewUrl}
+				<iframe
+					title={values.name}
+					src={values.previewUrl}
+					frameborder="0"
+					class="flex-1 w-full rounded-2xl h-96"
+				/>
+			{/if}
+		{:else if $currentTab === 'Repository'}
+			<TextField
+				name="sourceCodeUrl"
+				label="Source Code URL"
+				placeholder="Preview url.."
+				errors={$errors.sourceCodeUrl || []}
+			/>
+			<button type="button" class="btn btn-primary" on:click={onRefreshRepository}>
+				Refresh Repository
+			</button>
+		{/if}
+	{/if}
 </div>

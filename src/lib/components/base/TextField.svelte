@@ -1,6 +1,7 @@
 <script lang="ts">
 	import cn from '$lib/utils/cn'
 
+	export let disabled: boolean = false
 	export let required: boolean = false
 	export let errors: string[] = []
 	export let label: string = ''
@@ -25,6 +26,7 @@
 		{id}
 		{type}
 		{name}
+		{disabled}
 		{placeholder}
 		class={cn('input input-bordered border-solid bg-transparent', {
 			'input-error': errors.length > 0

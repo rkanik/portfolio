@@ -7,4 +7,4 @@
 	<title>Projects | Rasel Khandkar</title>
 </svelte:head>
 
-<Projects projects={data.projects} userTechnologies={data.userTechnologies} />
+<Projects projects={data.projects.data} userTechnologies={data.userTechnologies} />

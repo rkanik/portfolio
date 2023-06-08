@@ -1,22 +1,19 @@
 <script lang="ts">
-	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
-	import BaseFormOld from '$lib/components/base/BaseFormOld.svelte'
-	import BaseModal from '$lib/components/base/BaseModal.svelte'
-	// import { getSupabaseContext } from '$lib/store/useSupabase'
-	// import dataURLtoFile from '$lib/utils/dataURLtoFile'
-	import d from '$lib/utils/dayjs.js'
-	// import src from '$lib/utils/src'
-	// import useSupabaseStorage, { type SupabaseFile } from '$lib/utils/useSupabaseStorage'
-	// import { resizeImage } from '$lib/utils/resizeImage'
+	import type { BaseFormField, TProject } from '$lib/types'
+
 	import Icon from '@iconify/svelte'
-	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
-	import type { BaseFormField, TProject } from '$lib/types.js'
-	import cn from '$lib/utils/cn.js'
-	// import Project from '$lib/models/ProjectModel.js'
-	// import { useContextStoreContext } from '$lib/store/useContextStore.js'
-	import { getPublicUrl } from '$lib/utils/getPublicUrl.js'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
+	import BaseModal from '$lib/components/base/BaseModal.svelte'
+	import BaseFormOld from '$lib/components/base/BaseFormOld.svelte'
+	import BaseDataTable from '$lib/components/base/BaseDataTable.svelte'
+	import BaseActionsDropdown from '$lib/components/base/BaseActionsDropdown.svelte'
+
+	import cn from '$lib/utils/cn'
+	import d from '$lib/utils/dayjs'
+
 	import { goto } from '$app/navigation'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import { useProjects } from '$lib/modules/Projects.js'
 
 	export let data
 
@@ -39,16 +36,19 @@
 	}
 
 	let modal = false
-	// const context = useContextStoreContext()
-	// const supabase = getSupabaseContext()
-	// const storage = useSupabaseStorage(data.supabase)
+
+	const Projects = useProjects()
 
 	// List
 	const onFetchProjects = async () => {
-		data.projects = await data.supabase
-			.from('projects')
-			.select(`*,projectAttachments(*,attachments(*))`)
-			.order('sortOrder', { ascending: true })
+		if (!data.user) return
+
+		const { error, data: projects } = await Projects.list({
+			userId: data.user.id
+		})
+
+		data.error = error
+		data.projects = projects
 	}
 
 	const onSubmit = async (event: CustomEvent<typeof form.create.data>) => {
@@ -62,16 +62,9 @@
 					name: event.detail.name,
 					userId: data.user?.id as string,
 					slug: event.detail.name.split(' ').join('-').trim().toLowerCase()
-					// description: event.detail.description,
-					// previewUrl: event.detail.previewUrl,
-					// sourceCodeUrl: event.detail.sourceCodeUrl
-					// tags: event.detail.tagList.map((tag) => tag.value.toLowerCase()).join(',')
 				})
 				.select('*')
 				.single()
-
-			// modal = false
-			// onFetchProjects()
 
 			if (error) {
 				console.log('onSubmit', { error })
@@ -130,20 +123,17 @@
 	<div class="w-full mt-5 overflow-x-auto">
 		<BaseDataTable
 			actions
-			items={data.projects.data || []}
+			items={data.projects.data}
 			headers={[
 				{ text: 'Project', value: 'project' },
-
 				{ text: 'Technologies', value: 'technologies' },
 				{ text: 'Links', value: 'links' },
 				{ text: 'Status', value: 'status' },
 				{ text: 'Created', value: 'createdAt' },
 				{ text: 'Updated', value: 'updatedAt' }
 			]}
-			let:item
-			let:header
 		>
-			<div slot="item">
+			<svelte:fragment slot="item" let:item let:header let:value>
 				{#if header.value === 'technologies'}
 					<div class="flex flex-wrap max-w-xs -mt-1 -ml-1">
 						{#each item.projectTechnologies as technology}
@@ -202,11 +192,10 @@
 						{item.status}
 					</div>
 				{:else}
-					{item[header.value]}
+					{value}
 				{/if}
-			</div>
-
-			<div slot="actions">
+			</svelte:fragment>
+			<svelte:fragment slot="actions" let:item>
 				<BaseActionsDropdown
 					{item}
 					actions={[
@@ -226,7 +215,7 @@
 					]}
 					on:status={onToggleStatus}
 				/>
-			</div>
+			</svelte:fragment>
 		</BaseDataTable>
 	</div>
 </div>

@@ -1,60 +1,34 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte'
+	import type { TProject } from '$lib/types'
+	import type { TPaginated } from '$lib/utils/toPaginated'
 
+	import Icon from '@iconify/svelte'
 	import ProjectCard from './ProjectCard.svelte'
 	import BaseModal from './base/BaseModal.svelte'
-	import type { TProject } from '$lib/types'
 	import BaseSection from './base/BaseSection.svelte'
-	import { useContextStoreContext } from '$lib/store/useContextStore'
 	import ProjectDetails from './project/ProjectDetails.svelte'
 
-	export let projects: any = { data: [] }
+	export let projects: TPaginated<TProject>
 	export let userTechnologies: any = { data: [] }
 	export let max: number = projects.data.length
 
-	const context = useContextStoreContext()
-	const { supabase } = $context
+	let innerProjects = { ...projects }
 
 	const onFetchProjects = async () => {
-		const technologies = (userTechnologies.data || [])
+		const selectedTechnologyIds = (userTechnologies.data || [])
 			?.filter((item: any) => item.active)
-			.map((item: any) => item.technologies?.id)
+			.map((item: any) => item.technologyId)
 
-		const query = supabase
-			.from('projects')
-			.select(
-				`*,
-				projectAttachments(*,attachments(*)),
-				projectTechnologies!inner(*,technologies(*))`
-			)
-			.eq('status', 'active')
-			.order('sortOrder', { ascending: true })
-
-		// FILTER BY SUPABASE QUERY
-		// if (technologies.length) {
-		// 	query.filter('projectTechnologies.technologyId', 'in', `(${technologies.join(',')})`)
-		// 	// query.in('projectTechnologies.technologyId', technologies)
-		// 	// query.or(`technologyId.in.(${technologies.join(',')})`, {
-		// 	// 	foreignTable: 'projectTechnologies'
-		// 	// })
-		// }
-
-		projects = await query
-
-		// FILTER LOCALLY
-		if (projects.data) {
-			projects.data = technologies.length
-				? projects.data.filter((project: any) => {
-						return project.projectTechnologies?.some((tech: any) => {
-							return technologies.includes(tech.technologyId)
-						})
-				  })
-				: projects.data
-		}
+		innerProjects.data = selectedTechnologyIds.length
+			? projects.data.filter((project) => {
+					return project.projectTechnologies.some((pTechnology) => {
+						return selectedTechnologyIds.includes(pTechnology.technologyId)
+					})
+			  })
+			: projects.data
 	}
 
-	// let currentProject: TProject = null!
-	let currentProject: TProject = projects[0]
+	let currentProject: TProject = null!
 </script>
 
 <BaseSection
@@ -85,11 +59,11 @@
 	</div>
 
 	<div class="grid grid-cols-1 gap-8 mt-8 md:grid-cols-4">
-		{#each (projects.data || []).slice(0, max) as project}
+		{#each innerProjects.data.slice(0, max) as project}
 			<ProjectCard {project} on:click={(e) => (currentProject = e.detail)} />
 		{/each}
 	</div>
-	{#if projects.data?.length > max}
+	{#if innerProjects.data?.length > max}
 		<div class="mt-8 text-center">
 			<a href="/projects" class="space-x-2 rounded-full btn btn-outline btn-primary">
 				<span>Show more</span>

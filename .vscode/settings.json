@@ -1,4 +1,15 @@
 {
+	"vite.autoStart": false,
 	"editor.formatOnSave": true,
-	"cSpell.words": ["sortablejs", "supabase", "sveltuse"]
+	"cSpell.words": [
+		"daisyui",
+		"felte",
+		"iconify",
+		"Khandkar",
+		"Rasel",
+		"sortablejs",
+		"supabase",
+		"sveltuse",
+		"tailwindcss"
+	]
 }

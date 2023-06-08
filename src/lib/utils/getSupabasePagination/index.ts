@@ -1,7 +1,8 @@
+import { DEFAULT_PER_PAGE } from '$lib/const'
 import type { TPagination } from '$lib/types'
 
 export const getSupabasePagination = (v?: TPagination) => {
-	const { page = 1, perPage = 50 } = v || {}
+	const { page = 1, perPage = DEFAULT_PER_PAGE } = v || {}
 
 	const from = (page - 1) * perPage
 	const to = from + perPage
@@ -9,7 +10,6 @@ export const getSupabasePagination = (v?: TPagination) => {
 	return {
 		page,
 		perPage,
-		nextPage: page + 1,
 		from,
 		to,
 		limit: perPage

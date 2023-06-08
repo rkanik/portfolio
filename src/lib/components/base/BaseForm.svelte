@@ -7,6 +7,7 @@
 		name: string
 		class?: string
 		label?: string
+		disabled?: boolean
 		required?: boolean
 	}
 
@@ -52,15 +53,28 @@
 	export let loading: boolean = false
 	export let onClose = anonymous
 
+	export let showActions = true
+	export let actionsClass = 'col-span-12 flex items-center justify-end space-x-2 mt-4'
+
+	export let hideCancelButton = false
+	export let cancelButtonText = 'Cancel'
+	export let cancelButtonClass = 'btn btn-ghost normal-case'
+
+	export let hideSubmitButton = false
+	export let submitButtonText = 'Submit'
+	export let submitButtonClass = 'btn btn-primary normal-case px-8'
+
 	const { errors, form: useForm, data: values } = form
 </script>
 
-<form use:useForm class="grid grid-cols-12 gap-1">
+<form use:useForm class="grid grid-cols-12 gap-1 {$$props.class || ''}">
+	<slot name="top" />
 	{#each fields as field}
 		{@const props = {
 			name: field.name,
 			label: field.label,
 			required: field.required,
+			disabled: field.disabled,
 			class: field.class || 'col-span-12',
 			errors: $errors[field.name] || []
 		}}
@@ -90,8 +104,20 @@
 			/>
 		{/if}
 	{/each}
-	<div class="col-span-12 flex items-center justify-end space-x-2 mt-3">
-		<button type="button" class="btn btn-ghost normal-case" on:click={onClose}>Cancel</button>
-		<button type="submit" class="btn btn-primary normal-case px-8" class:loading> Save </button>
-	</div>
+	<slot name="bottom" />
+
+	{#if showActions}
+		<div class={actionsClass}>
+			{#if !hideCancelButton}
+				<button type="button" class={cancelButtonClass} on:click={onClose}>
+					{cancelButtonText}
+				</button>
+			{/if}
+			{#if !hideSubmitButton}
+				<button type="submit" class={submitButtonClass} class:loading>
+					{submitButtonText}
+				</button>
+			{/if}
+		</div>
+	{/if}
 </form>

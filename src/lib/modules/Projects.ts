@@ -1,11 +1,13 @@
-import type { TId, TPagination, TProject, TProjectAttachment, TTestimonial } from '$lib/types'
+import type { TId, TPagination, TProject, TTestimonial } from '$lib/types'
 
 import { z } from 'zod'
-import { useGlobalPageData, type TGlobalPageData } from '$lib/utils/useGlobalPageData'
 import { getSupabasePagination } from '$lib/utils/getSupabasePagination'
+import { useGlobalPageData, type TGlobalPageData } from '$lib/utils/useGlobalPageData'
+import { toPaginated } from '$lib/utils/toPaginated'
 
 type ListFilter = TPagination & {
-	//
+	userId?: TId
+	status?: 'active'
 }
 
 type Filter = {
@@ -29,33 +31,40 @@ export const useProjects = (context?: TGlobalPageData) => {
 	return {
 		createSchema,
 		async list(filter?: ListFilter) {
-			if (!user) {
-				return {
-					data: {
-						page: 1,
-						perPage: 10,
-						data: [] as TTestimonial[]
-					},
-					error: new Error('Unauthorized')
-				}
-			}
+			const { from, to, limit, page, perPage } = getSupabasePagination(filter)
 
-			const { from, to, limit, ...pagination } = getSupabasePagination(filter)
-			const res = await supabase
-				.from('testimonials')
-				.select('*, avatar(*)')
-				.eq('userId', user.id)
+			const query = supabase
+				.from('projects')
+				.select(
+					`*,
+					projectAttachments(*,attachments(*)),
+					projectTechnologies(*,technologies(*))`
+				)
 				.range(from, to)
 				.limit(limit)
 				.order('sortOrder', { ascending: true })
+				.order('sortOrder', {
+					ascending: true,
+					foreignTable: 'projectAttachments'
+				})
+				.order('sortOrder', {
+					ascending: true,
+					foreignTable: 'projectTechnologies'
+				})
+
+			if (filter?.status) query.eq('status', filter.status)
+			if (filter?.userId) query.eq('userId', filter.userId)
+
+			const response = await query
 
 			return {
-				data: {
-					...pagination,
-					count: res.count,
-					data: res.data as TTestimonial[]
-				},
-				error: res.error
+				error: response.error,
+				data: toPaginated({
+					page,
+					perPage,
+					count: response.count,
+					data: response.data as TProject[]
+				})
 			}
 		},
 		async get(filter?: Filter) {
@@ -70,10 +79,21 @@ export const useProjects = (context?: TGlobalPageData) => {
 				.from('projects')
 				.select(
 					`*,
+					projectAttachments(
+						*,attachments(*)
+					),
 					projectTechnologies(
 						*,technologies(*)
 					)`
 				)
+				.order('sortOrder', {
+					ascending: true,
+					foreignTable: 'projectAttachments'
+				})
+				.order('sortOrder', {
+					ascending: true,
+					foreignTable: 'projectTechnologies'
+				})
 				.eq('userId', user.id)
 
 			if (filter?.slug) {
@@ -85,17 +105,10 @@ export const useProjects = (context?: TGlobalPageData) => {
 			const { error, data } = await query
 			if (error) return { error, data }
 
-			const project = data as unknown as TProject
-
-			const projectAttachments = await supabase
-				.from('projectAttachments')
-				.select('*,attachments(*)')
-				.eq('projectId', project.id)
-				.order('sortOrder', { ascending: true })
-
-			project.projectAttachments = (projectAttachments.data ?? []) as TProjectAttachment[]
-
-			return { error, data: project }
+			return {
+				error,
+				data: data as unknown as TProject
+			}
 		},
 		async create(data: CreateSchema) {
 			if (!user) {

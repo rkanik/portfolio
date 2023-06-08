@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { Optional } from '$lib/types.js'
 	import type { SortableOptions } from 'sortablejs'
-	import type { OnUpdatedHandler } from 'sveltuse'
+	import type { OnUpdatedHandler } from 'sveltuse/dist/integrations/useSortable'
 
 	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
+
+	type Item = $$Generic<Record<string, unknown>>
 
 	type DataTableHeader = {
 		text: string
@@ -12,7 +14,7 @@
 
 	export let actions = false
 	export let selectable = true
-	export let items: any[] = []
+	export let items: Item[] = []
 	export let headers: DataTableHeader[] = []
 
 	export let sortable = false
