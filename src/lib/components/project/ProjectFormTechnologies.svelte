@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Nullable, TId, TProject, TProjectTechnology } from '$lib/types'
+	import type { Nullable, TId, TProject, TProjectTechnology, TTechnology } from '$lib/types'
 
 	import { useDebounceFn } from 'sveltuse'
 	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
@@ -9,6 +9,8 @@
 	import Icon from '@iconify/svelte'
 	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
 	import TechnologyPicker from '../TechnologyPicker.svelte'
+	import { getNewSortOrder } from '$lib/utils/getNewSortOrder'
+	import { tick } from 'svelte'
 
 	export let project: TProject
 	export let technologies: TTechnology[]
@@ -21,6 +23,13 @@
 			projectTechnologies: project.projectTechnologies.map((v) => {
 				return v.id === id ? { ...v, ...item } : v
 			})
+		}
+	}
+
+	const push = (...items: TProjectTechnology[]) => {
+		project = {
+			...project,
+			projectTechnologies: [...project.projectTechnologies, ...items]
 		}
 	}
 
@@ -72,18 +81,42 @@
 	}
 
 	// Picker
-	let modal = true
-	let selectedTechnologies: TId[] = []
+	let modal = false
+	let excluded: TTechnology[] = []
 
 	$: {
-		selectedTechnologies = project.projectTechnologies.map((v) => {
-			return v.technologies.id
+		excluded = project.projectTechnologies.map((v) => {
+			return v.technologies
 		})
 	}
 
-	const onSelect = (v: any, ctx: any) => {
-		console.log('onSelect', v)
+	let isInserting = false
+	const onSelect = async (techs: TTechnology[], ctx: any) => {
+		isInserting = true
+		const sortOrder = await getNewSortOrder({
+			add: 1,
+			ascending: false,
+			table: 'projectTechnologies'
+		})
+		const { error, data } = await supabase
+			.from('projectTechnologies')
+			.insert(
+				techs.map((tech, i) => ({
+					projectId: project.id,
+					technologyId: tech.id,
+					isVisible: true,
+					sortOrder: sortOrder + i
+				}))
+			)
+			.select('*,technologies(*)')
+		isInserting = false
 
+		if (error) {
+			console.log('onInsertTechnologies', { error })
+			return
+		}
+
+		push(...(data as TProjectTechnology[]))
 		ctx.reset()
 	}
 </script>
@@ -162,12 +195,12 @@
 		{/each}
 
 		<TechnologyPicker
-			{technologies}
-			inline={false}
-			multiple={true}
 			bind:modal
-			bind:selected={selectedTechnologies}
+			bind:loading={isInserting}
+			{excluded}
+			{technologies}
 			{onSelect}
+			inline={false}
 		>
 			<svelte:fragment>
 				<button

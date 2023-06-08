@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { Nullable, TId, TTechnology } from '$lib/types'
-
-	import { useDebounceFn } from 'sveltuse'
+	import type { TTechnology } from '$lib/types'
 
 	import cn from '$lib/utils/cn'
 	import Icon from '@iconify/svelte'
@@ -9,49 +7,58 @@
 	import Div from './Div.svelte'
 	import BaseModal from './base/BaseModal.svelte'
 
-	const toSelectedArray = (selected: Nullable<TId> | TId[]) => {
-		if (Array.isArray(selected)) return selected
-		if (selected !== null) return [selected]
-		return []
-	}
+	import { useSelect } from '$lib/utils/useSelect'
+	import { tick } from 'svelte'
 
 	export let modal = false
 	export let inline = true
+	export let loading = false
 
-	export let multiple = true
-
-	export let selected: Nullable<TId> | TId[] = multiple ? [] : null
-	export let innerSelected = toSelectedArray(selected)
-	export let newlySelected: TId[] = []
-
+	export let excluded: TTechnology[] = []
 	export let technologies: TTechnology[]
 
-	let innerTechnologies = technologies.filter((v) => {
-		return !innerSelected.includes(v.id)
-	})
-	let innerTechnologiesCopied = [...innerTechnologies]
+	const restTechnologies = (excluded: TTechnology[]) => {
+		return technologies.filter((v) => {
+			return !excluded.some((s) => s.id === v.id)
+		})
+	}
 
-	let search = ''
-	const onInputSearch = useDebounceFn(() => {
-		innerTechnologies = search.trim()
-			? innerTechnologiesCopied.filter((v) => {
-					return (
-						newlySelected.includes(v.id) ||
-						v.name.trim().toLowerCase().includes(search.trim().toLowerCase())
-					)
-			  })
-			: [...innerTechnologiesCopied]
-	}, 300)
+	const {
+		items,
+		selected,
+		setSelected,
+
+		isSelected,
+
+		inputValue,
+		onInputValue,
+		setInputValue,
+
+		onClickItem: toggle
+	} = useSelect({
+		items: restTechnologies(excluded),
+		multiple: true,
+		returnObject: true,
+		itemValue: 'id',
+		itemText: 'name'
+	})
+
+	$: {
+		items.set(restTechnologies(excluded))
+	}
 
 	const reset = () => {
-		search = ''
-		onInputSearch()
-		newlySelected = []
+		tick().then(() => {
+			setInputValue('')
+			setSelected([])
+			items.set(restTechnologies(excluded))
+		})
 		modal = false
+		loading = false
 	}
 
 	export let onSelect: (
-		selected: TTechnology | TTechnology[],
+		selected: TTechnology[],
 		ctx: {
 			reset: () => void
 		}
@@ -59,23 +66,10 @@
 		//
 	}
 
-	const onClickSelect: any = () => {
-		onSelect(
-			(multiple
-				? technologies.filter((v) => newlySelected.includes(v.id))
-				: technologies.find((v) => v.id === newlySelected[0])) as TTechnology | TTechnology[],
-			{
-				reset
-			}
-		)
-	}
-
-	const onToggleSelected = (item: TTechnology) => () => {
-		if (newlySelected.includes(item.id)) {
-			newlySelected = newlySelected.filter((v) => v !== item.id)
-		} else {
-			newlySelected = [...newlySelected, item.id]
-		}
+	const onClickSelect = () => {
+		onSelect($selected, {
+			reset
+		})
 	}
 
 	let isInitialized = inline
@@ -107,18 +101,18 @@
 		</div>
 
 		<input
-			bind:value={search}
 			type="text"
 			placeholder="Search..."
 			class="input w-full mt-4 bg-neutral input-primary"
-			on:input={onInputSearch}
+			value={$inputValue}
+			on:input={onInputValue}
 		/>
 
 		<div class="grid grid-cols-5 gap-2 mt-3">
-			{#each innerTechnologies as technology}
-				{@const active = newlySelected.includes(technology.id)}
+			{#each $items as technology}
+				{@const active = isSelected(technology)}
 				<button
-					on:click={onToggleSelected(technology)}
+					on:click={() => toggle(technology)}
 					class={cn('card px-4 py-4 flex flex-row items-center space-x-4', {
 						'bg-primary text-white': active,
 						'bg-neutral': !active
@@ -136,7 +130,12 @@
 
 		<div class="mt-4 flex items-center justify-end space-x-2">
 			<button type="button" class="btn btn-ghost normal-case" on:click={reset}>Close</button>
-			<button type="button" class="btn btn-primary normal-case px-8" on:click={onClickSelect}>
+			<button
+				class:loading
+				type="button"
+				class="btn btn-primary normal-case px-8"
+				on:click={onClickSelect}
+			>
 				Select
 			</button>
 		</div>

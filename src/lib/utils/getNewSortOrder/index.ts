@@ -1,7 +1,7 @@
 import { useGlobalPageData, type TGlobalPageData } from '../useGlobalPageData'
 
 export const getNewSortOrder = async (options: {
-	table: 'projects' | 'testimonial' | 'projectAttachments'
+	table: 'projects' | 'testimonial' | 'projectAttachments' | 'projectTechnologies'
 	add?: number
 	fallback?: number
 	ascending?: boolean
