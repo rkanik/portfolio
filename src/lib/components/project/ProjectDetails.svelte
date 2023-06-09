@@ -4,6 +4,7 @@
 	import Icon from '@iconify/svelte'
 	import useRequestFullscreen from '$lib/composable/useRequestFullscreen'
 	import src from '$lib/utils/src'
+	import GithubRepository from '../GithubRepository.svelte'
 
 	export let project: TProject
 	export let userTechnologies: TUserTechnology[] = []
@@ -15,34 +16,6 @@
 
 	const onRequestFullscreen = () => {
 		iframeFullscreen.show()
-	}
-
-	let languages: {
-		color: string
-		value: number
-		language: string
-		percentage: number
-	}[] = []
-
-	$: {
-		let entries = Object.entries(project.repository?.languages || {})
-		let total = entries.reduce((sum, [_, value]) => sum + value, 0)
-		languages = entries.map(([language, value]) => {
-			const color =
-				userTechnologies.find((v) => {
-					return v.technologies.name === language.toLowerCase()
-				})?.technologies.color || 'black'
-			return {
-				value,
-				color,
-				language,
-				percentage: (value / total) * 100
-			}
-		})
-	}
-
-	const toArray = <T>(v: T): T => {
-		return (Array.isArray(v) ? v : []) as T
 	}
 </script>
 
@@ -166,48 +139,7 @@
 			</div>
 
 			{#if project.repository}
-				<div>
-					<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Contributors</div>
-					<div class="flex flex-wrap -ml-1 mt-2">
-						{#each toArray(project.repository.contributors) as contributor}
-							<div class="tooltip" data-tip={`@${contributor.login}`}>
-								<a href={contributor.html_url} target="_blank" rel="noreferrer" class="ml-1 mt-1">
-									<div class="avatar">
-										<div class="w-8 rounded-full">
-											<img src={contributor.avatar_url} alt={contributor.login} />
-										</div>
-									</div>
-								</a>
-							</div>
-						{/each}
-					</div>
-				</div>
-
-				<div>
-					<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Languages</div>
-					<div class="mt-2">
-						<div class="flex w-full h-2 bg-base-100 rounded-full overflow-hidden">
-							{#each toArray(languages) as language}
-								<div
-									class="h-2"
-									style="width: {language.percentage}%;background-color:{language.color}"
-								/>
-							{/each}
-						</div>
-
-						<div class="mt-2 flex flex-wrap -ml-2">
-							{#each toArray(languages) as language}
-								<div class="flex items-center space-x-2 ml-2 mt-2">
-									<div class="h-2 w-2 rounded-full" style="background-color:{language.color}" />
-									<div class="text-sm font-medium">{language.language}</div>
-									<div class="text-xs text-opacity-40 text-white font-normal">
-										{language.percentage.toFixed(1)}%
-									</div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				</div>
+				<GithubRepository repository={project.repository} />
 			{/if}
 		</div>
 	</div>

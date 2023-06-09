@@ -24,6 +24,7 @@
 		{ path: '/admin/uploads', name: 'Uploads' },
 		{ path: '/admin/storage', name: 'Storage' },
 		{ path: '/admin/sortable', name: 'Sortable' },
+		{ path: '/admin/menu', name: 'Menu' }
 	]
 </script>
 

@@ -1,7 +1,8 @@
 import isObject from 'lodash/isObject'
+import getStoreValue from '$lib/utils/getStoreValue'
 
+import { useDebounceFn } from 'sveltuse'
 import { writable, type Readable } from 'svelte/store'
-import { getStoreValue, useDebounceFn } from 'sveltuse'
 
 type OnInputHandler = (
 	event: Event & {

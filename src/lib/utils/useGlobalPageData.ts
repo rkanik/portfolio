@@ -12,6 +12,6 @@ export type TGlobalPageData = {
 	supabase: SupabaseClient<Database>
 }
 
-export const useGlobalPageData = () => {
-	return toValue(page).data as TGlobalPageData
+export const useGlobalPageData = <T>() => {
+	return toValue(page).data as T & TGlobalPageData
 }

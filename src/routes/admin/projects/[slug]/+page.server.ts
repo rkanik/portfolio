@@ -24,7 +24,7 @@ export const load = async ({ params, locals: { getContext } }) => {
 		(
 			await context.supabase
 				.from('userTechnologies')
-				.select('id,technologies(id,icon,name)')
+				.select('id,technologies(*)')
 				.eq('userId', context.user.id)
 		)?.data || []
 	).map((v) => v.technologies) as TTechnology[]

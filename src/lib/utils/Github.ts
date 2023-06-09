@@ -19,7 +19,8 @@ const fetchWithFallback = <T>(url: string, fallback: T) => {
 	return new Promise<T>((resolve) => {
 		fetch(url, {
 			headers: new Headers({
-				Authorization: `Bearer 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`
+				Authorization: `Bearer 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`
+				// Authorization: `Bearer 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`
 			})
 		})
 			.then((raw) => raw.json())

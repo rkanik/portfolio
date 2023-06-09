@@ -19,7 +19,7 @@ export const load = async ({ locals: { getContext } }) => {
 			.select(
 				`*,
 				projectAttachments(*,attachments(*)),
-				projectTechnologies(id,technologies(id,name,icon))`
+				projectTechnologies(id,technologies(*))`
 			)
 			.eq('status', 'active')
 			.order('sortOrder', { ascending: true })

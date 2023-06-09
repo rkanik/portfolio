@@ -3,149 +3,27 @@
 	import type { OnSelectHandlerMultiple } from '$lib/components/StorageManager2.svelte'
 
 	import { onMount } from 'svelte'
-	import { createForm } from 'felte'
 	import { page } from '$app/stores'
-	import { validator } from '@felte/validator-zod'
+	import { useStates } from 'sveltuse'
+	import { goto } from '$app/navigation'
 	import { useProjects } from '$lib/modules/Projects'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
 	import { getNewSortOrder } from '$lib/utils/getNewSortOrder'
 	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder'
 
-	import z from 'zod'
 	import cn from '$lib/utils/cn'
 
 	import Icon from '@iconify/svelte'
-	import Github from '$lib/utils/Github'
-	import TextField from '$lib/components/base/TextField.svelte'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
 	import StoragePicker from '$lib/components/StoragePicker.svelte'
-	import Autocomplete from '$lib/components/base/Autocomplete.svelte'
 	import SvelteSortable from 'sveltuse/dist/components/SvelteSortable.svelte'
-	import { useStates } from 'sveltuse'
-	import { goto } from '$app/navigation'
 	import ProjectFormBasic from '$lib/components/project/ProjectFormBasic.svelte'
+	import ProjectPreviewForm from '$lib/components/project/ProjectPreviewForm.svelte'
+	import ProjectRepositoryForm from '$lib/components/project/ProjectRepositoryForm.svelte'
 	import ProjectFormTechnologies from '$lib/components/project/ProjectFormTechnologies.svelte'
 
 	export let data
 	let { project, supabase, technologies } = data
-
-	const nullableURL = z
-		.union([z.string().length(0), z.string().url()])
-		.nullable()
-		.transform((e) => (!e?.trim() ? null : e))
-
-	const projectSchema = z.object({
-		name: z.string().min(1, 'Required.'),
-		slug: z.string().min(1, 'Required.'),
-		description: z.string().nullable(),
-		previewUrl: nullableURL,
-		sourceCodeUrl: nullableURL,
-		status: z.boolean().default(false),
-		technologies: z.array(
-			z.object({
-				technologies: z.object({
-					id: z.string()
-				})
-			})
-		)
-	})
-
-	type TProjectSchema = z.infer<typeof projectSchema>
-
-	// const supabase = getSupabaseContext()
-
-	const {
-		errors,
-		isSubmitting,
-		data: values,
-		form,
-		setIsSubmitting,
-		setFields,
-		setData
-	} = createForm<TProjectSchema>({
-		extend: validator({ schema: projectSchema }),
-		initialValues: {
-			name: project?.name || '',
-			slug: project?.slug || '',
-			description: project?.description || null,
-			previewUrl: project?.previewUrl || null,
-			sourceCodeUrl: project?.sourceCodeUrl || null,
-			status: project?.status === 'active'
-		},
-		async onSubmit(values, context) {
-			if (!project) return
-
-			console.log('onSubmit', { values })
-
-			setIsSubmitting(true)
-			const { data, error } = await supabase
-				.from('projects')
-				.update({
-					name: values.name,
-					slug: values.name.split(' ').join('-').trim().toLowerCase(),
-					previewUrl: values.previewUrl,
-					description: values.description,
-					sourceCodeUrl: values.sourceCodeUrl,
-					status: values.status ? 'active' : 'disabled'
-				})
-				.eq('id', project.id)
-
-			await supabase
-				.from('projectTechnologies')
-				.delete()
-				.in(
-					'technologyId',
-					project.projectTechnologies
-						.filter((tech) => {
-							return !values.technologies.some((item) => {
-								return item.technologies.id === tech.technologies.id
-							})
-						})
-						.map((v) => v.technologies.id)
-				)
-
-			await supabase.from('projectTechnologies').insert(
-				values.technologies
-					.filter((tech) => {
-						return !project.projectTechnologies.some((item) => {
-							return item.technologies.id === tech.technologies.id
-						})
-					})
-					.map((tech) => ({
-						projectId: project.id,
-						technologyId: tech.technologies.id
-					}))
-			)
-
-			setIsSubmitting(false)
-
-			console.log({ data, error })
-		}
-	})
-
-	const onRefreshRepository = async () => {
-		if (!project) return
-
-		if (project.repository) {
-			console.log('repository', project.repository)
-			return
-		}
-
-		if (!project.sourceCodeUrl) return
-
-		const repositoryPath = project.sourceCodeUrl.split('/').slice(-2).join('/')
-		const repository = await Github.getRepository(repositoryPath)
-
-		console.log('repository', repository)
-
-		const { data, error } = await supabase
-			.from('projects')
-			.update({ repository })
-			.eq('id', project.id)
-			.single()
-
-		console.log('onRefreshRepository', error, data)
-	}
 
 	const Projects = useProjects()
 	const fetchProject = async () => {
@@ -180,13 +58,6 @@
 		)
 
 		fetchProject()
-	}
-
-	$: {
-		if (!$values.previewUrl && $values.previewUrl !== null) {
-			console.log('setData')
-			setData('previewUrl', null)
-		}
 	}
 
 	const onDeleteProjectAttachment = (projectAttachment: TProjectAttachment) => async () => {
@@ -308,30 +179,9 @@
 				{/if}
 			</div>
 		{:else if $currentTab === 'Preview'}
-			<TextField
-				name="previewUrl"
-				label="Preview URL"
-				placeholder="Preview url.."
-				errors={$errors.previewUrl || []}
-			/>
-			{#if values.previewUrl}
-				<iframe
-					title={values.name}
-					src={values.previewUrl}
-					frameborder="0"
-					class="flex-1 w-full rounded-2xl h-96"
-				/>
-			{/if}
+			<ProjectPreviewForm bind:project class="mt-4" />
 		{:else if $currentTab === 'Repository'}
-			<TextField
-				name="sourceCodeUrl"
-				label="Source Code URL"
-				placeholder="Preview url.."
-				errors={$errors.sourceCodeUrl || []}
-			/>
-			<button type="button" class="btn btn-primary" on:click={onRefreshRepository}>
-				Refresh Repository
-			</button>
+			<ProjectRepositoryForm bind:project class="mt-4" />
 		{/if}
 	{/if}
 </div>

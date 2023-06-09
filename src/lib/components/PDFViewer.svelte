@@ -2,7 +2,7 @@
 	import cn from '$lib/utils/cn'
 	import Icon from '@iconify/svelte'
 
-	import { usePDF } from 'sveltuse/dist/integrations'
+	import usePDF from 'sveltuse/dist/integrations/usePDF'
 
 	export let src: string
 	let pagesContainer: HTMLDivElement
