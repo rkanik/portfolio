@@ -65,7 +65,7 @@
 
 <form
 	use:form
-	class="absolute w-full max-w-lg p-5 border border-white shadow-2xl bg-primary bg-opacity-10 backdrop-blur-3xl border-opacity-10 rounded-xl xl:p-16 right-16 -top-32 min-h-[740px] flex flex-col"
+	class="w-full lg:max-w-md xl:max-w-lg p-5 border border-white shadow-2xl bg-primary bg-opacity-10 backdrop-blur-3xl border-opacity-10 rounded-xl xl:p-16 right-16 -top-32 min-h-[740px] flex flex-col {$$props.class}"
 >
 	{#if inquiry}
 		<div class="flex flex-col items-center justify-center flex-1">

@@ -8,7 +8,8 @@ export const getPublicUrl = (
 	type: 'thumbnail' | 'medium' | 'src' = 'thumbnail'
 ) => {
 	if (!attachment) return `/img/fallback-image.webp`
-	const name = type ? attachment[type] : attachment.thumbnail || attachment.medium || attachment.src
+	const name = attachment[type] || attachment.thumbnail || attachment.medium || attachment.src
+	console.log({ attachment, name })
 	const supabase = toValue(page).data.supabase as TSupabase
 	return (
 		supabase.storage.from(attachment.bucket).getPublicUrl(`${attachment.folder}/${name}`)?.data

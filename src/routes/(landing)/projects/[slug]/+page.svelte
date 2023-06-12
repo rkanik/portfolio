@@ -19,9 +19,11 @@
 	}
 </script>
 
-<div class="container mx-auto min-h-screen pt-5">
-	<ProjectDetails {project} {userTechnologies} />
-	<div class="grid grid-cols-1 gap-8 mt-8 md:grid-cols-4">
+<div class="container px-5 mx-auto min-h-screen pt-5">
+	<ProjectDetails {project} hideClose />
+	<div
+		class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5 md:gap-6 lg:gap-7 xl:gap-8 mt-8"
+	>
 		{#each projects.slice(0, max) as project}
 			<ProjectCard {project} />
 		{/each}

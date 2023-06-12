@@ -3,13 +3,13 @@
 	import rocketImage from '$lib/assets/img/rocket-small.webp'
 </script>
 
-<div class="container min-h-screen mx-auto {$$props.class}">
-	<div class="relative">
+<div class="container p-5 min-h-screen mx-auto {$$props.class}">
+	<div class="relative space-y-5 lg:space-y-0">
 		<div
 			class="p-4 border border-white rounded-xl bg-base-100 border-opacity-10 md:p-12 lg:p-16 xl:p-20"
 		>
 			<div class="flex items-center justify-between w-full">
-				<div class="max-w-xl">
+				<div class="lg:max-w-sm xl:max-w-xl">
 					<div class="text-sm font-medium tracking-widest uppercase text-secondary">Contact me</div>
 					<h2 class="mt-4 text-5xl font-bold">Get in Touch</h2>
 					<div class="mt-4 text-lg">
@@ -23,10 +23,10 @@
 					width="300"
 					height="300"
 					src={rocketImage}
-					class="object-cover object-center rounded-xl"
+					class="object-cover object-center rounded-xl hidden lg:block"
 				/>
 			</div>
 		</div>
-		<ContactMeForm />
+		<ContactMeForm class="lg:absolute" />
 	</div>
 </div>

@@ -35,7 +35,7 @@
 		background = window.scrollY > 80 ? 'bg-base-200' : 'bg-transparent'
 	}
 
-	const breakpoints = useBreakpoints()
+	useBreakpoints()
 
 	onMount(() => {
 		calculateProperties()
@@ -110,8 +110,10 @@
 				{/each}
 			</ul>
 		</div>
-		<div class="ml-8">
-			<a href="/contact" class="rounded-full btn btn-outline btn-secondary">Contact Me</a>
+		<div class="ml-auto lg:ml-8">
+			<a href="/contact" class="rounded-full btn btn-sm lg:btn-md btn-outline btn-secondary"
+				>Contact Me</a
+			>
 		</div>
 	</div>
 </div>

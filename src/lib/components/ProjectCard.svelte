@@ -16,23 +16,25 @@
 <div
 	class="relative overflow-hidden border-white card card-bordered bg-base-100 border-opacity-10 rounded-xl"
 >
-	<a
-		target="_blank"
-		rel="noreferrer"
-		href="https://encoderit.net/"
-		class="flex items-center space-x-1 absolute top-2 left-2 z-10 bg-white rounded-full pr-3 bg-opacity-50 backdrop-blur"
-	>
-		<div class="avatar">
-			<div class="w-7 rounded-full bg-white">
-				<img
-					alt="EIT"
-					src="https://encoderit.net/wp-content/themes/encoderit/assets/images/favicon.ico"
-					class="p-1"
-				/>
+	{#if project?.repository?.owner}
+		<a
+			target="_blank"
+			rel="noreferrer"
+			href={project.repository.owner.html_url}
+			class="flex items-center space-x-1 absolute top-2 left-2 z-10 bg-white rounded-full pr-3 bg-opacity-50 backdrop-blur"
+		>
+			<div class="avatar">
+				<div class="w-7 rounded-full bg-white">
+					<img
+						alt={project.repository.owner.login}
+						src={project.repository.owner.avatar_url}
+						class="p-1"
+					/>
+				</div>
 			</div>
-		</div>
-		<div class="text-sm font-slab font-medium text-black">Encoder IT</div>
-	</a>
+			<div class="text-sm font-slab font-medium text-black">{project.repository.owner.login}</div>
+		</a>
+	{/if}
 
 	{#if showThumbnail}
 		{@const attachment = project.projectAttachments[0]?.attachments}
@@ -46,6 +48,7 @@
 			/>
 		</a>
 	{/if}
+
 	<div class="border-t border-white card-body border-opacity-10">
 		<h2 class="flex items-center justify-between card-title">
 			<a

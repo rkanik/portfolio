@@ -1,8 +1,17 @@
 <script lang="ts">
-	import type { Nullable, TGithubRepository, TTechnology, TUserTechnology } from '$lib/types'
+	import type {
+		Nullable,
+		TGithubContributor,
+		TGithubRepository,
+		TTechnology,
+		TUserTechnology
+	} from '$lib/types'
 	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 	export let repository: Nullable<TGithubRepository> = null
+	export let hideName = false
+	export let hideOwner = false
+	export let hideDescription = false
 
 	type Language = {
 		color: string
@@ -67,40 +76,55 @@
 	const toArray = <T>(v: T): T => {
 		return (Array.isArray(v) ? v : []) as T
 	}
+
+	let contributors: TGithubContributor[] = []
+	$: if (repository?.contributors) {
+		let _contributors = toArray(repository.contributors)
+		if (repository?.owner) {
+			_contributors = _contributors.filter((contributor) => {
+				return contributor.login !== repository?.owner.login
+			})
+		}
+		contributors = _contributors
+	}
 </script>
 
 <div class={$$props.class}>
 	{#if repository}
-		<div>
-			<div class="uppercase text-secondary text-xs mb-1 tracking-wider">
-				Name
-				{#if repository.private}
-					<div class="badge badge-xs normal-case text-xs">Private</div>
-				{/if}
-			</div>
-			<div class="flex flex-wrap -ml-1 mt-2">
-				<a href={repository.html_url} class="text-blue-500 hover:underline text-base font-medium"
-					>{repository.full_name}</a
-				>
-			</div>
-		</div>
-
-		<div class="flex-none">
-			<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Owner</div>
-			<div class="flex flex-wrap -ml-1 mt-2">
-				<div class="tooltip" data-tip={`@${repository.owner.login}`}>
-					<a href={repository.owner.html_url} target="_blank" rel="noreferrer" class="ml-1 mt-1">
-						<div class="avatar">
-							<div class="w-8 rounded-full">
-								<img src={repository.owner.avatar_url} alt={repository.owner.login} />
-							</div>
-						</div>
-					</a>
+		{#if !hideName}
+			<div>
+				<div class="uppercase text-secondary text-xs mb-1 tracking-wider">
+					Name
+					{#if repository.private}
+						<div class="badge badge-xs normal-case text-xs">Private</div>
+					{/if}
+				</div>
+				<div class="flex flex-wrap -ml-1 mt-2">
+					<a href={repository.html_url} class="text-blue-500 hover:underline text-base font-medium"
+						>{repository.full_name}</a
+					>
 				</div>
 			</div>
-		</div>
+		{/if}
 
-		{#if repository.description}
+		{#if !hideOwner}
+			<div class="flex-none">
+				<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Owner</div>
+				<div class="flex flex-wrap -ml-1 mt-2">
+					<div class="tooltip" data-tip={`@${repository.owner.login}`}>
+						<a href={repository.owner.html_url} target="_blank" rel="noreferrer" class="ml-1 mt-1">
+							<div class="avatar">
+								<div class="w-8 rounded-full">
+									<img src={repository.owner.avatar_url} alt={repository.owner.login} />
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		{/if}
+
+		{#if !hideDescription && repository.description}
 			<div>
 				<div class="uppercase text-secondary text-xs mb-1 tracking-wider">About</div>
 				<div class="flex flex-wrap -ml-1 mt-2">
@@ -109,22 +133,24 @@
 			</div>
 		{/if}
 
-		<div>
-			<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Contributors</div>
-			<div class="flex flex-wrap -ml-1 mt-2">
-				{#each toArray(repository.contributors) as contributor}
-					<div class="tooltip" data-tip={`@${contributor.login}`}>
-						<a href={contributor.html_url} target="_blank" rel="noreferrer" class="ml-1 mt-1">
-							<div class="avatar">
-								<div class="w-8 rounded-full">
-									<img src={contributor.avatar_url} alt={contributor.login} />
+		{#if contributors.length}
+			<div>
+				<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Contributors</div>
+				<div class="flex flex-wrap -ml-1 mt-2">
+					{#each contributors as contributor}
+						<div class="tooltip" data-tip={`@${contributor.login}`}>
+							<a href={contributor.html_url} target="_blank" rel="noreferrer" class="ml-1 mt-1">
+								<div class="avatar">
+									<div class="w-8 rounded-full">
+										<img src={contributor.avatar_url} alt={contributor.login} />
+									</div>
 								</div>
-							</div>
-						</a>
-					</div>
-				{/each}
+							</a>
+						</div>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 
 		<div>
 			<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Languages</div>

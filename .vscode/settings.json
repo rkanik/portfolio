@@ -12,5 +12,6 @@
 		"sveltuse",
 		"tailwindcss",
 		"TORV"
-	]
+	],
+	"typescript.tsdk": "node_modules\\typescript\\lib"
 }

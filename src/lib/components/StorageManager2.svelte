@@ -121,6 +121,41 @@
 			let ext = item._.file.name.split('.').pop()
 
 			const name = url.split('/').pop() as string
+
+			if (!isImage(item._.file.name)) {
+				const { data: fileObject } = await supabase.storage
+					.from(bucket)
+					.upload(`${folder}/${name}.${ext}`, item._.file)
+
+				const { data: attachment, error } = await supabase
+					.from('attachments')
+					.insert({
+						bucket,
+						folder,
+						userId: user.id,
+						name: `${name}.${ext}`,
+						mimeType: item._.file.type,
+						src: (fileObject?.path || '').split('/').pop() || '',
+						medium: null,
+						thumbnail: null,
+						base64: ''
+					})
+					.select('*')
+					.single()
+
+				item.update({ isLoading: false })
+
+				if (error) {
+					console.log('attachment:error', error)
+					return
+				}
+
+				item.remove()
+				attachments.unshift(attachment)
+
+				return
+			}
+
 			const name800 = name + '--800p'
 			const name400 = name + '--400p'
 

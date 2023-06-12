@@ -6,4 +6,4 @@
 	<title>Contact | Rasel Khandkar</title>
 </svelte:head>
 
-<ContactMeSection class="pt-64 pb-64" />
+<ContactMeSection class="lg:pt-64 lg:pb-64" />

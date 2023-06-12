@@ -1,6 +1,6 @@
 <script lang="ts">
 	import cn from '$lib/utils/cn'
-	import { createEventDispatcher, onMount } from 'svelte'
+	import { onMount } from 'svelte'
 
 	export let title = ''
 	export let src: string
@@ -10,11 +10,11 @@
 	export let height = 768
 
 	export let initialScale = 1
+	export let iframe: HTMLIFrameElement
 
 	let scale = 1
 	let scaledHeight = height * initialScale
 
-	let iframe: HTMLIFrameElement
 	let container: HTMLElement
 
 	let isLoading = true
@@ -38,7 +38,7 @@
 <div
 	bind:this={container}
 	style={`--scale: ${scale};height: ${scaledHeight}px`}
-	class={cn('base-iframe overflow-hidden relative rounded-2xl', $$props.class)}
+	class={cn('base-iframe overflow-hidden relative rounded-2xl w-full', $$props.class)}
 >
 	<iframe
 		{src}

@@ -32,7 +32,7 @@
 		<slot />
 	</div>
 
-	<footer class="p-16 footer footer-center">
+	<footer class="p-4 lg:p-16 footer footer-center">
 		<a href="/" class="inline text-2xl font-bold">
 			<span>R</span><span class="text-secondary">.</span><span>K</span><span class="text-secondary"
 				>.</span

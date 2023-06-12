@@ -30,7 +30,7 @@
 		</div>
 	</div>
 
-	<Projects max={4} projects={data.projects} userTechnologies={data.userTechnologies} />
+	<Projects max={4} projects={data.projects.data} userTechnologies={data.userTechnologies} />
 	<TestimonialSection {testimonials} />
 
 	<ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />

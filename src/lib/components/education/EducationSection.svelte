@@ -7,7 +7,7 @@
 </script>
 
 <BaseSection class={$$props.class} subheader="Education" title="Educational Qualifications">
-	<div class="pt-8 pb-16">
+	<div class="pt-8 pb-16 pl-7 lg:pl-0">
 		<EducationTimeline {educations} />
 	</div>
 </BaseSection>

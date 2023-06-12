@@ -5,9 +5,10 @@
 	import useRequestFullscreen from '$lib/composable/useRequestFullscreen'
 	import src from '$lib/utils/src'
 	import GithubRepository from '../GithubRepository.svelte'
+	import BaseIFrame from '../base/BaseIFrame.svelte'
 
 	export let project: TProject
-	export let userTechnologies: TUserTechnology[] = []
+	export let hideClose = false
 
 	let iframe: HTMLIFrameElement
 	let iframeFullscreen = useRequestFullscreen(() => {
@@ -19,15 +20,18 @@
 	}
 </script>
 
-<div class="flex min-h-[80vh] space-x-5">
-	<div class="flex flex-col flex-1">
+<div
+	class="flex min-h-[80vh] flex-col lg:flex-row space-y-5 lg:space-y-0 lg:space-x-5 overflow-hidden"
+>
+	<div class="flex flex-col flex-1 overflow-hidden">
 		{#if project.previewUrl}
-			<iframe
-				bind:this={iframe}
+			<BaseIFrame
+				bind:iframe
+				height={769}
+				width={1366}
+				initialScale={0.828696925329429}
 				title={project.name}
 				src={project.previewUrl}
-				frameborder="0"
-				class="flex-1 w-full rounded-2xl"
 			/>
 		{:else}
 			<div>
@@ -39,7 +43,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="flex-none max-w-sm w-full">
+	<div class="flex-none lg:max-w-sm w-full">
 		<div class="flex items-center flex-none p-2 mb-5 rounded-2xl bg-base-100">
 			<div class="px-2 text-base font-medium">Project Details</div>
 			<div class="flex ml-auto space-x-1">
@@ -73,11 +77,13 @@
 					</a>
 				</div>
 
-				<div class="tooltip tooltip-left tooltip-primary" data-tip="Close modal">
-					<button class="btn btn-circle btn-sm" on:click={close}>
-						<Icon class="text-xl" icon="mdi:close" />
-					</button>
-				</div>
+				{#if !hideClose}
+					<div class="tooltip tooltip-left tooltip-primary" data-tip="Close modal">
+						<button class="btn btn-circle btn-sm" on:click={close}>
+							<Icon class="text-xl" icon="mdi:close" />
+						</button>
+					</div>
+				{/if}
 			</div>
 		</div>
 
@@ -139,7 +145,12 @@
 			</div>
 
 			{#if project.repository}
-				<GithubRepository repository={project.repository} />
+				<GithubRepository
+					repository={project.repository}
+					hideName
+					class="space-y-6"
+					hideDescription
+				/>
 			{/if}
 		</div>
 	</div>
