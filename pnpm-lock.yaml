@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -32,9 +32,6 @@ dependencies:
   daisyui:
     specifier: ^2.52.0
     version: 2.52.0(autoprefixer@10.4.14)(postcss@8.4.22)
-  darkreader:
-    specifier: ^4.9.58
-    version: 4.9.58
   date-picker-svelte:
     specifier: ^2.4.3
     version: 2.4.3(svelte@3.59.1)
@@ -62,6 +59,9 @@ dependencies:
   svelte-dragdroplist:
     specifier: ^1.1.1
     version: 1.1.1(svelte@3.59.1)
+  sveltuse:
+    specifier: ^0.0.16
+    version: 0.0.16(@types/sortablejs@1.15.1)(sortablejs@1.15.0)(svelte@3.59.1)
   theme-change:
     specifier: ^2.5.0
     version: 2.5.0
@@ -953,7 +953,6 @@ packages:
 
   /@types/sortablejs@1.15.1:
     resolution: {integrity: sha512-g/JwBNToh6oCTAwNS8UGVmjO7NLDKsejVhvE4x1eWiPTC3uCuNsa/TD4ssvX3du+MLiM+SHPNDuijp8y76JzLQ==}
-    dev: true
 
   /@types/websocket@1.0.5:
     resolution: {integrity: sha512-NbsqiNX9CnEfC1Z0Vf4mE1SgAJ07JnRYcNex7AJ9zAVzmiGHmjKFEk7O4TJIsgv2B1sLEb6owKFZrACwdYngsQ==}
@@ -1360,10 +1359,6 @@ packages:
       tailwindcss: 3.3.1(postcss@8.4.22)
     transitivePeerDependencies:
       - ts-node
-    dev: false
-
-  /darkreader@4.9.58:
-    resolution: {integrity: sha512-D/JGoJqW3m2AWBLhO+Pev+eThfs+CwRT4bcLb/1zKjql2yVwG0lx8C2XRDdSVGHw4y11n26W7syWoBpUfuhMqQ==}
     dev: false
 
   /data-uri-to-buffer@4.0.1:
@@ -2719,6 +2714,27 @@ packages:
   /svelte@3.59.1:
     resolution: {integrity: sha512-pKj8fEBmqf6mq3/NfrB9SLtcJcUvjYSWyePlfCqN9gujLB25RitWK8PvFzlwim6hD/We35KbPlRteuA6rnPGcQ==}
     engines: {node: '>= 8'}
+
+  /sveltuse@0.0.16(@types/sortablejs@1.15.1)(sortablejs@1.15.0)(svelte@3.59.1):
+    resolution: {integrity: sha512-m32lK/XTFqSxBggH7cPOqUa2pCOvtU390KcJ6u1NCQuMaOg9QD6dhhctg+I9Z7zvstC/27JxndiSMeVAssaYEg==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    peerDependencies:
+      '@types/sortablejs': '*'
+      darkreader: '*'
+      sortablejs: '*'
+      svelte: '*'
+    peerDependenciesMeta:
+      '@types/sortablejs':
+        optional: true
+      darkreader:
+        optional: true
+      sortablejs:
+        optional: true
+    dependencies:
+      '@types/sortablejs': 1.15.1
+      sortablejs: 1.15.0
+      svelte: 3.59.1
+    dev: false
 
   /tailwindcss@3.3.1(postcss@8.4.22):
     resolution: {integrity: sha512-Vkiouc41d4CEq0ujXl6oiGFQ7bA3WEhUZdTgXAhtKxSy49OmKs8rEfQmupsfF0IGW8fv2iQkp1EVUuapCFrZ9g==}

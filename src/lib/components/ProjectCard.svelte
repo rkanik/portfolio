@@ -16,7 +16,7 @@
 <div
 	class="relative overflow-hidden border-white card card-bordered bg-base-100 border-opacity-10 rounded-xl"
 >
-	{#if project?.repository?.owner}
+	{#if project?.repository?.owner && project.repository.owner.login !== 'rkanik'}
 		<a
 			target="_blank"
 			rel="noreferrer"
@@ -28,7 +28,7 @@
 					<img
 						alt={project.repository.owner.login}
 						src={project.repository.owner.avatar_url}
-						class="p-1"
+						class="p-1 rounded-full"
 					/>
 				</div>
 			</div>

@@ -112,6 +112,16 @@
 		const { data: project } = await Projects.update(item.id, { sortOrder })
 		if (project) update(project.id, project)
 	}
+
+	// Delete
+	const onDelete = async (event: CustomEvent<TProject>) => {
+		if (confirm('Are you sure you want delete this project?')) {
+			const { data } = await Projects.delete(event.detail.id)
+			projects.data = projects.data.filter((project) => {
+				return !data.some((item) => item.id === project.id)
+			})
+		}
+	}
 </script>
 
 <svelte:head>
@@ -136,7 +146,13 @@
 		</BaseModal>
 
 		<!-- eager={false} -->
-		<BaseModal bind:value={viewModal} hideClose modalBox="max-w-7xl bg-gray-700" let:onClose>
+		<BaseModal
+			bind:value={viewModal}
+			hideClose
+			activator={false}
+			modalBox="max-w-7xl bg-gray-700"
+			let:onClose
+		>
 			{#if currentProject}
 				<ProjectDetails
 					{onClose}
@@ -245,6 +261,7 @@
 						{ text: 'Delete', event: 'delete', icon: 'ic:outline-delete' }
 					]}
 					on:view={onView}
+					on:delete={onDelete}
 					on:status={onToggleStatus}
 				/>
 			</svelte:fragment>
