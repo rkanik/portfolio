@@ -1,47 +1,74 @@
-<script>
-	import { useOffsetPagination } from 'sveltuse/dist/core/useOffsetPagination'
-	import BaseJson from './BaseJson.svelte'
-	import cn from '$lib/utils/cn'
-	import { number } from 'zod'
+<script lang="ts">
+	import type { AnyFn } from '$lib/types'
 
-	const { pages, page, lastPage, isFirstPage, isLastPage, prev, next } = useOffsetPagination({
-		page: 99,
-		total: 1057,
-		perPage: 10,
-		totalVisible: 7,
-		onChange(v) {
-			console.log(v)
-		}
+	import cn from '$lib/utils/cn'
+
+	import { noop } from 'svelte/internal'
+	import { useOffsetPagination } from 'sveltuse/dist/core/useOffsetPagination'
+
+	export let onChange: AnyFn = noop
+	export let page = 1
+	export let total = 10
+	export let perPage = 10
+	export let totalVisible = 7
+
+	const {
+		pages,
+		page: currentPage,
+		total: currentTotal,
+		perPage: currentPerPage,
+		isFirstPage,
+		isLastPage,
+		gotoFirstPage,
+		gotoPreviousPage,
+		goto,
+		gotoNextPage,
+		gotoLastPage
+	} = useOffsetPagination({
+		page,
+		total,
+		perPage,
+		totalVisible,
+		onChange
 	})
+
+	$: {
+		console.log($currentPage, $currentPerPage, $currentTotal)
+	}
+
+	$: {
+		goto(page)
+	}
+
+	$: {
+		currentTotal.set(total)
+	}
+
+	$: {
+		currentPerPage.set(perPage)
+	}
 </script>
 
-<div>
-	<div class="btn-group">
+<div class={cn('btn-group', $$props.class)}>
+	<button class={cn('btn', { 'btn-disabled': $isFirstPage })} on:click={gotoFirstPage}>
+		{`<<`}
+	</button>
+	<button class={cn('btn', { 'btn-disabled': $isFirstPage })} on:click={gotoPreviousPage}>
+		{`<`}
+	</button>
+
+	{#each $pages as page}
 		<button
-			class={cn('btn', { 'btn-disabled': $isFirstPage })}
-			on:click={() => {
-				page.set(1)
-			}}
+			class={cn('btn', {
+				'btn-active': page === $currentPage,
+				'btn-disabled': page === '...'
+			})}
+			on:click={() => goto(page)}
 		>
-			{`<<`}
+			{page}
 		</button>
-		<button class={cn('btn', { 'btn-disabled': $isFirstPage })} on:click={prev}>{`<`}</button>
-		{#each $pages as item}
-			<button
-				class={cn('btn', {
-					'btn-active': item === $page,
-					'btn-disabled': item === '...'
-				})}
-				on:click={() => {
-					if (typeof item === 'number') {
-						page.set(item)
-					}
-				}}>{item}</button
-			>
-		{/each}
-		<button class={cn('btn', { 'btn-disabled': $isLastPage })} on:click={next}>{`>`}</button>
-		<button class={cn('btn', { 'btn-disabled': $isLastPage })} on:click={() => page.set($lastPage)}
-			>{`>>`}</button
-		>
-	</div>
+	{/each}
+
+	<button class={cn('btn', { 'btn-disabled': $isLastPage })} on:click={gotoNextPage}>{`>`}</button>
+	<button class={cn('btn', { 'btn-disabled': $isLastPage })} on:click={gotoLastPage}>{`>>`}</button>
 </div>

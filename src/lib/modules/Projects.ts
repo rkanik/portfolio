@@ -38,7 +38,7 @@ const select = `
 	)
 `
 
-const order = <T extends AnyObject>(query: T) => {
+const order = <T extends AnyObject>(query: T): T => {
 	return query
 		.order('sortOrder', { ascending: true })
 		.order('sortOrder', {
@@ -61,7 +61,9 @@ export const useProjects = (context?: TGlobalPageData) => {
 		async list(filter?: ListFilter) {
 			const { from, to, limit, page, perPage } = getSupabasePagination(filter)
 
-			const query = order(supabase.from('projects').select(select).range(from, to).limit(limit))
+			const query = order(
+				supabase.from('projects').select(select, { count: 'exact' }).range(from, to).limit(limit)
+			)
 
 			if (filter?.status) query.eq('status', filter.status)
 			if (filter?.userId) query.eq('userId', filter.userId)

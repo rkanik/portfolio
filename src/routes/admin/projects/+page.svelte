@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BaseFormField, TId, TProject } from '$lib/types'
+	import type { BaseFormField, TId, TProject, TUser } from '$lib/types'
 
 	import Icon from '@iconify/svelte'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
@@ -17,9 +17,10 @@
 	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder'
 	import type { Nullable } from 'sveltuse/dist/integrations/useSortable/index.js'
 	import ProjectDetails from '$lib/components/project/ProjectDetails.svelte'
+	import BasePagination from '$lib/components/base/BasePagination.svelte'
 
 	export let data
-	const { projects } = data
+	let { projects } = data
 
 	const fields: BaseFormField[] = [
 		{
@@ -53,6 +54,15 @@
 	// 	data.error = error
 	// 	data.projects = projects
 	// }
+
+	const onChangePagination = async (event: any) => {
+		const { data: _projects } = await Projects.list({
+			userId: (data.user as TUser).id,
+			page: event.page,
+			perPage: event.perPage
+		})
+		projects = { ..._projects }
+	}
 
 	// Create
 	const onSubmit = async (event: CustomEvent<typeof form.create.data>) => {
@@ -239,5 +249,12 @@
 				/>
 			</svelte:fragment>
 		</BaseDataTable>
+
+		<BasePagination
+			page={projects.page}
+			total={projects.count}
+			perPage={projects.perPage}
+			onChange={onChangePagination}
+		/>
 	</div>
 </div>

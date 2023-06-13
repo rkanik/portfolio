@@ -78,8 +78,6 @@
 	</SvelteSortable>
 </table>
 
-<BasePagination />
-
 <style lang="scss">
 	.base-data-table :where(th, td) {
 		white-space: normal !important;

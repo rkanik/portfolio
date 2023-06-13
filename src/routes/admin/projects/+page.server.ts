@@ -13,6 +13,7 @@ export const load = async ({ locals: { getContext } }) => {
 
 	const Projects = useProjects(ctx)
 	const { error, data: projects } = await Projects.list({
+		perPage: 5,
 		userId: ctx.user.id
 	})
 

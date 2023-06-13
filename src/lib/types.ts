@@ -29,7 +29,7 @@ export type TSupabase = SupabaseClient<Database>
 
 export type TId = string | number
 
-export type AnyFn = () => void
+export type AnyFn = (...args: unknown[]) => void
 
 export type AnyObject = { [key: string]: any }
 
