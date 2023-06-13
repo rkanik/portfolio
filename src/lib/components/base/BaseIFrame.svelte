@@ -1,6 +1,7 @@
 <script lang="ts">
 	import cn from '$lib/utils/cn'
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
+	import { useMutationObserver } from 'sveltuse'
 
 	export let title = ''
 	export let src: string
@@ -10,6 +11,7 @@
 	export let height = 768
 
 	export let initialScale = 1
+	export let renderOnMount = true
 	export let iframe: HTMLIFrameElement
 
 	let scale = 1
@@ -27,11 +29,29 @@
 		isLoading = true
 	}
 
-	onMount(() => {
+	const calculate = () => {
 		const { width: containerWidth } = container.getBoundingClientRect()
 		scale = containerWidth / width
 		scaledHeight = height * scale
 		iframe.classList.remove('w-full')
+	}
+
+	useMutationObserver(
+		() => container,
+		() => {
+			if (!renderOnMount) {
+				calculate()
+			}
+		},
+		{
+			childList: true
+		}
+	)
+
+	onMount(() => {
+		if (renderOnMount) {
+			calculate()
+		}
 	})
 </script>
 

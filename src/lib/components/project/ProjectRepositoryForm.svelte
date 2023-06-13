@@ -6,8 +6,8 @@
 	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 	import z from 'zod'
-	import BaseForm from '$lib/components/base/BaseForm.svelte'
 	import Github from '$lib/utils/Github'
+	import BaseForm from '$lib/components/base/BaseForm.svelte'
 	import GithubRepository from '../GithubRepository.svelte'
 
 	export let project: TProject

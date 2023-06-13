@@ -1,14 +1,24 @@
 <script lang="ts">
-	import type { TProject, TUserTechnology } from '$lib/types'
+	import type { AnyFn, Optional, TProject } from '$lib/types'
 
-	import Icon from '@iconify/svelte'
-	import useRequestFullscreen from '$lib/composable/useRequestFullscreen'
 	import src from '$lib/utils/src'
-	import GithubRepository from '../GithubRepository.svelte'
-	import BaseIFrame from '../base/BaseIFrame.svelte'
+	import Icon from '@iconify/svelte'
+	import BaseIFrame from '$lib/components/base/BaseIFrame.svelte'
+	import GithubRepository from '$lib/components/GithubRepository.svelte'
+	import useRequestFullscreen from '$lib/composable/useRequestFullscreen'
 
 	export let project: TProject
 	export let hideClose = false
+	export let iFrame: Optional<{
+		width?: number
+		height?: number
+		initialScale?: number
+		renderOnMount?: boolean
+	}> = undefined
+
+	export let onClose: Optional<AnyFn> = () => {
+		//
+	}
 
 	let iframe: HTMLIFrameElement
 	let iframeFullscreen = useRequestFullscreen(() => {
@@ -27,9 +37,10 @@
 		{#if project.previewUrl}
 			<BaseIFrame
 				bind:iframe
-				height={769}
-				width={1366}
-				initialScale={0.828696925329429}
+				width={iFrame?.width || 1366}
+				height={iFrame?.height || 769}
+				renderOnMount={iFrame?.renderOnMount ?? true}
+				initialScale={iFrame?.initialScale || 0.828696925329429}
 				title={project.name}
 				src={project.previewUrl}
 			/>
@@ -79,7 +90,7 @@
 
 				{#if !hideClose}
 					<div class="tooltip tooltip-left tooltip-primary" data-tip="Close modal">
-						<button class="btn btn-circle btn-sm" on:click={close}>
+						<button class="btn btn-circle btn-sm" on:click={onClose}>
 							<Icon class="text-xl" icon="mdi:close" />
 						</button>
 					</div>

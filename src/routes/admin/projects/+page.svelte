@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BaseFormField, TProject } from '$lib/types'
+	import type { BaseFormField, TId, TProject } from '$lib/types'
 
 	import Icon from '@iconify/svelte'
 	import BaseImage from '$lib/components/base/BaseImage.svelte'
@@ -12,10 +12,14 @@
 	import d from '$lib/utils/dayjs'
 
 	import { goto } from '$app/navigation'
+	import { useProjects } from '$lib/modules/Projects'
 	import { getPublicUrl } from '$lib/utils/getPublicUrl'
-	import { useProjects } from '$lib/modules/Projects.js'
+	import { getAverageSortOrder } from '$lib/utils/getAverageSortOrder'
+	import type { Nullable } from 'sveltuse/dist/integrations/useSortable/index.js'
+	import ProjectDetails from '$lib/components/project/ProjectDetails.svelte'
 
 	export let data
+	const { projects } = data
 
 	const fields: BaseFormField[] = [
 		{
@@ -36,37 +40,30 @@
 	}
 
 	let modal = false
-
 	const Projects = useProjects()
 
-	// List
-	const onFetchProjects = async () => {
-		if (!data.user) return
+	// // List
+	// const onFetchProjects = async () => {
+	// 	if (!data.user) return
 
-		const { error, data: projects } = await Projects.list({
-			userId: data.user.id
-		})
+	// 	const { error, data: projects } = await Projects.list({
+	// 		userId: data.user.id
+	// 	})
 
-		data.error = error
-		data.projects = projects
-	}
+	// 	data.error = error
+	// 	data.projects = projects
+	// }
 
+	// Create
 	const onSubmit = async (event: CustomEvent<typeof form.create.data>) => {
 		event.preventDefault()
 		try {
-			await data.supabase.rpc('increment_project_sort_orders', { sort_order_above: 0 })
-			const { data: project, error } = await data.supabase
-				.from('projects')
-				.insert({
-					sortOrder: 1,
-					name: event.detail.name,
-					userId: data.user?.id as string,
-					slug: event.detail.name.split(' ').join('-').trim().toLowerCase()
-				})
-				.select('*')
-				.single()
+			const { error, data: project } = await Projects.create({
+				name: event.detail.name,
+				userId: data.user?.id as string
+			})
 
-			if (error) {
+			if (error || !project) {
 				console.log('onSubmit', { error })
 				return
 			}
@@ -77,25 +74,33 @@
 		}
 	}
 
-	// Update
-	let isUpdating = false
+	const update = (id: TId, updated: Partial<TProject>) => {
+		projects.data = projects.data.map((item) => {
+			return item.id === id ? { ...item, ...updated } : item
+		})
+	}
 
+	// View
+	let viewModal = false
+	let currentProject: Nullable<TProject> = null
+	const onView = async (event: CustomEvent<TProject>) => {
+		currentProject = { ...event.detail }
+		viewModal = true
+	}
+
+	// Status
 	const onToggleStatus = async (event: CustomEvent<TProject>) => {
-		isUpdating = true
-		const { error } = await data.supabase
-			.from('projects')
-			.update({
-				status: event.detail.status === 'active' ? 'inactive' : 'active'
-			})
-			.eq('id', event.detail.id)
-		isUpdating = false
+		const { data: project } = await Projects.update(event.detail.id, {
+			status: event.detail.status === 'active' ? 'inactive' : 'active'
+		})
+		if (project) update(project.id, project)
+	}
 
-		if (error) {
-			console.log('onUpdate:error', error)
-			return
-		}
-
-		onFetchProjects()
+	// Sort Order
+	const onSortableUpdated = async (index: number) => {
+		const { item, sortOrder } = getAverageSortOrder(projects.data, index)
+		const { data: project } = await Projects.update(item.id, { sortOrder })
+		if (project) update(project.id, project)
 	}
 </script>
 
@@ -119,11 +124,27 @@
 				on:cancel={() => (modal = false)}
 			/>
 		</BaseModal>
+
+		<!-- eager={false} -->
+		<BaseModal bind:value={viewModal} hideClose modalBox="max-w-7xl bg-gray-700" let:onClose>
+			{#if currentProject}
+				<ProjectDetails
+					{onClose}
+					project={currentProject}
+					iFrame={{
+						renderOnMount: false,
+						initialScale: 0.6061493411420205
+					}}
+				/>
+			{/if}
+		</BaseModal>
 	</div>
 	<div class="w-full mt-5 overflow-x-auto">
 		<BaseDataTable
+			bind:items={projects.data}
+			{onSortableUpdated}
 			actions
-			items={data.projects.data}
+			sortable
 			headers={[
 				{ text: 'Project', value: 'project' },
 				{ text: 'Technologies', value: 'technologies' },
@@ -213,6 +234,7 @@
 						{ divider: true },
 						{ text: 'Delete', event: 'delete', icon: 'ic:outline-delete' }
 					]}
+					on:view={onView}
 					on:status={onToggleStatus}
 				/>
 			</svelte:fragment>

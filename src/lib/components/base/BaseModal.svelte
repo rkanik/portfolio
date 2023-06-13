@@ -10,6 +10,7 @@
 				text?: string
 		  }
 
+	export let eager = true
 	export let value: boolean
 	export let title: string | undefined = undefined
 	export let activator: Activator = {
@@ -25,7 +26,7 @@
 		value = true
 	}
 
-	const onHide = () => {
+	const onClose = () => {
 		value = false
 	}
 
@@ -37,6 +38,11 @@
 
 	$: {
 		setBodyOverflow(value ? 'hidden' : 'auto')
+	}
+
+	let isInitialized = false
+	$: if (value && !isInitialized) {
+		isInitialized = true
 	}
 
 	onDestroy(() => {
@@ -61,7 +67,7 @@
 					<button
 						type="button"
 						class="absolute btn btn-sm btn-circle right-2 top-2"
-						on:click={onHide}
+						on:click={onClose}
 					>
 						✕
 					</button>
@@ -70,7 +76,9 @@
 					<h3 class="text-lg font-bold">{title}</h3>
 				{/if}
 				<div class={cn({ 'mt-4': title || !hideClose })}>
-					<slot close={onHide} />
+					{#if eager || (!eager && isInitialized)}
+						<slot {onClose} close={onClose} />
+					{/if}
 				</div>
 			</div>
 		</div>

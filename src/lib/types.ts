@@ -31,6 +31,8 @@ export type TId = string | number
 
 export type AnyFn = () => void
 
+export type AnyObject = { [key: string]: any }
+
 export type TAttachment = Database['public']['Tables']['attachments']['Row']
 export type TProjectAttachment = Database['public']['Tables']['projectAttachments']['Row'] & {
 	attachments: TAttachment
