@@ -33,7 +33,6 @@
 		"sortablejs": "^1.15.0",
 		"svelte": "^3.59.1",
 		"svelte-dragdroplist": "^1.1.1",
-		"sveltuse": "^0.0.14",
 		"theme-change": "^2.5.0",
 		"uuid": "^9.0.0",
 		"zod": "^3.21.4"

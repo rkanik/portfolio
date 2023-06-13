@@ -1,4 +1,6 @@
 <script lang="ts">
+	import BasePagination from './BasePagination.svelte'
+
 	import type { Optional } from '$lib/types.js'
 	import type { SortableOptions } from 'sortablejs'
 	import type { OnUpdatedHandler } from 'sveltuse/dist/integrations/useSortable'
@@ -75,6 +77,8 @@
 		{/each}
 	</SvelteSortable>
 </table>
+
+<BasePagination />
 
 <style lang="scss">
 	.base-data-table :where(th, td) {
