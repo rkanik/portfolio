@@ -39,16 +39,19 @@ const select = `
 `
 
 const order = <T extends AnyObject>(query: T): T => {
-	return query
-		.order('sortOrder', { ascending: true })
-		.order('sortOrder', {
-			ascending: true,
-			foreignTable: 'projectAttachments'
-		})
-		.order('sortOrder', {
-			ascending: true,
-			foreignTable: 'projectTechnologies'
-		})
+	return (
+		query
+			// .order('createdAt', { ascending: false })
+			.order('sortOrder', { ascending: true })
+			.order('sortOrder', {
+				ascending: true,
+				foreignTable: 'projectAttachments'
+			})
+			.order('sortOrder', {
+				ascending: true,
+				foreignTable: 'projectTechnologies'
+			})
+	)
 }
 
 export type CreateSchema = z.infer<typeof createSchema>

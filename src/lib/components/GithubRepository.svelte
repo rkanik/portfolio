@@ -107,7 +107,7 @@
 			</div>
 		{/if}
 
-		{#if !hideOwner}
+		{#if !hideOwner && repository.owner}
 			<div class="flex-none">
 				<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Owner</div>
 				<div class="flex flex-wrap -ml-1 mt-2">

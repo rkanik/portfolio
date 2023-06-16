@@ -14,7 +14,7 @@ export const load = async ({ locals: { getContext } }) => {
 		userTechnologies,
 		projects: await Projects.list({
 			page: 1,
-			perPage: 10,
+			perPage: 1000,
 			status: 'active',
 			userId: publicUser.id
 		})

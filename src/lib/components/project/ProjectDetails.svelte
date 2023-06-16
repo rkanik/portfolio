@@ -109,7 +109,7 @@
 			<div>
 				<div class="uppercase text-secondary text-xs mb-1 tracking-wider">Description</div>
 				<p>
-					{project.description}
+					{@html project.description}
 				</p>
 			</div>
 
