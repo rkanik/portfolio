@@ -1,3 +1,5 @@
+import { env } from '$env/dynamic/public'
+
 const baseUrl = 'https://api.github.com'
 
 type Repository = {
@@ -19,7 +21,7 @@ const fetchWithFallback = <T>(url: string, fallback: T) => {
 	return new Promise<T>((resolve) => {
 		fetch(url, {
 			headers: new Headers({
-				Authorization: `Bearer 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`
+				Authorization: `Bearer ${env.PUBLIC_GITHUB_PERSONAL_ACCESS_TOKEN}`
 			})
 		})
 			.then((raw) => raw.json())

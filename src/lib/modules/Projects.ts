@@ -11,6 +11,7 @@ import { useGlobalPageData, type TGlobalPageData } from '$lib/utils/useGlobalPag
 type ListFilter = TPagination & {
 	userId?: TId
 	status?: 'active'
+	name?: string
 }
 
 type Filter = {
@@ -70,6 +71,7 @@ export const useProjects = (context?: TGlobalPageData) => {
 
 			if (filter?.status) query.eq('status', filter.status)
 			if (filter?.userId) query.eq('userId', filter.userId)
+			if (filter?.name) query.ilike('name', `%${filter.name}%`)
 
 			const response = await query
 

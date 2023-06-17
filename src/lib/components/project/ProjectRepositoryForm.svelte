@@ -13,10 +13,6 @@
 	export let project: TProject
 	const { supabase, technologies } = useGlobalPageData<{ technologies: TTechnology[] }>()
 
-	$: {
-		console.log(technologies)
-	}
-
 	const nullableURL = z
 		.union([z.string().length(0), z.string().url()])
 		.nullable()

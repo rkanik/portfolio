@@ -43,17 +43,16 @@
 	let modal = false
 	const Projects = useProjects()
 
-	// // List
-	// const onFetchProjects = async () => {
-	// 	if (!data.user) return
-
-	// 	const { error, data: projects } = await Projects.list({
-	// 		userId: data.user.id
-	// 	})
-
-	// 	data.error = error
-	// 	data.projects = projects
-	// }
+	// List
+	const onFetchProjects = async (filter: any = {}) => {
+		if (!data.user) return
+		const { error, data: list } = await Projects.list({
+			userId: data.user.id,
+			...filter
+		})
+		data.error = error
+		projects = { ...list }
+	}
 
 	const onChangePagination = async (event: any) => {
 		const { data: _projects } = await Projects.list({
@@ -122,6 +121,12 @@
 			})
 		}
 	}
+
+	// onSearch
+	const onSearch = (fields: any) => {
+		console.log('onSearch', fields)
+		onFetchProjects(fields)
+	}
 </script>
 
 <svelte:head>
@@ -172,13 +177,22 @@
 			actions
 			sortable
 			headers={[
-				{ text: 'Project', value: 'project' },
+				{
+					text: 'Project',
+					value: 'project',
+					search: {
+						type: 'text',
+						name: 'name',
+						placeholder: 'Search name...'
+					}
+				},
 				{ text: 'Technologies', value: 'technologies' },
 				{ text: 'Links', value: 'links' },
 				{ text: 'Status', value: 'status' },
 				{ text: 'Created', value: 'createdAt' },
 				{ text: 'Updated', value: 'updatedAt' }
 			]}
+			{onSearch}
 		>
 			<svelte:fragment slot="item" let:item let:header let:value>
 				{#if header.value === 'technologies'}

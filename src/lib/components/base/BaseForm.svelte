@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
 	import type { createForm } from 'felte'
 
-	type TForm = ReturnType<typeof createForm<any>>
+	export type TForm = ReturnType<typeof createForm<any>>
 
-	type TBaseField = {
+	export type TBaseField = {
 		name: string
 		class?: string
 		label?: string
@@ -11,27 +11,27 @@
 		required?: boolean
 	}
 
-	type TTextField = TBaseField & {
-		type: 'text' | 'email' | 'password' | 'tel'
+	export type TTextField = TBaseField & {
+		type: 'text' | 'number' | 'tel' | 'email' | 'password'
 		placeholder?: string
 	}
 
-	type TDateField = TBaseField & {
+	export type TDateField = TBaseField & {
 		type: 'date'
 		value?: Maybe<Date>
 		placeholder?: string
 	}
 
-	type TRatingField = TBaseField & {
+	export type TRatingField = TBaseField & {
 		type: 'rating'
 	}
 
-	type TTextAreaField = TBaseField & {
+	export type TTextAreaField = TBaseField & {
 		type: 'textarea'
 		placeholder?: string
 	}
 
-	type TAvatarField = TBaseField & {
+	export type TAvatarField = TBaseField & {
 		type: 'avatar'
 		attachment?: Maybe<TAttachment>
 	}
