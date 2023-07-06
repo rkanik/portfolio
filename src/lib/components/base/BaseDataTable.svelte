@@ -82,10 +82,10 @@
 		</tr>
 		<tr>
 			{#if selectable}
-				<td />
+				<td class="border-t border-solid border-white" />
 			{/if}
 			{#each headers as header}
-				<td>
+				<td class="border-t border-solid border-white">
 					{#if 'search' in header && header.search}
 						<TextField
 							{...header.search}
@@ -96,7 +96,7 @@
 				</td>
 			{/each}
 			{#if actions}
-				<td />
+				<td class="border-t border-solid border-white" />
 			{/if}
 			<td />
 		</tr>
@@ -142,3 +142,4 @@
 		white-space: normal !important;
 	}
 </style>
+-
