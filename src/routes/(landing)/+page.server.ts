@@ -20,7 +20,8 @@ export const load = async (event) => {
 			.from('userTechnologies')
 			.select('*,technologies(*)')
 			.eq('userId', publicUser.id)) as {
-			data: TUserTechnology[]
+			error: null | Error
+			data: null | TUserTechnology[]
 		}
 	})
 

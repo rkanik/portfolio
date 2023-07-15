@@ -1,20 +1,21 @@
 <script lang="ts">
+	import type { TTestimonial } from '$lib/types'
+
+	import Icon from '@iconify/svelte'
 	import AboutMe from '$lib/components/AboutMe.svelte'
-	import HeroSection from '$lib/components/HeroSection.svelte'
 	import Projects from '$lib/components/Projects.svelte'
-	// import RandomizePosition from '$lib/components/RandomizePosition.svelte'
+	import HeroSection from '$lib/components/HeroSection.svelte'
 	import BaseSection from '$lib/components/base/BaseSection.svelte'
+	import ContactMeSection from '$lib/components/contact/ContactMeSection.svelte'
 	import EducationSection from '$lib/components/education/EducationSection.svelte'
 	import ExperienceSection from '$lib/components/experience/ExperienceSection.svelte'
 	import TestimonialSection from '$lib/components/testimonial/TestimonialSection.svelte'
-	import type { TTestimonial } from '$lib/types.js'
-	import Icon from '@iconify/svelte'
 
 	// import rocketImage from '$lib/assets/img/rocket-small.webp'
-	import ContactMeSection from '$lib/components/contact/ContactMeSection.svelte'
+	// import RandomizePosition from '$lib/components/RandomizePosition.svelte'
 
 	export let data
-	const testimonials = (data.testimonials.data || []) as TTestimonial[]
+	$: testimonials = (data.testimonials.data || []) as TTestimonial[]
 </script>
 
 <svelte:head>
@@ -30,7 +31,7 @@
 		</div>
 	</div>
 
-	<Projects max={4} projects={data.projects.data} userTechnologies={data.userTechnologies} />
+	<Projects max={8} projects={data.projects.data} />
 	<TestimonialSection {testimonials} />
 
 	<ExperienceSection class="pt-20" experiences={data.publicUser.profile?.experiences || []} />
@@ -44,7 +45,7 @@
 			</div>
 		</RandomizePosition> -->
 
-		{#if !data.userTechnologies.error}
+		{#if Array.isArray(data.userTechnologies.data)}
 			<div class="max-w-5xl mx-auto mt-8">
 				<div class="flex flex-wrap justify-center">
 					{#each data.userTechnologies.data as tech}

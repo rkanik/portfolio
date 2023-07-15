@@ -22,7 +22,7 @@
 		</div>
 		<h1 class="mt-2 md:mt-4 mb-4 md:mb-8 text-3xl md:text-5xl font-bold text-center">{title}</h1>
 		{#if description}
-			<p class="m-0 text-base text-center">{description}</p>
+			<p class="m-0 text-base text-center line-clamp-5">{description}</p>
 		{/if}
 	</div>
 	<div class="flex-1 w-full mt-4">

@@ -7,10 +7,24 @@
 	import BaseModal from './base/BaseModal.svelte'
 	import BaseSection from './base/BaseSection.svelte'
 	import ProjectDetails from './project/ProjectDetails.svelte'
+	import { arrayUniqueBy } from '$lib/utils/arrayUniqueBy'
 
 	export let projects: TPaginated<TProject>
 	export let technologies: (TTechnology & { active?: boolean })[] = []
 	export let max: number = projects.data.length
+
+	$: technologies = arrayUniqueBy(
+		projects.data.reduce<TTechnology[]>(
+			(carry, project) =>
+				carry.concat(
+					project.projectTechnologies.map((v) => {
+						return v.technologies
+					})
+				),
+			[]
+		),
+		'id'
+	)
 
 	$: currentTechnologyIds = technologies
 		.filter((technology) => technology.active)
