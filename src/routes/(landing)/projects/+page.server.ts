@@ -1,6 +1,12 @@
 import { getOrPutCache } from '$lib/cache'
 import { useProjects } from '$lib/modules/Projects'
 
+export const config = {
+	isr: {
+		expiration: 60
+	}
+}
+
 export const load = async (event) => {
 	const context = await event.locals.getContext()
 	const Projects = useProjects(context)

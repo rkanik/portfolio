@@ -1,5 +1,11 @@
 import { getOrPutCache } from '$lib/cache'
 
+export const config = {
+	isr: {
+		expiration: 60
+	}
+}
+
 export const load = async (event) => {
 	const { supabase, publicUser } = await event.locals.getContext()
 

@@ -1,6 +1,12 @@
 import type { TProject, TUserTechnology } from '$lib/types'
 import { error as notFoundError } from '@sveltejs/kit'
 
+export const config = {
+	isr: {
+		expiration: 60
+	}
+}
+
 export const load = async ({ params, locals: { getContext } }) => {
 	const { supabase, publicUser } = await getContext()
 
