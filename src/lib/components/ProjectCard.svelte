@@ -91,7 +91,9 @@
 				{#if Array.isArray(project.projectTechnologies)}
 					{#each project.projectTechnologies as item}
 						<div class="badge ml-1 mt-1 pb-0.5 space-x-1 items-center">
-							<Icon icon={item.technologies?.icon} class="text-sm mt-0.5" />
+							<div class="w-3.5 h-3.5">
+								<Icon icon={item.technologies?.icon} class="text-sm mt-0.5" />
+							</div>
 							<div>{item.technologies?.name}</div>
 						</div>
 					{/each}

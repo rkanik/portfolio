@@ -1,3 +1,5 @@
+import type { TUserTechnology } from '$lib/types'
+
 import { getOrPutCache } from '$lib/cache'
 import { useProjects } from '$lib/modules/Projects'
 
@@ -13,11 +15,13 @@ export const load = async (event) => {
 
 	const { supabase, publicUser } = context
 
-	const userTechnologies = await getOrPutCache(['userTechnologies', publicUser.id], () => {
-		return supabase
+	const userTechnologies = await getOrPutCache(['userTechnologies', publicUser.id], async () => {
+		return (await supabase
 			.from('userTechnologies')
-			.select('id,technologies(id,icon,name)')
-			.eq('userId', publicUser.id)
+			.select('*,technologies(*)')
+			.eq('userId', publicUser.id)) as {
+			data: TUserTechnology[]
+		}
 	})
 
 	const testimonials = await getOrPutCache(['testimonials', publicUser.id], () => {
