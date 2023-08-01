@@ -9,6 +9,7 @@
 	import Github from '$lib/utils/Github'
 	import BaseForm from '$lib/components/base/BaseForm.svelte'
 	import GithubRepository from '../GithubRepository.svelte'
+	import type { TProfile } from '$lib/types/Profile'
 
 	export let project: TProject
 	const { supabase, technologies } = useGlobalPageData<{ technologies: TTechnology[] }>()
@@ -61,11 +62,14 @@
 		}
 	})
 
+	const { profile } = useGlobalPageData<{ profile: TProfile }>()
+	let githubAccessToken = profile?.github?.accessTokens?.[0]?.value || ''
+
 	const onRefreshRepository = async () => {
 		if (!project || !project.sourceCodeUrl) return
 
 		const repositoryPath = project.sourceCodeUrl.split('/').slice(-2).join('/')
-		const repository = await Github.getRepository(repositoryPath)
+		const repository = await Github.getRepository(repositoryPath, githubAccessToken)
 
 		const { data, error } = await supabase
 			.from('projects')
@@ -107,6 +111,13 @@
 >
 	<svelte:fragment slot="bottom">
 		<div class="col-span-12">
+			{#if profile}
+				<select bind:value={githubAccessToken}>
+					{#each profile.github.accessTokens as token}
+						<option value={token.value}>{token.name}</option>
+					{/each}
+				</select>
+			{/if}
 			<button
 				type="button"
 				class="btn btn-outline normal-case btn-sm btn-primary"

@@ -101,6 +101,7 @@ export interface Database {
           educations: Json[]
           experiences: Json[]
           full_name: string | null
+          github: Json | null
           id: string
           updated_at: string | null
           username: string | null
@@ -112,6 +113,7 @@ export interface Database {
           educations?: Json[]
           experiences?: Json[]
           full_name?: string | null
+          github?: Json | null
           id: string
           updated_at?: string | null
           username?: string | null
@@ -123,6 +125,7 @@ export interface Database {
           educations?: Json[]
           experiences?: Json[]
           full_name?: string | null
+          github?: Json | null
           id?: string
           updated_at?: string | null
           username?: string | null

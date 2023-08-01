@@ -8,14 +8,9 @@ export const config = {
 }
 
 export const load = async ({ params, locals: { getContext } }) => {
-	const { supabase, publicUser } = await getContext()
+	const context = await getContext()
 
-	const userTechnologies = await supabase
-		.from('userTechnologies')
-		.select('*,technologies(*)')
-		.eq('userId', publicUser.id)
-
-	const { error, data: project } = await supabase
+	const { error, data: project } = await context.supabase
 		.from('projects')
 		.select(
 			`*,
@@ -32,22 +27,7 @@ export const load = async ({ params, locals: { getContext } }) => {
 		})
 	}
 
-	const projects = ((
-		await supabase
-			.from('projects')
-			.select(
-				`*,
-				projectAttachments(*,attachments(*)),
-				projectTechnologies(id,technologies(*))`
-			)
-			.eq('status', 'active')
-			.neq('id', project.id)
-			.order('sortOrder', { ascending: true })
-	).data || []) as TProject[]
-
 	return {
-		projects,
-		project: project as TProject,
-		userTechnologies: (userTechnologies.data || []) as TUserTechnology[]
+		project: project as TProject
 	}
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TEducation } from '$lib/types'
+	import type { TEducation } from '$lib/types/Profile'
 	import BaseSection from '../base/BaseSection.svelte'
 	import EducationTimeline from './EducationTimeline.svelte'
 

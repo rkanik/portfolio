@@ -21,18 +21,18 @@
 			target="_blank"
 			rel="noreferrer"
 			href={project.repository.owner.html_url}
-			class="flex items-center space-x-1 absolute top-2 left-2 z-10 bg-white rounded-full pr-3 bg-opacity-50 backdrop-blur"
+			class="flex items-center space-x-1 absolute top-1 left-1 z-10 bg-black text-white rounded-full pr-3 p-0.5 bg-opacity-50 backdrop-blur"
 		>
 			<div class="avatar">
 				<div class="w-7 rounded-full bg-white">
 					<img
 						alt={project.repository.owner.login}
 						src={project.repository.owner.avatar_url}
-						class="p-1 rounded-full"
+						class="p-0.5 rounded-full"
 					/>
 				</div>
 			</div>
-			<div class="text-sm font-slab font-medium text-black">{project.repository.owner.login}</div>
+			<div class="text-sm font-slab font-medium">{project.repository.owner.login}</div>
 		</a>
 	{/if}
 

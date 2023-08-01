@@ -10,15 +10,18 @@
 	let isMounted = false
 	let imgRef: HTMLImageElement
 	let observer: IntersectionObserver
+	let loaded = false
 
 	const onError = () => (imgRef.src = errorSrc)
 
 	const observe = (src: string) => {
 		if (imgRef && src && isMounted) {
+			unobserve()
 			observer = new IntersectionObserver((entries) => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting && imgRef.src !== src) {
 						entry.target.setAttribute('src', src)
+						loaded = true
 						unobserve()
 					}
 				})

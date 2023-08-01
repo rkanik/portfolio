@@ -1,9 +1,9 @@
-import { page } from '$app/stores'
-import { toValue } from './toValue'
-
 import type { TPublicUser } from '$lib/types'
 import type { Database } from '../../supabase'
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
+
+import { page } from '$app/stores'
+import { get_store_value } from 'svelte/internal'
 
 export type TGlobalPageData = {
 	user: User | null
@@ -13,5 +13,5 @@ export type TGlobalPageData = {
 }
 
 export const useGlobalPageData = <T>() => {
-	return toValue(page).data as T & TGlobalPageData
+	return get_store_value(page).data as T & TGlobalPageData
 }
