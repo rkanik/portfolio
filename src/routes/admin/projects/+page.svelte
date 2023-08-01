@@ -124,8 +124,9 @@
 
 	// onSearch
 	const onSearch = (fields: any) => {
-		console.log('onSearch', fields)
-		onFetchProjects(fields)
+		if (fields.name) {
+			onFetchProjects(fields)
+		}
 	}
 </script>
 
@@ -281,11 +282,11 @@
 			</svelte:fragment>
 		</BaseDataTable>
 
-		<BasePagination
+		<!-- <BasePagination
 			page={projects.page}
 			total={projects.count}
 			perPage={projects.perPage}
 			onChange={onChangePagination}
-		/>
+		/> -->
 	</div>
 </div>

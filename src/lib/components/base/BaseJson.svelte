@@ -3,8 +3,6 @@
 	export let space = 3
 </script>
 
-<pre>
-	<code>
-		{JSON.stringify(data, null, space)}
-	</code>
-</pre>
+<div class="p-4 rounded-lg bg-neutral-900 overflow-auto">
+	<pre><code>{JSON.stringify(data, null, space)}</code></pre>
+</div>

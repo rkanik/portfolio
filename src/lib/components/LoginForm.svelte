@@ -1,20 +1,18 @@
 <script lang="ts">
 	import { enhance, type SubmitFunction } from '$app/forms'
-	import { useContextStoreContext } from '$lib/store/useContextStore'
-	import { getSupabaseContext } from '$lib/store/useSupabase'
+	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 	let loading = false
 	let loginForm: HTMLFormElement
 
-	// const supabase = getSupabaseContext()
-	const context = useContextStoreContext()
+	const { supabase } = useGlobalPageData()
 
 	let emailInput: HTMLInputElement
 	let passwordInput: HTMLInputElement
 
 	const handleSubmit: SubmitFunction = async (event) => {
 		loading = true
-		await $context.supabase.auth.signInWithPassword({
+		await supabase.auth.signInWithPassword({
 			email: emailInput.value,
 			password: passwordInput.value
 		})

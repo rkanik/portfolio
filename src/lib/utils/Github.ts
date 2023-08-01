@@ -17,11 +17,15 @@ type LanguageStats = {
 	[language: string]: number
 }
 
-const fetchWithFallback = <T>(url: string, fallback: T) => {
+const fetchWithFallback = <T>(
+	url: string,
+	fallback: T,
+	token = env.PUBLIC_GITHUB_PERSONAL_ACCESS_TOKEN
+) => {
 	return new Promise<T>((resolve) => {
 		fetch(url, {
 			headers: new Headers({
-				Authorization: `Bearer ${env.PUBLIC_GITHUB_PERSONAL_ACCESS_TOKEN}`
+				Authorization: `Bearer ${token}`
 			})
 		})
 			.then((raw) => raw.json())
@@ -30,15 +34,15 @@ const fetchWithFallback = <T>(url: string, fallback: T) => {
 	})
 }
 
-async function getRepository(path: string): Promise<any> {
+async function getRepository(path: string, token: string): Promise<any> {
 	const repositoryUrl = `${baseUrl}/repos/${path}`
 	const contributorsUrl = `${baseUrl}/repos/${path}/contributors`
 	const languagesUrl = `${baseUrl}/repos/${path}/languages`
 
 	const [repository, contributors, languages] = await Promise.all([
-		fetchWithFallback<Repository>(repositoryUrl, { name: '', description: '' }),
-		fetchWithFallback<Collaborator[]>(contributorsUrl, []),
-		fetchWithFallback<LanguageStats[]>(languagesUrl, [])
+		fetchWithFallback<Repository>(repositoryUrl, { name: '', description: '' }, token),
+		fetchWithFallback<Collaborator[]>(contributorsUrl, [], token),
+		fetchWithFallback<LanguageStats[]>(languagesUrl, [], token)
 	])
 
 	return {

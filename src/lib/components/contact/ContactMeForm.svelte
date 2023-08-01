@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TEnquiry } from '$lib/types.js'
+	import type { TEnquiry } from '$lib/types'
 
 	import Icon from '@iconify/svelte'
 	import TextArea from '$lib/components/base/TextArea.svelte'
@@ -8,7 +8,7 @@
 	import { z } from 'zod'
 	import { createForm } from 'felte'
 	import { validator } from '@felte/validator-zod'
-	import { useContextStoreContext } from '$lib/store/useContextStore'
+	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 	const schema = z.object({
 		name: z.string().min(1, 'Required.'),
@@ -23,8 +23,7 @@
 	let inquiry: TEnquiry | null
 	let loading = false
 
-	const context = useContextStoreContext()
-	const { publicUser, supabase } = $context
+	const { supabase, publicUser } = useGlobalPageData()
 
 	const { form, errors } = createForm<Schema>({
 		extend: validator({ schema }),

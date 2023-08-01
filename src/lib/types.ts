@@ -1,6 +1,7 @@
 import type { Readable, Writable } from 'svelte/store'
 import type { Database } from '../supabase'
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
+import type { TProfile } from './types/Profile'
 
 export type BaseFormFieldOption = {
 	[key: string]: any
@@ -82,27 +83,7 @@ export type TTestimonial = Database['public']['Tables']['testimonials']['Row'] &
 	avatar: TAttachment | null
 }
 
-export type TEducation = {
-	year: number
-	title: string
-	right?: boolean
-	lines: string[]
-}
-
-export type TExperience = {
-	year: number
-	title: string
-	right?: boolean
-	lines: string[]
-}
-
 export type TUser = User
-
-export type TProfile = Database['public']['Tables']['profiles']['Row'] & {
-	user?: User
-	educations: TEducation[]
-	experiences: TExperience[]
-}
 
 export type TPublicUser = {
 	id: string

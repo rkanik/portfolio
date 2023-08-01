@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TEducation } from '$lib/types'
+	import type { TEducation } from '$lib/types/Profile'
 	import TimelineItem from '../TimelineItem.svelte'
 
 	export let educations: TEducation[]

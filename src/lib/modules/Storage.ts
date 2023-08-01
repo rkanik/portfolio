@@ -1,4 +1,5 @@
-import type { TPagination, TPublicContext } from '$lib/types'
+import type { TPagination } from '$lib/types'
+import type { TGlobalPageData } from '$lib/utils/useGlobalPageData'
 
 type ListFilter = TPagination & {
 	bucket?: string
@@ -28,7 +29,7 @@ export type FileObject = {
 	buckets: Bucket
 }
 
-export const useStorageModule = (context: TPublicContext) => {
+export const useStorageModule = (context: Pick<TGlobalPageData, 'user' | 'supabase'>) => {
 	const { user, supabase } = context
 
 	return {

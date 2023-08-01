@@ -1,4 +1,21 @@
 <script lang="ts">
+	import type { PageData } from '../../routes/(landing)/$types'
+	import type { FileObject } from '$lib/modules/Storage'
+
+	import cn from '$lib/utils/cn'
+	import src from '$lib/utils/src'
+	import Icon from '@iconify/svelte'
+	import dataURLtoFile from '$lib/utils/dataURLtoFile'
+	import useSupabaseStorage from '$lib/utils/useSupabaseStorage'
+
+	import { page } from '$app/stores'
+	import { onMount } from 'svelte'
+	import { useArray } from 'sveltuse'
+	import { toFileName } from '$lib/utils/toFileName'
+	import { resizeImage } from '$lib/utils/resizeImage'
+	import { useStorageModule } from '$lib/modules/Storage'
+	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
+
 	type FileItem = {
 		file: File
 		src: string
@@ -8,21 +25,6 @@
 		data: { path: string } | null
 	}
 
-	import cn from '$lib/utils/cn'
-	import src from '$lib/utils/src'
-	import Icon from '@iconify/svelte'
-	import dataURLtoFile from '$lib/utils/dataURLtoFile'
-	import useSupabaseStorage from '$lib/utils/useSupabaseStorage'
-
-	import { createEventDispatcher, onMount } from 'svelte'
-	import { useArray } from 'sveltuse'
-	import { toFileName } from '$lib/utils/toFileName'
-	import { resizeImage } from '$lib/utils/resizeImage'
-	import { useContextStoreContext } from '$lib/store/useContextStore'
-	import { useStorageModule, type FileObject } from '$lib/modules/Storage'
-	import { page } from '$app/stores'
-	import type { PageData } from '../../routes/(landing)/$types'
-
 	export let bucket = ''
 	export let folder = ''
 	export let onSelect: (files: FileObject[]) => void = () => {
@@ -31,8 +33,8 @@
 
 	let selectedIds: any = []
 
-	const context = useContextStoreContext()
-	const Storage = useStorageModule($context)
+	const { user, supabase } = useGlobalPageData()
+	const Storage = useStorageModule({ user, supabase })
 
 	let fileObjects: {
 		data: never[] | FileObject[] | null
@@ -60,7 +62,7 @@
 		selectedIds = [...selectedIds, file.id]
 	}
 
-	const storage = useSupabaseStorage($context.supabase)
+	const storage = useSupabaseStorage(supabase)
 
 	const files = useArray<FileItem>([])
 

@@ -3,7 +3,8 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_USER_ID } from '$
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
 import type { Handle } from '@sveltejs/kit'
 import type { Database } from './supabase'
-import type { TProfile, TPublicUser, TSupabase } from '$lib/types'
+import type { TPublicUser, TSupabase } from '$lib/types'
+import type { TProfile } from '$lib/types/Profile'
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.getContext = async () => {
