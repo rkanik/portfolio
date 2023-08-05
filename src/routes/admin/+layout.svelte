@@ -4,6 +4,7 @@
 	import LoginForm from '$lib/components/LoginForm.svelte'
 	import ThemeChange from '$lib/components/ThemeChange.svelte'
 	import { page } from '$app/stores'
+	import Icon from '@iconify/svelte'
 
 	export let data
 
@@ -23,6 +24,7 @@
 		{ path: '/admin/testimonials', name: 'Testimonials' },
 		{ path: '/admin/uploads', name: 'Uploads' },
 		{ path: '/admin/storage', name: 'Storage' },
+		{ title: 'Category' },
 		{ path: '/admin/sortable', name: 'Sortable' },
 		{ path: '/admin/menu', name: 'Menu' }
 	]
@@ -35,44 +37,14 @@
 </svelte:head>
 
 {#if data.session}
-	<div class="drawer drawer-mobile">
-		<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-		<div class="flex flex-col drawer-content">
-			<div class="navbar bg-base-100">
-				<!-- <div class="flex-none lg:hidden">
-					<label for="my-drawer-3" class="btn btn-square btn-ghost">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							class="inline-block w-6 h-6 stroke-current"
-							><path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							/></svg
-						>
-					</label>
-				</div> -->
-				<div class="flex-none">
-					<button class="btn btn-square btn-ghost">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							class="inline-block w-5 h-5 stroke-current"
-							><path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							/></svg
-						>
-					</button>
-				</div>
+	<div class="drawer drawer-mobile bg-base-300">
+		<input id="dashboard-drawer" type="checkbox" class="drawer-toggle" />
+		<div class="drawer-content flex flex-col">
+			<div class="navbar bg-base-300 border-b border-base-100 sticky top-0 z-20 h-12 min-h-12">
 				<div class="flex-1">
-					<a href="/admin" class="text-xl normal-case btn btn-ghost">Admin</a>
+					<label for="dashboard-drawer" class="drawer-button lg:hidden">
+						<Icon icon="mdi-menu" />
+					</label>
 				</div>
 				<div class="flex-none">
 					<ThemeChange />
@@ -139,19 +111,31 @@
 			</div>
 			<slot />
 		</div>
-		<div class="drawer-side bg-base-100">
-			<label for="my-drawer-2" class="drawer-overlay" />
-			<div>
-				<div class="h-16" />
-				<ul class="menu w-80 text-base-content">
-					{#each items as item}
-						<li
-							class={$page.url.pathname === item.path
-								? 'bordered bg-primary bg-opacity-20 font-medium'
-								: 'hover-bordered'}
+		<div class="drawer-side border-r border-base-100">
+			<label for="dashboard-drawer" class="drawer-overlay !bg-black !bg-opacity-50" />
+			<div class="w-60 bg-base-200 lg:bg-base-300">
+				<div class="h-12 flex items-center px-4 border-b border-base-100">
+					<a href="/" class="inline text-2xl font-bold">
+						<span>R</span><span class="text-primary">.</span><span>K</span><span
+							class="text-primary">.</span
 						>
-							<a href={item.path}>{item.name}</a>
-						</li>
+					</a>
+				</div>
+				<ul class="menu menu-compact rounded-box p-2 space-y-1">
+					{#each items as item}
+						{#if 'title' in item}
+							<li class="menu-title">
+								<span>{item.title}</span>
+							</li>
+						{:else}
+							<li
+								class={$page.url.pathname === item.path
+									? 'bg-primary bg-opacity-20 font-bold text-primary rounded-lg'
+									: ''}
+							>
+								<a href={item.path}>{item.name}</a>
+							</li>
+						{/if}
 					{/each}
 				</ul>
 			</div>

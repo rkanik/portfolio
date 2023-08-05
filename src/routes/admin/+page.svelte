@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms'
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
 	import type { TProfileGithub } from '$lib/types/Profile'
 
@@ -25,6 +26,8 @@
 			.single()
 		console.log('onSaveChanges:res', res)
 	}
+
+	const onPrintPDF = () => {}
 </script>
 
 <svelte:head>
@@ -32,7 +35,11 @@
 </svelte:head>
 
 <div class="p-5">
-	<form class="max-w-lg w-full mx-auto p-4 bg-neutral-900 rounded-lg">
+	<form action="?/printPDF" method="post" use:enhance={({ form, action }) => {}}>
+		<button type="submit">Print pdf</button>
+	</form>
+
+	<form class="max-w-lg w-full mx-auto p-4 bg-base-200 shadow-2xl rounded-lg">
 		<h2>Github</h2>
 		<h4>Access Tokens</h4>
 		<div class="space-y-1">

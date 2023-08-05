@@ -12,6 +12,10 @@ export let themes = [
 		id: 'cupcake'
 	},
 	{
+		name: 'neutral',
+		id: 'neutral'
+	},
+	{
 		name: '🐝  bumblebee',
 		id: 'bumblebee'
 	},

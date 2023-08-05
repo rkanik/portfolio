@@ -1,10 +1,12 @@
 // src/hooks.server.ts
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_USER_ID } from '$env/static/public'
+import { themes } from '$lib/data'
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit'
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_USER_ID } from '$env/static/public'
+
 import type { Handle } from '@sveltejs/kit'
+import type { TProfile } from '$lib/types/Profile'
 import type { Database } from './supabase'
 import type { TPublicUser, TSupabase } from '$lib/types'
-import type { TProfile } from '$lib/types/Profile'
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.getContext = async () => {
@@ -37,6 +39,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range'
+		},
+		transformPageChunk({ html }) {
+			const cookieTheme = event.cookies.get('theme')
+			const theme = cookieTheme && themes.find((item) => item.id === cookieTheme)?.id
+
+			if (theme) html = html.replace('%theme%', `data-theme="${theme}"`)
+
+			return html
 		}
 	})
 }

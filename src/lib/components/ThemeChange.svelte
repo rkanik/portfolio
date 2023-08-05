@@ -1,14 +1,21 @@
-<script>
-	import { onMount } from 'svelte'
+<script lang="ts">
+	import { page } from '$app/stores'
 	import { themes } from '$lib/data'
+	import Cookies from 'js-cookie'
 
-	import { themeChange } from 'theme-change'
-	onMount(() => {
-		themeChange(false)
-	})
 	export let dropdownClasses = ''
 	export let btnClasses = 'btn-ghost'
 	export let contentClasses = 'mt-16'
+
+	const onSetTheme = (theme: string) => {
+		document.documentElement.setAttribute('data-theme', theme)
+		Cookies.set('theme', theme, {
+			path: '/admin',
+			secure: true,
+			expires: 365,
+			sameSite: 'Strict'
+		})
+	}
 </script>
 
 <div title="Change Theme" class={`dropdown dropdown-end ${dropdownClasses}`}>
@@ -46,6 +53,7 @@
 					class="outline-base-content overflow-hidden rounded-lg text-left"
 					data-set-theme={theme.id}
 					data-act-class="[&_svg]:visible"
+					on:click={() => onSetTheme(theme.id)}
 				>
 					<div
 						data-theme={theme.id}
