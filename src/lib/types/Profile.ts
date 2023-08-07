@@ -21,8 +21,17 @@ export type TProfileGithub = {
 	}[]
 }
 
+export type TResume = {
+	name: string
+	presentAddress: string
+	emails: { value: string }[]
+	phones: { value: string }[]
+	educations: TEducation[]
+}
+
 export type TProfile = Database['public']['Tables']['profiles']['Row'] & {
 	educations: TEducation[]
 	experiences: TExperience[]
 	github: TProfileGithub
+	resume: TResume
 }

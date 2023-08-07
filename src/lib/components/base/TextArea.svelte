@@ -6,8 +6,12 @@
 	export let label: string = ''
 	export let placeholder: string = ''
 	export let name: string
+	export let value: string = ''
 	export let id = Math.random().toString(36).slice(-10)
 	export let rows: number = 3
+	const onInput = (e: any) => {
+		value = e.target.value
+	}
 </script>
 
 <div class={cn('form-control', $$props.class)}>
@@ -25,10 +29,12 @@
 		{id}
 		{name}
 		{rows}
+		{value}
 		{placeholder}
 		class={cn('textarea textarea-bordered border-solid bg-transparent', {
 			'textarea-error': errors.length > 0
 		})}
+		on:input={onInput}
 	/>
 	{#if errors.length > 0}
 		<label for={id} class="label">

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import '../../app.css'
-
 	import LoginForm from '$lib/components/LoginForm.svelte'
 	import ThemeChange from '$lib/components/ThemeChange.svelte'
 	import { page } from '$app/stores'
@@ -20,6 +18,7 @@
 
 	const items = [
 		{ path: '/admin', name: 'Dashboard' },
+		{ path: '/admin/resume', name: 'Resume' },
 		{ path: '/admin/projects', name: 'Projects' },
 		{ path: '/admin/testimonials', name: 'Testimonials' },
 		{ path: '/admin/uploads', name: 'Uploads' },

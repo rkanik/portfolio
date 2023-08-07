@@ -83,13 +83,4 @@
 			<button type="button" on:click={onSaveChanges}>Save</button>
 		</div>
 	</form>
-
-	<div class="mt-16" />
-	<BaseJson
-		data={{
-			github,
-			user: data.user,
-			profile: data.profile
-		}}
-	/>
 </div>

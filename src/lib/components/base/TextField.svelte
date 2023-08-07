@@ -11,6 +11,7 @@
 	export let type: 'text' | 'number' | 'tel' | 'email' | 'password' = 'text'
 	export let id = Math.random().toString(36).slice(-10)
 	export let inputClass = ''
+	export let labelClass = ''
 	const onInput = (e: any) => {
 		value = type.match(/^(number|range)$/) ? +e.target.value : e.target.value
 	}
@@ -18,7 +19,7 @@
 
 <div class={cn('form-control', $$props.class)}>
 	{#if label}
-		<label for={id} class="label">
+		<label for={id} class={cn('label', labelClass)}>
 			<span class="label-text">
 				{label}
 				{#if required}

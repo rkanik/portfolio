@@ -103,6 +103,7 @@ export interface Database {
           full_name: string | null
           github: Json | null
           id: string
+          resume: Json | null
           updated_at: string | null
           username: string | null
           website: string | null
@@ -115,6 +116,7 @@ export interface Database {
           full_name?: string | null
           github?: Json | null
           id: string
+          resume?: Json | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
@@ -127,6 +129,7 @@ export interface Database {
           full_name?: string | null
           github?: Json | null
           id?: string
+          resume?: Json | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
