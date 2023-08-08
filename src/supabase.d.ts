@@ -14,6 +14,7 @@ export interface Database {
           base64: string | null
           bucket: string
           createdAt: string | null
+          filename: string | null
           folder: string
           id: string
           medium: string | null
@@ -28,6 +29,7 @@ export interface Database {
           base64?: string | null
           bucket?: string
           createdAt?: string | null
+          filename?: string | null
           folder?: string
           id?: string
           medium?: string | null
@@ -42,6 +44,7 @@ export interface Database {
           base64?: string | null
           bucket?: string
           createdAt?: string | null
+          filename?: string | null
           folder?: string
           id?: string
           medium?: string | null

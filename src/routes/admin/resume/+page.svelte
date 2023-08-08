@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AnyFn } from '$lib/types'
+	import type { AnyFn, TAttachment } from '$lib/types'
 	import type { TProfileGithub, TResume } from '$lib/types/Profile'
 
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
@@ -11,6 +11,8 @@
 	import Input from '$lib/components/base/Input.svelte'
 	import Icon from '@iconify/svelte'
 	import ResumeCollapse from '$lib/components/resume/ResumeCollapse.svelte'
+	import StoragePicker from '$lib/components/StoragePicker.svelte'
+	import type { OnSelectHandlerSingle } from '$lib/components/StorageManager2.svelte'
 
 	export let data
 
@@ -23,6 +25,7 @@
 
 	let resume: TResume = data.profile?.resume || {
 		name: '',
+		attachment: null,
 		emails: [],
 		phones: [],
 		presentAddress: '',
@@ -51,6 +54,14 @@
 	const setResumeCb: any = (updater: AnyFn) => {
 		return setResume(updater)
 	}
+
+	const onResumeAttachment: OnSelectHandlerSingle = (attachment: TAttachment, { reset }) => {
+		setResume(() => (resume.attachment = attachment))
+		onSaveResume(resume)
+		reset()
+	}
+
+	let resumePDFModal = false
 </script>
 
 <div class="flex flex-1 overflow-hidden">
@@ -74,6 +85,28 @@
 					class="textarea textarea-sm textarea-bordered border-solid rounded bg-base-200 border-base-100"
 				/>
 			</FormControl>
+
+			<ResumeCollapse hidePlus title="Attachment">
+				<div class="p-3 text-sm flex items-center space-x-2">
+					<StoragePicker
+						bind:modal={resumePDFModal}
+						multiple={false}
+						selected={resume.attachment ? [resume.attachment.id] : []}
+						onSelect={onResumeAttachment}
+					>
+						<button
+							type="button"
+							class="btn btn-circle btn-sm btn-primary"
+							on:click={() => (resumePDFModal = true)}
+						>
+							<Icon class="text-lg" icon="mdi-upload" />
+						</button>
+					</StoragePicker>
+					<a href="/resume" class="text-purple-300 underline"
+						>{resume.attachment?.filename || resume.attachment?.name}</a
+					>
+				</div>
+			</ResumeCollapse>
 
 			<ResumeCollapse
 				title="Emails"

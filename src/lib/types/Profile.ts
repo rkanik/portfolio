@@ -1,3 +1,4 @@
+import type { TAttachment } from '$lib/types'
 import type { Database } from '../../supabase'
 
 export type TEducation = {
@@ -23,6 +24,7 @@ export type TProfileGithub = {
 
 export type TResume = {
 	name: string
+	attachment: TAttachment | null
 	presentAddress: string
 	emails: { value: string }[]
 	phones: { value: string }[]

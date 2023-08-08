@@ -5,7 +5,7 @@
 		reset: () => void
 	}
 
-	export type OnSelectHandler = OnSelectHandlerMultiple | OnSelectHandlerSingle
+	export type OnSelectHandler = OnSelectHandlerSingle | OnSelectHandlerMultiple
 
 	export type OnSelectHandlerSingle = (
 		attachment: TAttachment,
@@ -134,6 +134,7 @@
 						folder,
 						userId: user.id,
 						name: `${name}.${ext}`,
+						filename: item._.file.name,
 						mimeType: item._.file.type,
 						src: (fileObject?.path || '').split('/').pop() || '',
 						medium: null,
@@ -185,6 +186,7 @@
 					userId: user.id,
 					name: `${name}.${ext}`,
 					mimeType: item._.file.type,
+					filename: item._.file.name,
 					src: (fileObject?.path || '').split('/').pop() || '',
 					medium: (fileObject800?.path || '').split('/').pop(),
 					thumbnail: (fileObject400?.path || '').split('/').pop(),
@@ -400,7 +402,7 @@
 					</div>
 				{/if}
 				<div class="flex-none p-2 text-sm">
-					<div class="truncate">{attachment._.name}</div>
+					<div class="truncate">{attachment._.filename || attachment._.name}</div>
 					<div class="text-xs opacity-70">
 						{attachment._.mimeType}
 						<!-- , {Math.round((file.metadata?.size || 1024) / 1024)}KB -->

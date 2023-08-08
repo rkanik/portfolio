@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { OnSelectHandler } from './StorageManager2.svelte'
+
 	import BaseModal from './base/BaseModal.svelte'
-	import StorageManager2, { type OnSelectHandler } from './StorageManager2.svelte'
+	import StorageManager2 from './StorageManager2.svelte'
 
 	export let modal: boolean
 	export let selected: string[] = []
@@ -9,7 +11,7 @@
 		//
 	}
 
-	const onSelectInner: OnSelectHandler = (v, { reset }) => {
+	const onSelectInner = (v: any, { reset }: any) => {
 		onSelect(v, {
 			reset() {
 				reset()
