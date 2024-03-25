@@ -4,6 +4,7 @@
 
 	import BaseJson from '$lib/components/base/BaseJson.svelte'
 	import { useDebounceFn } from 'sveltuse'
+	import { useAttachmentUpdater } from '$lib/composable/useAttachmentUpdater'
 	import Resizable from '$lib/components/Resizable.svelte'
 	import TextField from '$lib/components/base/TextField.svelte'
 	import TextArea from '$lib/components/base/TextArea.svelte'
@@ -61,6 +62,18 @@
 		reset()
 	}
 
+	const onInputResume = async (e: any) => {
+		if (!resume.attachment) return
+		const au = useAttachmentUpdater({ supabase })
+
+		const { error, data } = await au.updateOne(resume.attachment?.id, e.target.files[0])
+		if (error) return window.alert(error.message)
+
+		setResume(() => (resume.attachment = data))
+		await onSaveResume(resume)
+		window.alert('Resume updated successfully!')
+	}
+
 	let resumePDFModal = false
 </script>
 
@@ -88,23 +101,25 @@
 
 			<ResumeCollapse hidePlus title="Attachment">
 				<div class="p-3 text-sm flex items-center space-x-2">
-					<StoragePicker
+					<!-- <StoragePicker
 						bind:modal={resumePDFModal}
 						multiple={false}
 						selected={resume.attachment ? [resume.attachment.id] : []}
 						onSelect={onResumeAttachment}
-					>
-						<button
-							type="button"
-							class="btn btn-circle btn-sm btn-primary"
-							on:click={() => (resumePDFModal = true)}
-						>
-							<Icon class="text-lg" icon="mdi-upload" />
-						</button>
-					</StoragePicker>
-					<a href="/resume" class="text-purple-300 underline"
-						>{resume.attachment?.filename || resume.attachment?.name}</a
-					>
+					> -->
+					<button type="button" class="btn btn-circle btn-sm btn-primary relative">
+						<Icon class="text-lg" icon="mdi-upload" />
+						<input
+							type="file"
+							accept=".pdf"
+							class="opacity-0 absolute inset-0"
+							on:input={onInputResume}
+						/>
+					</button>
+					<!-- </StoragePicker> -->
+					<a href="/resume" class="text-purple-300 underline">
+						{resume.attachment?.name}
+					</a>
 				</div>
 			</ResumeCollapse>
 

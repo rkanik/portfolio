@@ -4,10 +4,7 @@
 	import { getPublicUrl } from '$lib/utils/getPublicUrl.js'
 
 	export let data
-	console.log(
-		data.publicUser.profile?.resume.attachment,
-		getPublicUrl(data.publicUser.profile?.resume.attachment)
-	)
+	console.log(data.publicUser.profile, getPublicUrl(data.publicUser.profile?.resume.attachment))
 </script>
 
 <svelte:head>
