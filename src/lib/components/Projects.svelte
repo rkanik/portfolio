@@ -39,6 +39,15 @@
 		  })
 		: copiedProjects
 
+	let order = 'ranking'
+	$: orderedProjects =
+		order === 'newest'
+			? [...filteredProjects].sort((a, b) => {
+					if (!a.createdAt || !b.createdAt) return 0
+					return (new Date(b.createdAt) as any) - (new Date(a.createdAt) as any)
+			  })
+			: filteredProjects
+
 	let currentProject: TProject = null!
 </script>
 
@@ -67,9 +76,12 @@
 			{/if}
 		</div>
 	</div>
-
+	<select bind:value={order}>
+		<option value="ranking">Ranking</option>
+		<option value="newest">Newest</option>
+	</select>
 	<div class="grid grid-cols-1 gap-8 mt-8 md:grid-cols-4">
-		{#each filteredProjects.slice(0, max) as project}
+		{#each orderedProjects.slice(0, max) as project}
 			<ProjectCard {project} on:click={(e) => (currentProject = e.detail)} />
 		{/each}
 	</div>

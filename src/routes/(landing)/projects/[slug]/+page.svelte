@@ -29,6 +29,8 @@
 			return project.id === item.id
 		})
 	})
+
+	$: console.log(data)
 </script>
 
 <div class="container px-5 mx-auto min-h-screen pt-5">

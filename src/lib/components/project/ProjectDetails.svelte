@@ -6,6 +6,9 @@
 	import BaseIFrame from '$lib/components/base/BaseIFrame.svelte'
 	import GithubRepository from '$lib/components/GithubRepository.svelte'
 	import useRequestFullscreen from '$lib/composable/useRequestFullscreen'
+	import { getPublicUrl } from '$lib/utils/getPublicUrl'
+	import BaseImage from '$lib/components/base/BaseImage.svelte'
+	import { createEventDispatcher } from 'svelte'
 
 	export let project: TProject
 	export let hideClose = false
@@ -16,8 +19,9 @@
 		renderOnMount?: boolean
 	}> = undefined
 
-	export let onClose: Optional<AnyFn> = () => {
-		//
+	const dispatch = createEventDispatcher()
+	export let onClose: Optional<AnyFn> = (e) => {
+		dispatch('close', e)
 	}
 
 	let iframe: HTMLIFrameElement
@@ -45,10 +49,13 @@
 				src={project.previewUrl}
 			/>
 		{:else}
+			{@const attachment = project.projectAttachments[0]?.attachments}
+			{@const src = getPublicUrl(attachment, 'src')}
 			<div>
-				<img
+				<BaseImage
+					lazySrc={src}
 					alt={project.name}
-					src={src(project.projectAttachments?.[0]?.attachments?.thumbnail)}
+					src={attachment?.base64 || src}
 					class="object-cover w-full h-full rounded-2xl"
 				/>
 			</div>
