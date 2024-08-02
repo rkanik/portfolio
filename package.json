@@ -37,6 +37,7 @@
 		"mode-watcher": "^0.4.1",
 		"nanoid": "^4.0.2",
 		"paneforge": "^0.0.5",
+		"prettier-plugin-svelte": "^3.2.6",
 		"puppeteer": "^21.0.1",
 		"slugify": "^1.6.6",
 		"sortablejs": "^1.15.0",
@@ -57,6 +58,7 @@
 	},
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+		"@iconify-json/mdi": "^1.1.67",
 		"@iconify/svelte": "^3.1.2",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-cloudflare": "^2.2.0",
@@ -73,8 +75,7 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"postcss": "^8.4.22",
-		"prettier": "^2.8.0",
-		"prettier-plugin-svelte": "^2.8.1",
+		"prettier": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.5",
 		"sass": "^1.62.0",
 		"supabase": "^1.50.8",
@@ -83,6 +84,7 @@
 		"tailwindcss": "^3.3.1",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
+		"unplugin-icons": "^0.19.1",
 		"vite": "^4.2.0"
 	}
 }

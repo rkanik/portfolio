@@ -11,7 +11,8 @@
 		"supabase",
 		"sveltuse",
 		"tailwindcss",
-		"TORV"
+		"TORV",
+		"unplugin"
 	],
 	"typescript.tsdk": "node_modules\\typescript\\lib"
 }
