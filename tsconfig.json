@@ -9,9 +9,7 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "NodeNext",
-		"module": "NodeNext",
-		"verbatimModuleSyntax": true,
+		"moduleResolution": "bundler",
 		"types": ["unplugin-icons/types/svelte"]
 	}
 }
