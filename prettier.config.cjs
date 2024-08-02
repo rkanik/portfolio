@@ -15,7 +15,7 @@ const config = {
 	plugins: [
 		'prettier-plugin-svelte',
 		'@ianvs/prettier-plugin-sort-imports',
-		'prettier-plugin-tailwindcss'
+		// 'prettier-plugin-tailwindcss'
 	],
 	importOrder: [
 		'<TYPES>^(node:)',
