@@ -3,5 +3,5 @@
 </script>
 
 <div class="p-4">
-	<Button />
+	<Button>Click More</Button>
 </div>
