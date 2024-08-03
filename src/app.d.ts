@@ -9,20 +9,16 @@ declare global {
 		interface Locals {
 			getContext(): Promise<TContext>
 			supabase: SupabaseClient<Database>
-			getSession(): Promise<
-				| {
-						session: null
-						user: null
-				  }
-				| {
-						session: Session
-						user: User | null
-				  }
-			>
+			getSession(): Promise<{
+				user: User | null
+				session: Session | null
+			}>
 		}
-		// interface PageData {
-		// 	session: Session | null
-		// }
+		interface PageData {
+			user: User | null
+			session: Session | null
+			supabase: SupabaseClient<Database>
+		}
 		interface Platform {
 			env: {
 				COUNTER: DurableObjectNamespace

@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("SUPABASE_DATABASE_URL")
+  directUrl = env("SUPABASE_DIRECT_URL")
+}
+
+model attachments {
+  id                 String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name               String
+  src                String
+  mimeType           String?
+  thumbnail          String?
+  base64             String?
+  createdAt          DateTime?            @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime?            @default(now()) @db.Timestamptz(6)
+  userId             String               @default("d91e7069-95a2-430b-8d18-aa423866315c")
+  bucket             String               @default("uploads")
+  folder             String               @default("users/d91e7069-95a2-430b-8d18-aa423866315c")
+  medium             String?
+  filename           String?
+  projectAttachments projectAttachments[]
+  testimonials       testimonials[]
+}
+
+model inquiries {
+  id        BigInt   @id @default(autoincrement())
+  userId    String   @db.Uuid
+  name      String
+  email     String
+  company   String?
+  message   String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @db.Timestamptz(6)
+  profiles  profiles @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model profiles {
+  username         String?            @db.VarChar
+  full_name        String?            @db.VarChar
+  website          String?            @db.VarChar
+  avatar_url       String?            @db.VarChar
+  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  id               String             @id @db.Uuid
+  educations       Json[]             @default([]) @db.Json
+  experiences      Json[]             @default([]) @db.Json
+  github           Json?
+  resume           Json?
+  data             Json?
+  inquiries        inquiries[]
+  projects         projects[]
+  testimonials     testimonials[]
+  userTechnologies userTechnologies[]
+  userTestimonials userTestimonials[]
+}
+
+model projectAttachments {
+  id           BigInt      @id @default(autoincrement())
+  projectId    String      @db.Uuid
+  attachmentId String      @db.Uuid
+  sortOrder    Float
+  attachments  attachments @relation(fields: [attachmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  projects     projects    @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model projectTechnologies {
+  id           BigInt       @id @default(autoincrement())
+  projectId    String       @db.Uuid
+  technologyId String       @db.Uuid
+  isVisible    Boolean?     @default(true)
+  sortOrder    Float        @default(1)
+  projects     projects     @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  technologies technologies @relation(fields: [technologyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model projects {
+  name                String                @db.VarChar
+  description         String?
+  previewUrl          String?               @db.VarChar
+  sourceCodeUrl       String?               @db.VarChar
+  tags                String?
+  createdAt           DateTime?             @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime?             @default(now()) @db.Timestamptz(6)
+  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  status              String                @default("active")
+  sortOrder           Float                 @default(1)
+  userId              String                @db.Uuid
+  slug                String                @unique @default("")
+  repository          Json?                 @db.Json
+  repositoryOwner     String?
+  repositoryRepo      String?
+  projectAttachments  projectAttachments[]
+  projectTechnologies projectTechnologies[]
+  profiles            profiles              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model technologies {
+  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  icon                String
+  name                String
+  url                 String?
+  description         String?
+  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
+  color               String                @default("blue")
+  projectTechnologies projectTechnologies[]
+  userTechnologies    userTechnologies[]
+}
+
+model testimonials {
+  id               BigInt             @id @default(autoincrement())
+  name             String
+  avatar           String?            @db.Uuid
+  company          String?
+  testimonial      String
+  rating           BigInt
+  date             DateTime?          @db.Timestamptz(6)
+  createdAt        DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime           @default(now()) @db.Timestamptz(6)
+  status           String             @default("active")
+  userId           String             @default(dbgenerated("'d91e7069-95a2-430b-8d18-aa423866315c'::uuid")) @db.Uuid
+  sortOrder        Float
+  attachments      attachments?       @relation(fields: [avatar], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profiles         profiles           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userTestimonials userTestimonials[]
+}
+
+model userTechnologies {
+  id           String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId       String       @db.Uuid
+  technologyId String       @db.Uuid
+  created_at   DateTime?    @default(now()) @db.Timestamptz(6)
+  technologies technologies @relation(fields: [technologyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profiles     profiles     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model userTestimonials {
+  id            BigInt       @id @default(autoincrement())
+  testimonialId BigInt
+  userId        String       @db.Uuid
+  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime     @default(now()) @db.Timestamptz(6)
+  testimonials  testimonials @relation(fields: [testimonialId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profiles      profiles     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
