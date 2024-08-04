@@ -13,7 +13,9 @@
 		"superforms",
 		"sveltuse",
 		"tailwindcss",
+		"tanstack",
 		"TORV",
+		"trpc",
 		"unplugin"
 	],
 	"typescript.tsdk": "node_modules\\typescript\\lib"

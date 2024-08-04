@@ -1,9 +1,10 @@
-<script>
-	import Button from '@ui/button/button.svelte'
+<script lang="ts">
+	import { page } from '$app/stores'
+	import { trpc } from '$lib/trpc/client'
+
+	const greeting = trpc($page).greeting.createQuery()
 </script>
 
 <div class="p-4">
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus quis error
-	reiciendis veniam alias sint temporibus unde reprehenderit asperiores, modi
-	iste voluptas vero quidem eius accusantium velit molestias recusandae eos?
+	<p>{$greeting.data}</p>
 </div>

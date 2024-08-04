@@ -1,5 +1,3 @@
-// src/hooks.server.ts
-import type { Handle } from '@sveltejs/kit'
 import type { TPublicUser } from '$lib/types'
 import type { TProfile } from '$lib/types/Profile'
 import { createServerClient } from '@supabase/ssr'
@@ -8,9 +6,10 @@ import {
 	PUBLIC_SUPABASE_URL,
 	PUBLIC_USER_ID,
 } from '$env/static/public'
-import { themes } from '$lib/data'
+import { router } from '$lib/trpc/router'
+import { createTRPCHandle } from 'trpc-sveltekit'
 
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient(
 		PUBLIC_SUPABASE_URL,
 		PUBLIC_SUPABASE_ANON_KEY,
@@ -69,18 +68,23 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	return resolve(event, {
-		filterSerializedResponseHeaders(name) {
-			return name === 'content-range'
-		},
-		transformPageChunk({ html }) {
-			const cookieTheme = event.cookies.get('theme')
-			const theme =
-				cookieTheme && themes.find((item) => item.id === cookieTheme)?.id
+	console.log('::handle::')
+	return createTRPCHandle({
+		router,
+		createContext: (e) => e.locals,
+	})({ event, resolve })
+	// return resolve(event, {
+	// 	filterSerializedResponseHeaders(name) {
+	// 		return name === 'content-range'
+	// 	},
+	// 	transformPageChunk({ html }) {
+	// 		const cookieTheme = event.cookies.get('theme')
+	// 		const theme =
+	// 			cookieTheme && themes.find((item) => item.id === cookieTheme)?.id
 
-			if (theme) html = html.replace('%theme%', `data-theme="${theme}"`)
+	// 		if (theme) html = html.replace('%theme%', `data-theme="${theme}"`)
 
-			return html
-		},
-	})
+	// 		return html
+	// 	},
+	// })
 }

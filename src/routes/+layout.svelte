@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import '../app.css'
+
+	export let data
 </script>
 
-<slot />
+<QueryClientProvider client={data.queryClient}>
+	<slot />
+</QueryClientProvider>

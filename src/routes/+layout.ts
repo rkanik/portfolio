@@ -4,6 +4,8 @@ import {
 	createServerClient,
 	isBrowser,
 } from '@supabase/ssr'
+import { QueryClient } from '@tanstack/svelte-query'
+import { browser } from '$app/environment'
 import {
 	PUBLIC_SUPABASE_ANON_KEY,
 	PUBLIC_SUPABASE_URL,
@@ -31,10 +33,22 @@ export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 
 	const session = await supabase.auth.getSession()
 
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				enabled: browser,
+				refetchOnMount: true,
+				refetchOnReconnect: true,
+				refetchOnWindowFocus: true,
+			},
+		},
+	})
+
 	return {
+		supabase,
+		queryClient,
 		publicUser: data.publicUser,
 		user: session.data.session?.user || null,
 		session: session.data.session,
-		supabase,
 	}
 }

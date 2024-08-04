@@ -131,7 +131,7 @@
 <ModeWatcher />
 <div class="flex h-screen flex-col overflow-hidden bg-background">
 	<AdminMenubar class="flex-none" />
-	<div class="flex flex-1">
+	<div class="flex flex-1 overflow-hidden">
 		<div class="flex flex-none flex-col space-y-3 border-r px-2 py-3">
 			<div class="mt-auto"></div>
 			<ThemeSwitcher />
@@ -164,7 +164,6 @@
 					{/each}
 				</div>
 			</div>
-			<div class="py-4"></div>
 		</div>
 		<div class="flex-1 overflow-y-scroll border-l">
 			<slot />

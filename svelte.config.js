@@ -7,10 +7,12 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
+			'@/*': './src/*',
 			'@ui/*': './src/lib/components/ui/*',
 			'@base/*': './src/lib/components/base/*',
 			'@utils/*': './src/lib/utils/*',
 			'@modules/*': './src/lib/modules/*',
+			'@prisma/*': './prisma/*',
 		},
 	},
 }
