@@ -34,7 +34,7 @@ const useSupabaseStorage = (supabase: SupabaseClient) => {
 			)
 		},
 		async upload(item: SupabaseFile) {
-			const { file, filename, path, bucket = 'uploads' } = item
+			const { file, filename, path, bucket = 'portfolio' } = item
 			const ext = file.name.split('.').pop() || '.jpg'
 			const { error, data } = await supabase.storage
 				.from(bucket)

@@ -25,13 +25,13 @@ const createSchema = z.object({
 
 const select = `
 	*,
-	projectAttachments(
+	projectAttachments:project_attachments(
 		*,
 		attachments(
 			*
 		)
 	),
-	projectTechnologies(
+	projectTechnologies:project_technologies(
 		*,
 		technologies(
 			*
@@ -46,11 +46,11 @@ const order = <T extends AnyObject>(query: T): T => {
 			.order('sortOrder', { ascending: true })
 			.order('sortOrder', {
 				ascending: true,
-				foreignTable: 'projectAttachments'
+				foreignTable: 'project_attachments'
 			})
 			.order('sortOrder', {
 				ascending: true,
-				foreignTable: 'projectTechnologies'
+				foreignTable: 'project_technologies'
 			})
 	)
 }
@@ -74,6 +74,7 @@ export const useProjects = (context?: TGlobalPageData) => {
 			if (filter?.name) query.ilike('name', `%${filter.name}%`)
 
 			const response = await query
+			// console.log(response.data, response.error)
 
 			return {
 				error: response.error,

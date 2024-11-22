@@ -13,8 +13,8 @@ export const load = async ({ params, locals: { getContext } }) => {
 		.from('projects')
 		.select(
 			`*,
-			projectAttachments(*,attachments(*)),
-			projectTechnologies(id,technologies(*))`
+			projectAttachments:project_attachments(*,attachments(*)),
+			projectTechnologies:project_technologies(id,technologies(*))`
 		)
 		.eq('status', 'active')
 		.eq('slug', params.slug)
@@ -31,8 +31,8 @@ export const load = async ({ params, locals: { getContext } }) => {
 			.from('projects')
 			.select(
 				`*,
-				projectAttachments(*,attachments(*)),
-				projectTechnologies(id,technologies(*))`
+				projectAttachments:project_attachments(*,attachments(*)),
+				projectTechnologies:project_technologies(id,technologies(*))`
 			)
 			.eq('status', 'active')
 			.neq('id', project.id)

@@ -52,6 +52,7 @@
 
 			loading = false
 
+			console.log(response);
 			if (response.error) {
 				error = response.error
 				return

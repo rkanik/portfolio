@@ -46,10 +46,10 @@
 		const sortOrder = await getNewSortOrder({
 			add: 1,
 			ascending: false,
-			table: 'projectAttachments'
+			table: 'project_attachments'
 		})
 
-		await supabase.from('projectAttachments').insert(
+		await supabase.from('project_attachments').insert(
 			attachments.map((attachment, index) => ({
 				projectId: project.id,
 				attachmentId: attachment.id,
@@ -62,7 +62,7 @@
 
 	const onDeleteProjectAttachment = (projectAttachment: TProjectAttachment) => async () => {
 		if (confirm(`Are you sure to delete this attachment?`)) {
-			await supabase.from('projectAttachments').delete().eq('id', projectAttachment.id)
+			await supabase.from('project_attachments').delete().eq('id', projectAttachment.id)
 			fetchProject()
 		}
 	}
@@ -74,7 +74,7 @@
 		)
 
 		const { error, data: updatedProjectAttachment } = await supabase
-			.from('projectAttachments')
+			.from('project_attachments')
 			.update({ sortOrder: projectAttachment.sortOrder })
 			.eq('id', projectAttachment.id)
 			.select('*,attachments(*)')

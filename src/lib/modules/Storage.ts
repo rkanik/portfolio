@@ -40,8 +40,8 @@ export const useStorageModule = (context: TPublicContext) => {
 				}
 			}
 
-			const { bucket = 'uploads', folder = 'projects' } = filter || {}
-			const uploads = await supabase.storage.from(bucket).list(folder, {
+			const { bucket = 'portfolio', folder = 'projects' } = filter || {}
+			const storage = await supabase.storage.from(bucket).list(folder, {
 				limit: 100,
 				offset: 0,
 				sortBy: {
@@ -51,8 +51,8 @@ export const useStorageModule = (context: TPublicContext) => {
 			})
 
 			return {
-				data: uploads.data,
-				error: uploads.error
+				data: storage.data,
+				error: storage.error
 			}
 		}
 	}
