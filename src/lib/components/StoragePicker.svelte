@@ -19,7 +19,7 @@
 	}
 
 	export let folder = ''
-	export let bucket = 'uploads'
+	export let bucket = 'portfolio'
 
 	let isInitialized = false
 	$: if (modal && !isInitialized) {

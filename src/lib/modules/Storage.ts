@@ -41,8 +41,8 @@ export const useStorageModule = (context: Pick<TGlobalPageData, 'user' | 'supaba
 				}
 			}
 
-			const { bucket = 'uploads', folder = 'projects' } = filter || {}
-			const uploads = await supabase.storage.from(bucket).list(folder, {
+			const { bucket = 'portfolio', folder = 'projects' } = filter || {}
+			const storage = await supabase.storage.from(bucket).list(folder, {
 				limit: 100,
 				offset: 0,
 				sortBy: {
@@ -52,8 +52,8 @@ export const useStorageModule = (context: Pick<TGlobalPageData, 'user' | 'supaba
 			})
 
 			return {
-				data: uploads.data,
-				error: uploads.error
+				data: storage.data,
+				error: storage.error
 			}
 		}
 	}

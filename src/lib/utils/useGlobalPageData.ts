@@ -9,7 +9,7 @@ export type TGlobalPageData = {
 	user: User | null
 	session: Session | null
 	publicUser: TPublicUser
-	supabase: SupabaseClient<Database>
+	supabase: SupabaseClient<Database, 'portfolio'>
 }
 
 export const useGlobalPageData = <T>() => {

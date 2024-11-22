@@ -29,7 +29,7 @@
 	import Icon from '@iconify/svelte'
 
 	export let folder = ''
-	export let bucket = 'uploads'
+	export let bucket = 'portfolio'
 	export let multiple: boolean = true
 	export let title = 'Storage Manager'
 

@@ -3,4 +3,4 @@
 	export let data
 </script>
 
-<StorageManager bucket="uploads" folder={`users/${data.user?.id || ''}`} />
+<StorageManager bucket="portfolio" folder={`users/${data.user?.id || ''}`} />

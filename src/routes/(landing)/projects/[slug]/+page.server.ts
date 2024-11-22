@@ -1,21 +1,20 @@
 import type { TProject, TUserTechnology } from '$lib/types'
 import { error as notFoundError } from '@sveltejs/kit'
 
-export const config = {
-	isr: {
-		expiration: 60
-	}
-}
-
 export const load = async ({ params, locals: { getContext } }) => {
-	const context = await getContext()
+	const { supabase, publicUser } = await getContext()
 
-	const { error, data: project } = await context.supabase
+	const userTechnologies = await supabase
+		.from('userTechnologies')
+		.select('*,technologies(*)')
+		.eq('userId', publicUser.id)
+
+	const { error, data: project } = await supabase
 		.from('projects')
 		.select(
 			`*,
-			projectAttachments(*,attachments(*)),
-			projectTechnologies(id,technologies(*))`
+			projectAttachments:project_attachments(*,attachments(*)),
+			projectTechnologies:project_technologies(id,technologies(*))`
 		)
 		.eq('status', 'active')
 		.eq('slug', params.slug)
@@ -27,7 +26,22 @@ export const load = async ({ params, locals: { getContext } }) => {
 		})
 	}
 
+	const projects = ((
+		await supabase
+			.from('projects')
+			.select(
+				`*,
+				projectAttachments:project_attachments(*,attachments(*)),
+				projectTechnologies:project_technologies(id,technologies(*))`
+			)
+			.eq('status', 'active')
+			.neq('id', project.id)
+			.order('sortOrder', { ascending: true })
+	).data || []) as TProject[]
+
 	return {
-		project: project as TProject
+		projects,
+		project: project as TProject,
+		userTechnologies: (userTechnologies.data || []) as TUserTechnology[]
 	}
 }
