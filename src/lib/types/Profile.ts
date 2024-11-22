@@ -31,7 +31,7 @@ export type TResume = {
 	educations: TEducation[]
 }
 
-export type TProfile = Database['public']['Tables']['profiles']['Row'] & {
+export type TProfile = Database['portfolio']['Tables']['profiles']['Row'] & {
 	educations: TEducation[]
 	experiences: TExperience[]
 	github: TProfileGithub

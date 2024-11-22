@@ -2,21 +2,31 @@
 	"vite.autoStart": false,
 	"editor.formatOnSave": true,
 	"cSpell.words": [
+		"animejs",
+		"autoincrement",
+		"cmdk",
 		"daisyui",
+		"datasource",
+		"embla",
 		"felte",
 		"formsnap",
+		"ianvs",
 		"iconify",
 		"Khandkar",
+		"paneforge",
 		"Rasel",
+		"sonner",
 		"sortablejs",
 		"supabase",
 		"superforms",
 		"sveltuse",
 		"tailwindcss",
 		"tanstack",
+		"Timestamptz",
 		"TORV",
 		"trpc",
-		"unplugin"
+		"unplugin",
+		"vaul"
 	],
 	"typescript.tsdk": "node_modules\\typescript\\lib"
 }

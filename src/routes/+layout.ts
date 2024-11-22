@@ -1,3 +1,4 @@
+import type { Database } from '@/supabase'
 import type { LayoutLoad } from './$types'
 import {
 	createBrowserClient,
@@ -15,21 +16,35 @@ export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 	depends('supabase:auth')
 
 	const supabase = isBrowser()
-		? createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-				global: {
-					fetch,
-				},
-			})
-		: createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-				global: {
-					fetch,
-				},
-				cookies: {
-					getAll() {
-						return data.cookies
+		? createBrowserClient<Database, 'portfolio'>(
+				PUBLIC_SUPABASE_URL,
+				PUBLIC_SUPABASE_ANON_KEY,
+				{
+					global: {
+						fetch,
+					},
+					db: {
+						schema: 'portfolio',
 					},
 				},
-			})
+			)
+		: createServerClient<Database, 'portfolio'>(
+				PUBLIC_SUPABASE_URL,
+				PUBLIC_SUPABASE_ANON_KEY,
+				{
+					global: {
+						fetch,
+					},
+					cookies: {
+						getAll() {
+							return data.cookies
+						},
+					},
+					db: {
+						schema: 'portfolio',
+					},
+				},
+			)
 
 	const session = await supabase.auth.getSession()
 

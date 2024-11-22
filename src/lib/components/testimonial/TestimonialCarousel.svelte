@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { TTestimonial } from '$lib/types'
-	import { browser } from '$app/environment'
-
 	import Icon from '@iconify/svelte'
+	import { browser } from '$app/environment'
 	import Carousel from 'svelte-carousel'
 	import { breakpointsTailwind, useBreakpoints } from 'sveltuse'
 
@@ -34,19 +33,19 @@
 		let:showNextPage
 		let:currentPageIndex
 	>
+		<!-- disabled={currentPageIndex === 0}
+	on:click={showPrevPage} -->
 		<button
 			slot="prev"
-			disabled={currentPageIndex === 0}
-			class="absolute btn btn-circle btn-outline btn-sm right-10 -bottom-5"
-			on:click={showPrevPage}
+			class="btn btn-circle btn-outline btn-sm absolute -bottom-5 right-10"
 		>
 			<Icon icon="material-symbols:chevron-left-rounded" class="text-lg" />
 		</button>
+		<!-- disabled={currentPageIndex === testimonials.length - 3}
+		on:click={showNextPage} -->
 		<button
 			slot="next"
-			disabled={currentPageIndex === testimonials.length - 3}
-			class="absolute right-0 btn btn-circle btn-outline btn-sm -bottom-5"
-			on:click={showNextPage}
+			class="btn btn-circle btn-outline btn-sm absolute -bottom-5 right-0"
 		>
 			<Icon icon="material-symbols:chevron-right-rounded" class="text-lg" />
 		</button>

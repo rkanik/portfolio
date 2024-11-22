@@ -1,33 +1,221 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("SUPABASE_DATABASE_URL")
   directUrl = env("SUPABASE_DIRECT_URL")
+  schemas   = ["portfolio", "public"]
 }
 
-model attachments {
-  id                 String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+model addresses {
+  id              Int               @id @default(autoincrement())
+  name            String?
+  phone           String?
+  email           String?
+  type            PublicAddressType @default(Other)
+  addressLine1    String
+  addressLine2    String?
+  postCode        String?
+  countryId       Int?
+  divisionId      Int?
+  districtId      Int?
+  subDistrictId   Int?
+  stateId         Int?
+  cityId          Int?
+  cityCorporation String?
+  houseNumber     String?
+  village         String?
+  wardNumber      String?
+  postOffice      String?
+  rmo             String?
+  union           String?
+  cities          cities?           @relation(fields: [cityId], references: [id])
+  countries       countries?        @relation(fields: [countryId], references: [id])
+  districts       districts?        @relation(fields: [districtId], references: [id])
+  divisions       divisions?        @relation(fields: [divisionId], references: [id])
+  states          states?           @relation(fields: [stateId], references: [id])
+  sub_districts   sub_districts?    @relation(fields: [subDistrictId], references: [id])
+
+  @@schema("public")
+}
+
+model BloodGroup {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@map("blood_groups")
+  @@schema("public")
+}
+
+model cities {
+  id         Int         @id @default(autoincrement())
+  name       String
+  countryId  Int?
+  stateId    Int?
+  divisionId Int?
+  districtId Int?
+  addresses  addresses[]
+  countries  countries?  @relation(fields: [countryId], references: [id])
+  districts  districts?  @relation(fields: [districtId], references: [id])
+  divisions  divisions?  @relation(fields: [divisionId], references: [id])
+  states     states?     @relation(fields: [stateId], references: [id])
+
+  @@schema("public")
+}
+
+model countries {
+  id            Int             @id @default(autoincrement())
+  name          String
+  iso2          String
+  iso3          String
+  addresses     addresses[]
+  cities        cities[]
+  districts     districts[]
+  divisions     divisions[]
+  states        states[]
+  sub_districts sub_districts[]
+
+  @@schema("public")
+}
+
+model districts {
+  id            Int             @id @default(autoincrement())
+  name          String
+  divisionId    Int
+  countryId     Int
+  addresses     addresses[]
+  cities        cities[]
+  countries     countries       @relation(fields: [countryId], references: [id])
+  divisions     divisions       @relation(fields: [divisionId], references: [id])
+  sub_districts sub_districts[]
+
+  @@schema("public")
+}
+
+model divisions {
+  id            Int             @id @default(autoincrement())
+  name          String
+  countryId     Int
+  addresses     addresses[]
+  cities        cities[]
+  districts     districts[]
+  countries     countries       @relation(fields: [countryId], references: [id])
+  sub_districts sub_districts[]
+
+  @@schema("public")
+}
+
+model genders {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@schema("public")
+}
+
+model marital_statuses {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@schema("public")
+}
+
+model nationalities {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@schema("public")
+}
+
+model permissions {
+  id                Int                 @id @default(autoincrement())
+  for               String?
+  name              String
+  slug              String              @unique
+  description       String?
+  roles_permissions roles_permissions[]
+
+  @@schema("public")
+}
+
+model religions {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@schema("public")
+}
+
+model roles {
+  id                Int                 @id @default(autoincrement())
+  for               String?
+  name              String
+  slug              String              @unique
+  description       String?
+  roles_permissions roles_permissions[]
+
+  @@schema("public")
+}
+
+model roles_permissions {
+  id           Int         @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  permissions  permissions @relation(fields: [permissionId], references: [id])
+  roles        roles       @relation(fields: [roleId], references: [id])
+
+  @@schema("public")
+}
+
+model states {
+  id        Int         @id @default(autoincrement())
+  name      String
+  countryId Int
+  addresses addresses[]
+  cities    cities[]
+  countries countries   @relation(fields: [countryId], references: [id])
+
+  @@schema("public")
+}
+
+model sub_districts {
+  id         Int         @id @default(autoincrement())
+  name       String
+  districtId Int
+  divisionId Int
+  countryId  Int
+  addresses  addresses[]
+  countries  countries   @relation(fields: [countryId], references: [id])
+  districts  districts   @relation(fields: [districtId], references: [id])
+  divisions  divisions   @relation(fields: [divisionId], references: [id])
+
+  @@schema("public")
+}
+
+model Attachment {
+  id                 Int                 @id @default(autoincrement())
   name               String
   src                String
   mimeType           String?
   thumbnail          String?
   base64             String?
-  createdAt          DateTime?            @default(now()) @db.Timestamptz(6)
-  updatedAt          DateTime?            @default(now()) @db.Timestamptz(6)
-  userId             String               @default("d91e7069-95a2-430b-8d18-aa423866315c")
-  bucket             String               @default("uploads")
-  folder             String               @default("users/d91e7069-95a2-430b-8d18-aa423866315c")
+  createdAt          DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime            @default(now()) @db.Timestamptz(6)
+  userId             String              @db.Uuid
+  bucket             String
+  folder             String
   medium             String?
   filename           String?
-  projectAttachments projectAttachments[]
-  testimonials       testimonials[]
+  profiles           Profile             @relation(fields: [userId], references: [id])
+  projectAttachments ProjectAttachment[]
+
+  @@map("attachments")
+  @@schema("portfolio")
 }
 
-model inquiries {
-  id        BigInt   @id @default(autoincrement())
+model Inquiry {
+  id        Int      @id @default(autoincrement())
   userId    String   @db.Uuid
   name      String
   email     String
@@ -35,114 +223,164 @@ model inquiries {
   message   String
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @db.Timestamptz(6)
-  profiles  profiles @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profiles  Profile  @relation(fields: [userId], references: [id])
+
+  @@map("inquiries")
+  @@schema("portfolio")
 }
 
-model profiles {
-  username         String?            @db.VarChar
-  full_name        String?            @db.VarChar
-  website          String?            @db.VarChar
-  avatar_url       String?            @db.VarChar
-  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
-  id               String             @id @db.Uuid
-  educations       Json[]             @default([]) @db.Json
-  experiences      Json[]             @default([]) @db.Json
+model Profile {
+  username         String           @unique
+  full_name        String
+  website          String?
+  avatar_url       String?
+  created_at       DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime         @default(now()) @db.Timestamptz(6)
+  id               String           @id @unique @db.Uuid
+  educations       Json?
+  experiences      Json?
   github           Json?
   resume           Json?
   data             Json?
-  inquiries        inquiries[]
-  projects         projects[]
-  testimonials     testimonials[]
-  userTechnologies userTechnologies[]
-  userTestimonials userTestimonials[]
+  attachments      Attachment[]
+  inquiries        Inquiry[]
+  projects         Project[]
+  testimonials     Testimonial[]
+  userTechnologies UserTechnology[]
+
+  @@map("profiles")
+  @@schema("portfolio")
 }
 
-model projectAttachments {
-  id           BigInt      @id @default(autoincrement())
-  projectId    String      @db.Uuid
-  attachmentId String      @db.Uuid
-  sortOrder    Float
-  attachments  attachments @relation(fields: [attachmentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  projects     projects    @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model ProjectAttachment {
+  id           Int        @id @default(autoincrement())
+  projectId    String     @db.Uuid
+  attachmentId Int
+  sortOrder    Float      @default(0)
+  attachment   Attachment @relation(fields: [attachmentId], references: [id])
+  project      Project    @relation(fields: [projectId], references: [id])
+
+  @@map("project_attachments")
+  @@schema("portfolio")
 }
 
-model projectTechnologies {
-  id           BigInt       @id @default(autoincrement())
-  projectId    String       @db.Uuid
-  technologyId String       @db.Uuid
-  isVisible    Boolean?     @default(true)
-  sortOrder    Float        @default(1)
-  projects     projects     @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  technologies technologies @relation(fields: [technologyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model ProjectTechnology {
+  id           Int        @id @default(autoincrement())
+  projectId    String     @db.Uuid
+  technologyId String     @db.Uuid
+  isVisible    Boolean    @default(true)
+  sortOrder    Float      @default(0)
+  project      Project    @relation(fields: [projectId], references: [id])
+  technology   Technology @relation(fields: [technologyId], references: [id])
+
+  @@map("project_technologies")
+  @@schema("portfolio")
 }
 
-model projects {
-  name                String                @db.VarChar
+model Project {
+  id                  String              @id @db.Uuid
+  name                String
   description         String?
-  previewUrl          String?               @db.VarChar
-  sourceCodeUrl       String?               @db.VarChar
+  previewUrl          String?
+  sourceCodeUrl       String?
   tags                String?
-  createdAt           DateTime?             @default(now()) @db.Timestamptz(6)
-  updatedAt           DateTime?             @default(now()) @db.Timestamptz(6)
-  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  status              String                @default("active")
-  sortOrder           Float                 @default(1)
-  userId              String                @db.Uuid
-  slug                String                @unique @default("")
-  repository          Json?                 @db.Json
+  createdAt           DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime            @default(now()) @db.Timestamptz(6)
+  status              String              @default("draft")
+  sortOrder           Float               @default(0)
+  userId              String              @db.Uuid
+  slug                String              @unique
+  repository          String?
   repositoryOwner     String?
   repositoryRepo      String?
-  projectAttachments  projectAttachments[]
-  projectTechnologies projectTechnologies[]
-  profiles            profiles              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  projectAttachments  ProjectAttachment[]
+  projectTechnologies ProjectTechnology[]
+  profiles            Profile             @relation(fields: [userId], references: [id])
+
+  @@map("projects")
+  @@schema("portfolio")
 }
 
-model technologies {
-  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  icon                String
+model Technology {
+  id                  String              @id @db.Uuid
   name                String
+  icon                String
   url                 String?
+  color               String?
   description         String?
-  created_at          DateTime?             @default(now()) @db.Timestamptz(6)
-  color               String                @default("blue")
-  projectTechnologies projectTechnologies[]
-  userTechnologies    userTechnologies[]
+  created_at          DateTime            @default(now()) @db.Timestamptz(6)
+  projectTechnologies ProjectTechnology[]
+  userTechnologies    UserTechnology[]
+
+  @@map("technologies")
+  @@schema("portfolio")
 }
 
-model testimonials {
-  id               BigInt             @id @default(autoincrement())
-  name             String
-  avatar           String?            @db.Uuid
-  company          String?
-  testimonial      String
-  rating           BigInt
-  date             DateTime?          @db.Timestamptz(6)
-  createdAt        DateTime           @default(now()) @db.Timestamptz(6)
-  updatedAt        DateTime           @default(now()) @db.Timestamptz(6)
-  status           String             @default("active")
-  userId           String             @default(dbgenerated("'d91e7069-95a2-430b-8d18-aa423866315c'::uuid")) @db.Uuid
-  sortOrder        Float
-  attachments      attachments?       @relation(fields: [avatar], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  profiles         profiles           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  userTestimonials userTestimonials[]
+model Testimonial {
+  id          Int      @id @default(autoincrement())
+  userId      String   @db.Uuid
+  name        String
+  avatar      String?
+  company     String?
+  rating      Int
+  testimonial String
+  date        DateTime @db.Timestamptz(6)
+  status      String   @default("draft")
+  sortOrder   Float    @default(0)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @db.Timestamptz(6)
+  profile     Profile  @relation(fields: [userId], references: [id])
+
+  @@map("testimonials")
+  @@schema("portfolio")
 }
 
-model userTechnologies {
-  id           String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  userId       String       @db.Uuid
-  technologyId String       @db.Uuid
-  created_at   DateTime?    @default(now()) @db.Timestamptz(6)
-  technologies technologies @relation(fields: [technologyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  profiles     profiles     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model UserTechnology {
+  id           String     @id @db.Uuid
+  userId       String     @db.Uuid
+  technologyId String     @db.Uuid
+  created_at   DateTime   @default(now()) @db.Timestamptz(6)
+  technologies Technology @relation(fields: [technologyId], references: [id])
+  profiles     Profile    @relation(fields: [userId], references: [id])
+
+  @@map("user_technologies")
+  @@schema("portfolio")
 }
 
-model userTestimonials {
-  id            BigInt       @id @default(autoincrement())
-  testimonialId BigInt
-  userId        String       @db.Uuid
-  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime     @default(now()) @db.Timestamptz(6)
-  testimonials  testimonials @relation(fields: [testimonialId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  profiles      profiles     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+enum Gender {
+  Male
+  Female
+  Others
+
+  @@schema("public")
+}
+
+enum PublicAddressType {
+  Home
+  Office
+  Present
+  Permanent
+  Billing
+  Shipping
+  Birth
+  Other
+
+  @@schema("public")
+}
+
+enum PublicStatus {
+  New
+  Verified
+
+  @@schema("public")
+}
+
+enum Religion {
+  Hindu
+  Muslim
+  Christian
+  Buddhist
+  Others
+
+  @@schema("public")
 }

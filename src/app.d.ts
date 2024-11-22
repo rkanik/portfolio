@@ -8,7 +8,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			getContext(): Promise<TContext>
-			supabase: SupabaseClient<Database>
+			supabase: SupabaseClient<Database, 'portfolio'>
 			getSession(): Promise<{
 				user: User | null
 				session: Session | null
@@ -17,7 +17,7 @@ declare global {
 		interface PageData {
 			user: User | null
 			session: Session | null
-			supabase: SupabaseClient<Database>
+			supabase: SupabaseClient<Database, 'portfolio'>
 		}
 		interface Platform {
 			env: {

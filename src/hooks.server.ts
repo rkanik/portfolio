@@ -1,5 +1,6 @@
 import type { TPublicUser } from '$lib/types'
 import type { TProfile } from '$lib/types/Profile'
+import type { Database } from './supabase'
 import { createServerClient } from '@supabase/ssr'
 import {
 	PUBLIC_SUPABASE_ANON_KEY,
@@ -10,10 +11,13 @@ import { router } from '$lib/trpc/router'
 import { createTRPCHandle } from 'trpc-sveltekit'
 
 export const handle = async ({ event, resolve }) => {
-	event.locals.supabase = createServerClient(
+	event.locals.supabase = createServerClient<Database, 'portfolio'>(
 		PUBLIC_SUPABASE_URL,
 		PUBLIC_SUPABASE_ANON_KEY,
 		{
+			db: {
+				schema: 'portfolio',
+			},
 			cookies: {
 				getAll() {
 					return event.cookies.getAll()
@@ -51,6 +55,7 @@ export const handle = async ({ event, resolve }) => {
 			.select('*')
 			.eq('id', PUBLIC_USER_ID)
 			.single()
+
 		const publicUser: TPublicUser = {
 			id: PUBLIC_USER_ID,
 			profile: profile.data as TProfile | null,

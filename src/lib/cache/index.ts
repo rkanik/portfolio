@@ -1,16 +1,21 @@
 import Cache from 'timed-cache'
 
 const cache = new Cache({
-	defaultTtl: 1000 * 5 * 60
+	defaultTtl: 1000 * 5 * 60,
 })
 
 export const getOrPutCache = async <F extends () => Promise<unknown> | unknown>(
 	key: string | unknown[],
-	callback: F
+	callback: F,
+	{
+		ignoreCache = false,
+	}: {
+		ignoreCache?: boolean
+	} = {},
 ) => {
 	const cached = cache.get(key)
 
-	if (cached !== undefined) {
+	if (cached !== undefined && !ignoreCache) {
 		return cached as Awaited<ReturnType<F>>
 	}
 

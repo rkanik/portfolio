@@ -5,3 +5,6 @@ export const getTechnologies = async () => {
 		//
 	})
 }
+
+export type TTechnologies = Awaited<ReturnType<typeof getTechnologies>>
+export type TTechnology = TTechnologies[number]

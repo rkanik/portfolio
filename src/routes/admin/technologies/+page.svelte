@@ -1,91 +1,96 @@
 <script lang="ts">
+	import type { TTechnology } from '$lib/types'
 	import Icon from '@iconify/svelte'
-	import { page } from '$app/stores'
-	import BaseJson from '$lib/components/base/BaseJson.svelte'
-	import TechnologyPicker from '$lib/components/TechnologyPicker.svelte'
-	import { trpc } from '$lib/trpc/client'
-	import { writable } from 'svelte/store'
+	import TechnologyFormDialog from '@modules/technologies/TechnologyFormDialog.svelte'
+	import MdiDeleteOutline from '~icons/mdi/delete-outline'
+	import MdiSquareEditOutline from '~icons/mdi/square-edit-outline'
+	import { Button } from '@/lib/components/ui/button'
+	import { Card, CardContent } from '@/lib/components/ui/card'
 
 	export let data
 
 	const { api } = data
-
 	const technologies = data.technologies()
+
+	//
+	const remover = api.technologies.remove.createMutation()
+	const onClickDelete = (id: string) => {
+		if (!confirm('Are you sure you want to delete this technology?')) return
+		$remover.mutate(id, {
+			onSuccess() {
+				$technologies.refetch()
+			},
+		})
+	}
+
+	//
+	let open = false
+	let technology: TTechnology | undefined
+
+	const onClickUpdate = (item: TTechnology) => {
+		open = true
+		technology = item
+	}
 </script>
 
 <div class="p-8">
 	<div class="flex justify-between">
 		<div></div>
-		<!-- <TechnologyFormDialog /> -->
+		<div>
+			<TechnologyFormDialog
+				{open}
+				initialForm={data.form}
+				initialData={technology}
+				onOpenChange={(v) => {
+					open = v
+					if (!v) technology = undefined
+				}}
+				on:success={() => $technologies.refetch()}
+			/>
+		</div>
 	</div>
+	{#if $technologies.isFetching}
+		<div>Loading...</div>
+	{/if}
 	<div class="mt-4 grid gap-4 2xl:grid-cols-8">
 		{#each $technologies.data || [] as item}
-			<!-- {@const isDeleting = deleteLoadingId === item.id}
-		{@const isVisibilityUpdating = isVisibleLoadingId === item.id} -->
-			<div
-				class="item group card relative h-32 cursor-grab bg-neutral text-neutral-content"
-			>
-				<!-- <div
-				data-tip="Delete"
-				class="tooltip tooltip-left tooltip-primary absolute right-1 top-1 z-10"
-			>
-				<button
-					class={cn('btn-outline btn-error btn-xs btn-circle btn', {
-						'invisible opacity-0 group-hover:visible group-hover:opacity-100':
-							!isDeleting,
-					})}
-					class:loading={isDeleting}
-					on:click={onClickDelete(item)}
-				>
-					{#if !isDeleting}
-						<Icon icon="mdi-delete-outline" />
-					{/if}
-				</button>
-			</div> -->
-
-				<div
-					data-tip="Toggle visibility"
-					class="tooltip tooltip-left tooltip-primary absolute bottom-1 right-1 z-10"
-				>
-					<!-- <button
-					class={cn('btn-outline btn-xs btn-circle btn', {
-						'btn-warning invisible opacity-0 group-hover:visible group-hover:opacity-100':
-							item.isVisible && !isVisibilityUpdating,
-						'btn-ghost opacity-50 group-hover:opacity-100':
-							!item.isVisible && !isVisibilityUpdating,
-						'btn-success': isVisibilityUpdating,
-					})}
-					class:loading={isVisibilityUpdating}
-					on:click={onToggleIsVisible(item)}
-				>
-					{#if !isVisibilityUpdating}
-						{#if item.isVisible}
-							<Icon icon="mdi-eye-outline" />
-						{:else}
-							<Icon icon="mdi-eye-off-outline" />
-						{/if}
-					{/if}
-				</button> -->
-				</div>
-
-				<div class="card-body relative justify-end">
-					<Icon
-						icon={item.icon}
-						class="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 transform text-8xl opacity-[0.02]"
-					/>
-					<div class="h-6 w-6">
-						<Icon icon={item.icon} class="z-10 text-3xl" />
+			<Card class="group relative overflow-hidden">
+				<CardContent class="space-y-2 pt-6">
+					<div class="h-8 w-8">
+						<Icon
+							icon={item.icon}
+							color={item.color}
+							class="z-10 text-3xl"
+						/>
 					</div>
 					<div class="z-10 mt-2 text-base font-bold">{item.name}</div>
+				</CardContent>
+				<Icon
+					icon={item.icon}
+					color={item.color}
+					class="absolute -bottom-4 -right-4 z-0 transform text-8xl opacity-[0.02]"
+				/>
+				<div
+					class="invisible absolute bottom-0 right-0 flex items-center -space-x-1 p-0.5 opacity-0 transition-all group-hover:visible group-hover:opacity-100"
+				>
+					<Button
+						size="icon"
+						variant="ghost"
+						class=" flex h-7 w-7 rounded-md text-neutral-400 dark:text-neutral-500"
+						on:click={() => onClickUpdate(item)}
+					>
+						<MdiSquareEditOutline />
+					</Button>
+					<Button
+						size="icon"
+						variant="ghost"
+						class="flex h-7 w-7 rounded-md text-neutral-400 hover:!text-red-500 dark:text-neutral-500"
+						on:click={() => onClickDelete(item.id)}
+					>
+						<MdiDeleteOutline />
+					</Button>
 				</div>
-			</div>
+			</Card>
 		{/each}
 	</div>
-	<!-- <TechnologyPicker technologies={$technologies.data} inline={true} />
-	<BaseJson
-		data={{
-			isFetching: $technologies.isFetching,
-			data: $technologies.data,
-		}}
-	/> -->
 </div>

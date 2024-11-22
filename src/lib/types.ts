@@ -1,6 +1,6 @@
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 import type { Readable, Writable } from 'svelte/store'
 import type { Database } from '../supabase'
-import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 import type { TProfile } from './types/Profile'
 
 export type BaseFormFieldOption = {
@@ -26,7 +26,7 @@ export type BaseFormField = {
 	accept?: string
 }
 
-export type TSupabase = SupabaseClient<Database>
+export type TSupabase = SupabaseClient<Database, 'portfolio'>
 
 export type TId = string | number
 
@@ -34,18 +34,21 @@ export type AnyFn = (...args: unknown[]) => void
 
 export type AnyObject = { [key: string]: any }
 
-export type TAttachment = Database['public']['Tables']['attachments']['Row']
-export type TProjectAttachment = Database['public']['Tables']['projectAttachments']['Row'] & {
-	attachments: TAttachment
-}
+export type TAttachment = Database['portfolio']['Tables']['attachments']['Row']
+export type TProjectAttachment =
+	Database['portfolio']['Tables']['project_attachments']['Row'] & {
+		attachments: TAttachment
+	}
 
-export type TTechnology = Database['public']['Tables']['technologies']['Row']
-export type TUserTechnology = Database['public']['Tables']['userTechnologies']['Row'] & {
-	technologies: TTechnology
-}
-export type TProjectTechnology = Database['public']['Tables']['projectTechnologies']['Row'] & {
-	technologies: TTechnology
-}
+export type TTechnology = Database['portfolio']['Tables']['technologies']['Row']
+export type TUserTechnology =
+	Database['portfolio']['Tables']['user_technologies']['Row'] & {
+		technologies: TTechnology
+	}
+export type TProjectTechnology =
+	Database['portfolio']['Tables']['project_technologies']['Row'] & {
+		technology: TTechnology
+	}
 
 export type TGithubLanguages = {
 	[language: string]: number
@@ -73,15 +76,16 @@ export type TGithubRepository = {
 	languages: TGithubLanguages
 }
 
-export type TProject = Database['public']['Tables']['projects']['Row'] & {
+export type TProject = Database['portfolio']['Tables']['projects']['Row'] & {
 	repository: TGithubRepository | null
 	projectAttachments: TProjectAttachment[]
 	projectTechnologies: TProjectTechnology[]
 }
 
-export type TTestimonial = Database['public']['Tables']['testimonials']['Row'] & {
-	avatar: TAttachment | null
-}
+export type TTestimonial =
+	Database['portfolio']['Tables']['testimonials']['Row'] & {
+		avatar: TAttachment | null
+	}
 
 export type TUser = User
 
@@ -94,14 +98,14 @@ export type TPublicContext = {
 	user: User | null
 	session: Session | null
 	publicUser: TPublicUser
-	supabase: SupabaseClient<Database>
+	supabase: SupabaseClient<Database, 'portfolio'>
 }
 
 export type TAuthContext = {
 	user: User
 	session: Session
 	publicUser: TPublicUser
-	supabase: SupabaseClient<Database>
+	supabase: SupabaseClient<Database, 'portfolio'>
 }
 
 export type TContext = TPublicContext | TAuthContext
@@ -111,7 +115,7 @@ export type TPagination = {
 	perPage?: number
 }
 
-export type TEnquiry = Database['public']['Tables']['inquiries']['Row']
+export type TEnquiry = Database['portfolio']['Tables']['inquiries']['Row']
 
 export type ClickEvent<T> = MouseEvent & {
 	currentTarget: EventTarget & T
