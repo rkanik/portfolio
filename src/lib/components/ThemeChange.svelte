@@ -38,7 +38,7 @@
 		>
 	</div>
 	<div
-		class={`dropdown-content bg-base-200 text-base-content rounded-t-box rounded-b-box top-px max-h-96 h-[70vh] w-52 overflow-y-auto shadow-2xl ${contentClasses}`}
+		class={`dropdown-content z-50 bg-base-200 text-base-content rounded-t-box rounded-b-box top-px max-h-96 h-[70vh] w-52 overflow-y-auto shadow-2xl ${contentClasses}`}
 	>
 		<div class="grid grid-cols-1 gap-3 p-3" tabindex="-1">
 			{#each themes as theme}
@@ -46,6 +46,9 @@
 					class="outline-base-content overflow-hidden rounded-lg text-left"
 					data-set-theme={theme.id}
 					data-act-class="[&_svg]:visible"
+					on:click={() => {
+						document.cookie = `theme=${theme.id}; path=/; max-age=31536000` // 1 year in seconds
+					}}
 				>
 					<div
 						data-theme={theme.id}

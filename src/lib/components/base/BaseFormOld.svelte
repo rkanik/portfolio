@@ -1,5 +1,5 @@
 <script lang="ts">
-	import cn from 'classnames'
+	import { cn } from '$lib/utils/cn'
 	import { createEventDispatcher } from 'svelte'
 	import BaseCombobox from './BaseCombobox.svelte'
 	import type { BaseFormField } from '$lib/types'

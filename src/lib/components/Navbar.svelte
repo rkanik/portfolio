@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
+	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
 
-	const items = [
+	const { session } = useGlobalPageData()
+
+	$: items = [
 		{
 			href: '/projects',
 			label: 'Projects'
@@ -22,8 +25,12 @@
 		{
 			href: '/resume',
 			label: 'Resume'
-		}
-	]
+		},
+		session ? {
+			href: '/admin',
+			label: 'Admin'
+		} : null
+	].filter(Boolean)
 
 	let top = '0px'
 	let oldScrollY = 0

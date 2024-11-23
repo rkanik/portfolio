@@ -39,7 +39,7 @@ export const useTestimonialModule = (context?: TGlobalPageData) => {
 			const { from, to, limit, ...pagination } = getSupabasePagination(filter)
 			const res = await supabase
 				.from('testimonials')
-				.select('*, avatar(*)')
+				.select('*')
 				.eq('userId', user.id)
 				.range(from, to)
 				.limit(limit)

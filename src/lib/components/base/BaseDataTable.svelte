@@ -1,7 +1,4 @@
 <script lang="ts">
-	// import { omitBy } from 'lodash'
-	// import { isEmpty } from 'lodash'
-
 	import type { Optional } from '$lib/types.js'
 	import type { SortableOptions } from 'sortablejs'
 	import type { TTextField } from './BaseForm.svelte'
@@ -41,13 +38,6 @@
 	}
 
 	const onChangeSearch = useDebounceFn((searchFields) => {
-		// if (
-		// 	omitBy(searchFields, (value, key) => {
-		// 		return isEmpty(value)
-		// 	})
-		// ) {
-		// 	onSearch && onSearch(searchFields)
-		// }
 		onSearch && onSearch(searchFields)
 	}, searchDelay)
 
@@ -58,51 +48,13 @@
 	$: {
 		onChangeSearch(searchFields)
 	}
-	// End Search
 </script>
 
 <!-- <form use:form> -->
-<table class="table w-full base-data-table table-compact">
-	<!-- head -->
-	<thead>
-		<tr>
-			{#if selectable}
-				<th>
-					<label>
-						<input type="checkbox" class="checkbox" />
-					</label>
-				</th>
-			{/if}
-			{#each headers as header}
-				<th>{header.text}</th>
-			{/each}
-			{#if actions}
-				<th />
-			{/if}
-		</tr>
-		<tr>
-			{#if selectable}
-				<td class="border-t border-solid border-white" />
-			{/if}
-			{#each headers as header}
-				<td class="border-t border-solid border-white">
-					{#if 'search' in header && header.search}
-						<TextField
-							{...header.search}
-							bind:value={searchFields[header.search.name]}
-							inputClass="input-sm"
-						/>
-					{/if}
-				</td>
-			{/each}
-			{#if actions}
-				<td class="border-t border-solid border-white" />
-			{/if}
-			<td />
-		</tr>
-	</thead>
-	<SvelteSortable bind:items tag="tbody" options={sortableOptions} onUpdated={onSortableUpdated}>
-		{#each items as item}
+<div class="border border-base-100 p-4 rounded-xl overflow-hidden">
+	<table class="table table-xs w-full base-data-table">
+		<!-- head -->
+		<thead>
 			<tr>
 				{#if selectable}
 					<th>
@@ -112,34 +64,73 @@
 					</th>
 				{/if}
 				{#each headers as header}
-					<td>
-						<slot
-							name="item"
-							{item}
-							{header}
-							value={typeof header.value === 'function'
-								? header.value(item, header)
-								: item[header.value]}
-						>
-							{typeof header.value === 'function' ? header.value(item, header) : item[header.value]}
-						</slot>
-					</td>
+					<th>{header.text}</th>
 				{/each}
-
 				{#if actions}
-					<th>
-						<slot name="actions" {item} />
-					</th>
+					<th />
 				{/if}
 			</tr>
-		{/each}
-	</SvelteSortable>
-</table>
+			<tr>
+				{#if selectable}
+					<td class="border-t border-solid border-white" />
+				{/if}
+				{#each headers as header}
+					<td class="border-t border-solid border-white">
+						{#if 'search' in header && header.search}
+							<TextField
+								{...header.search}
+								bind:value={searchFields[header.search.name]}
+								inputClass="input-sm"
+							/>
+						{/if}
+					</td>
+				{/each}
+				{#if actions}
+					<td class="border-t border-solid border-white" />
+				{/if}
+				<td />
+			</tr>
+		</thead>
+		<SvelteSortable bind:items tag="tbody" options={sortableOptions} onUpdated={onSortableUpdated}>
+			{#each items as item}
+				<tr>
+					{#if selectable}
+						<th>
+							<label>
+								<input type="checkbox" class="checkbox" />
+							</label>
+						</th>
+					{/if}
+					{#each headers as header}
+						<td>
+							<slot
+								name="item"
+								{item}
+								{header}
+								value={typeof header.value === 'function'
+									? header.value(item, header)
+									: item[header.value]}
+							>
+								{typeof header.value === 'function'
+									? header.value(item, header)
+									: item[header.value]}
+							</slot>
+						</td>
+					{/each}
 
-<!-- </form> -->
+					{#if actions}
+						<th>
+							<slot name="actions" {item} />
+						</th>
+					{/if}
+				</tr>
+			{/each}
+		</SvelteSortable>
+	</table>
+</div>
+
 <style lang="scss">
 	.base-data-table :where(th, td) {
 		white-space: normal !important;
 	}
 </style>
--

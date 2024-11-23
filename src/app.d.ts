@@ -1,5 +1,6 @@
 // import { Session } from '@supabase/supabase-js'
 import type { TContext } from '$lib/types'
+import 'unplugin-icons/types/svelte'
 
 declare global {
 	namespace App {

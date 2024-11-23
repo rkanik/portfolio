@@ -2,7 +2,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte'
 	import { fly } from 'svelte/transition'
-	import cn from 'classnames'
 	import BaseTeleport from './BaseTeleport.svelte'
 	import get from 'lodash/get'
 	import Icon from '@iconify/svelte'

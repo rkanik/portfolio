@@ -106,7 +106,7 @@
 	<div class="text-error">Error</div>
 	<BaseJson data={error} />
 {:else}
-	<div class="container px-4 py-4 mx-auto md:px-0 md:py-5">
+	<div class="p-4">
 		<div class="flex items-center justify-between py-2">
 			<h1 class="text-2xl font-medium">Testimonials</h1>
 			<BaseModal
@@ -156,10 +156,10 @@
 					{#if header.value === 'technologies'}
 						<!--  -->
 					{:else if header.value === 'name'}
-						<div class="flex items-center py-2 space-x-4">
+						<div class="flex items-center space-x-4">
 							<div class="avatar placeholder">
 								<div class="bg-neutral-focus text-neutral-content rounded-full w-8">
-									{#if item.avatar}
+									{#if typeof item.avatar === 'object'}
 										<img alt={item.avatar?.name} src={getPublicUrl(item.avatar)} />
 									{:else}
 										<span class="text-xs uppercase">{item.name.substring(0, 2)}</span>

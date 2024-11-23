@@ -57,6 +57,7 @@
 			</div>
 			<div class="form-control mt-6">
 				<button type="submit" class="btn btn-primary">{loading ? 'Loading...' : 'Login'}</button>
+				<a href="/" class="link link-hover mt-2 text-center">Home</a>
 			</div>
 		</div>
 	</div>

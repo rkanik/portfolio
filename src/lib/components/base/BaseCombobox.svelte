@@ -2,9 +2,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { fly } from 'svelte/transition'
-	import cn from 'classnames'
 	import BaseTeleport from './BaseTeleport.svelte'
 	import get from 'lodash/get'
+	import { cn } from '$lib/utils/cn'
 
 	// Options
 	type OptionsProps = any[] | ((q?: string) => Promise<any[]>)
