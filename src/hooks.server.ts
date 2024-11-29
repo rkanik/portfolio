@@ -56,6 +56,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			return name === 'content-range'
 		},
 		transformPageChunk({ html }) {
+			if (!event.url.pathname.startsWith('/admin')) return html
 			const theme = event.cookies.get('theme')
 			return theme ? html.replace('%data-theme%', `data-theme="${theme}"`) : html
 		}
