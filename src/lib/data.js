@@ -4,6 +4,10 @@ export let themes = [
 		id: 'light'
 	},
 	{
+		name: '👻  teal',
+		id: 'teal'
+	},
+	{
 		name: '🌚  dark',
 		id: 'dark'
 	},

@@ -9,10 +9,7 @@ export const getOrPutCache = async <F extends () => Promise<unknown> | unknown>(
 	callback: F
 ) => {
 	const cached = cache.get(key)
-
-	if (cached !== undefined) {
-		return cached as Awaited<ReturnType<F>>
-	}
+	if (cached) return cached as Awaited<ReturnType<F>>
 
 	const response = await callback()
 	cache.put(key, response)

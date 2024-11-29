@@ -15,6 +15,7 @@ export const load = async (event) => {
 	})
 
 	// const testimonials = await supabase.from('testimonials').select('*').eq('userId', publicUser.id)
+	// console.log(testimonials.error)
 	const testimonials = await getOrPutCache(['testimonials', publicUser.id], () => {
 		return supabase.from('testimonials').select('*').eq('userId', publicUser.id)
 		// return supabase.from('testimonials').select('*,avatar(*)').eq('userId', publicUser.id)
