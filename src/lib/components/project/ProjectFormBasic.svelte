@@ -76,6 +76,12 @@
 	$: {
 		basicForm.setFields('slug', slugify($basicValues.name, { lower: true }))
 	}
+
+	$: {
+		Object.entries(toBasic(project)).forEach(([k, v]) => {
+			basicForm.setFields(k as any, v, true)
+		})
+	}
 </script>
 
 <BaseForm

@@ -38,10 +38,10 @@
 			<Icon icon="material-symbols:more-vert" class="text-lg" />
 		</button>
 	</svelte:fragment>
-	<ul class="p-2 border shadow menu bg-gray-600 rounded-lg w-52 border-gray-500">
+	<ul class="p-2 border shadow menu bg-base-100 rounded-lg w-52 border-base-100">
 		{#each actions as action}
 			{#if 'divider' in action}
-				<hr class="mx-2 my-0 inline-block !border-gray-500" />
+				<hr class="mx-2 my-0 inline-block !border-base-300" />
 			{:else}
 				<!-- svelte-ignore a11y-invalid-attribute -->
 				<li>

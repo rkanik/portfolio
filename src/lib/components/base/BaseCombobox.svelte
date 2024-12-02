@@ -246,7 +246,7 @@
 				<div class="overflow-hidden bg-gray-600 rounded-lg {filtered.length ? 'p-2' : ''}">
 					<ul
 						class="overflow-y-auto menu max-h-96 flex-nowrap"
-						transition:fly={{ duration: 200, y: 5 }}
+						transition:fly|global={{ duration: 200, y: 5 }}
 						on:mousedown|preventDefault={handleOptionMousedown}
 					>
 						{#each filtered as option}

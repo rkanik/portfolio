@@ -67,7 +67,7 @@
 	</slot>
 	<div
 		bind:this={contentElement}
-		class="dropdown-content shadow bg-base-100 rounded-box w-52 !fixed"
+		class="dropdown-content shadow bg-base-100 rounded-box w-52 !fixed z-50"
 		style={`top:${style.posY}px;left:${style.posX}px;display:${style.visible ? 'block' : 'none'}`}
 	>
 		<slot />

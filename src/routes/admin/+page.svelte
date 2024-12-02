@@ -17,6 +17,7 @@
 	}
 
 	const onSaveChanges = async () => {
+		console.log(user?.id)
 		const res = await supabase
 			.from('profiles')
 			.update({ github })
@@ -65,6 +66,9 @@
 			{/each}
 		</div>
 		<div class="flex items-center justify-end space-x-2">
+			<form method="post" action="?/fixUser">
+				<button type="submit">Fix Current User</button>
+			</form>
 			<button
 				type="button"
 				on:click={() => {

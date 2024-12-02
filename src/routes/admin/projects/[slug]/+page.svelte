@@ -23,7 +23,10 @@
 	import ProjectFormTechnologies from '$lib/components/project/ProjectFormTechnologies.svelte'
 
 	export let data
-	let { project, supabase, technologies } = data
+	$: project = data.project
+	$: technologies = data.technologies
+
+	const supabase = data.supabase
 
 	const Projects = useProjects()
 	const fetchProject = async () => {
@@ -112,7 +115,7 @@
 	})
 </script>
 
-<div class="w-full max-w-4xl py-16 mx-auto">
+<div class="p-4">
 	{#if project}
 		<div>
 			<h1 class="text-2xl font-medium">

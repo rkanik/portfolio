@@ -6,6 +6,7 @@ export const load = async ({ params, locals: { getContext } }) => {
 	const context = await getContext()
 	const Projects = useProjects(context)
 
+	// console.log('server', params.slug)
 	const { error, data: project } = await Projects.get({
 		slug: params.slug
 	})
@@ -23,7 +24,7 @@ export const load = async ({ params, locals: { getContext } }) => {
 	const technologies = (
 		(
 			await context.supabase
-				.from('userTechnologies')
+				.from('user_technologies')
 				.select('id,technologies(*)')
 				.eq('userId', context.user.id)
 		)?.data || []

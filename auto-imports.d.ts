@@ -7,7 +7,6 @@
 export {}
 declare global {
   const IconMdiAccount: typeof import('~icons/mdi/account.svelte')['default']
-  const IconMdiDashb: typeof import('~icons/mdi/dashb.svelte')['default']
   const IconMdiDashboard: typeof import('~icons/mdi/dashboard.svelte')['default']
   const IconMdiList: typeof import('~icons/mdi/list.svelte')['default']
   const IconMdiProject: typeof import('~icons/mdi/project.svelte')['default']

@@ -1,9 +1,10 @@
-import { ComponentType } from "svelte"
+import { ComponentType } from 'svelte'
 
 export type TMenuItem = {
 	text?: string
 	href?: string
-	icon?: ComponentType
+	exact?: boolean
 	title?: string
+	icon?: ComponentType
 	children?: TMenuItem[]
 }

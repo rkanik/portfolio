@@ -32,7 +32,9 @@
 		<a
 			href={item.href}
 			class={cn({
-				active: item.href === $page.url.pathname
+				active: item.exact
+					? $page.url.pathname === item.href
+					: $page.url.pathname.startsWith(item.href)
 			})}
 		>
 			{#if item.icon}

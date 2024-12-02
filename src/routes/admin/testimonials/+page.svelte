@@ -149,10 +149,8 @@
 					{ text: 'Created', value: 'createdAt' },
 					{ text: 'Updated', value: 'updatedAt' }
 				]}
-				let:item
-				let:header
 			>
-				<div slot="item">
+				<div slot="item" let:item let:header>
 					{#if header.value === 'technologies'}
 						<!--  -->
 					{:else if header.value === 'name'}
@@ -213,7 +211,7 @@
 					{/if}
 				</div>
 
-				<div slot="actions">
+				<div slot="actions" let:item>
 					<BaseActionsDropdown
 						{item}
 						actions={[

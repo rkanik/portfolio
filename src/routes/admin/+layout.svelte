@@ -13,8 +13,12 @@
 	import IconMdiDatabase from '~icons/mdi/database'
 	import IconMdiSort from '~icons/mdi/sort'
 	import EosIconsAdmin from '~icons/eos-icons/admin'
+	import { PaneGroup, Pane, PaneResizer } from 'paneforge'
+	import { setContext } from 'svelte'
+	import { usePaneGroup } from '$lib/utils/usePaneGroup'
 
 	export let data
+	setContext('cookies', data.cookies)
 
 	// Logout
 	let isLoggingOut = false
@@ -31,7 +35,7 @@
 			text: 'Admin',
 			icon: EosIconsAdmin,
 			children: [
-				{ href: '/admin', text: 'Dashboard', icon: IconMdiViewDashboard },
+				{ href: '/admin', exact: true, text: 'Dashboard', icon: IconMdiViewDashboard },
 				{ href: '/admin/projects', text: 'Projects', icon: IconMdiTable },
 				{ href: '/admin/testimonials', text: 'Testimonials', icon: IconMdiMessage },
 				{ href: '/admin/uploads', text: 'Uploads', icon: IconMdiUpload },
@@ -59,6 +63,8 @@
 			]
 		}
 	]
+
+	const { layout, onLayoutChange } = usePaneGroup('admin-layout-pane', [15, 85])
 </script>
 
 <svelte:head>
@@ -178,15 +184,21 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex-1 flex overflow-hidden">
-			<aside class="bg-base-300 flex-none overflow-auto w-72 border-r border-base-100">
-				<!-- <svelte:component this={'IconMdiAccount'} /> -->
-				<Menu {items} />
-			</aside>
-			<div class="flex-1 overflow-auto">
-				<slot />
-			</div>
-		</div>
+		<PaneGroup direction="horizontal" {onLayoutChange}>
+			<Pane minSize={10} maxSize={25} defaultSize={layout?.[0]} class="flex-col flex">
+				<div class="bg-base-300 flex-1 overflow-auto">
+					<Menu {items} />
+				</div>
+			</Pane>
+			<PaneResizer class="w-2 relative h-full flex flex-col items-center">
+				<div class="w-px bg-base-100 flex-1" />
+			</PaneResizer>
+			<Pane defaultSize={layout?.[1]} class="flex flex-col">
+				<div class="flex-1 overflow-auto">
+					<slot />
+				</div>
+			</Pane>
+		</PaneGroup>
 	</div>
 {:else}
 	<div class="flex items-center justify-center h-screen">

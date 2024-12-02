@@ -232,7 +232,7 @@
 					<ul
 						class="overflow-y-auto menu bg-base-100 p-2 max-h-96 flex-nowrap border border-white border-opacity-10 space-y-1 mt-1 rounded-xl"
 						on:mousedown|preventDefault
-						transition:fly={{ duration: 200, y: 5 }}
+						transition:fly|global={{ duration: 200, y: 5 }}
 					>
 						{#each filtered as option}
 							<slot

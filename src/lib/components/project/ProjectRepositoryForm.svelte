@@ -87,6 +87,11 @@
 			...project,
 			...(data as unknown as TGithubRepository)
 		}
+		location.reload()
+	}
+
+	$: {
+		repositoryForm.setFields('sourceCodeUrl', project.sourceCodeUrl, true)
 	}
 
 	const { isSubmitting } = repositoryForm
