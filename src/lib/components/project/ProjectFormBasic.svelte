@@ -10,6 +10,8 @@
 
 	import BaseForm from '$lib/components/base/BaseForm.svelte'
 	import { useGlobalPageData } from '$lib/utils/useGlobalPageData'
+	import { page } from '$app/stores'
+	import { invalidateProjectsQuery } from '$lib/queries/createProjectsQuery'
 
 	export let project: TProject
 	const { supabase } = useGlobalPageData()
@@ -61,6 +63,7 @@
 				return
 			}
 
+			invalidateProjectsQuery()
 			project = {
 				...project,
 				...basicProject

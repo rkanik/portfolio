@@ -16,6 +16,8 @@
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge'
 	import { setContext } from 'svelte'
 	import { usePaneGroup } from '$lib/utils/usePaneGroup'
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
+	import { browser } from '$app/environment'
 
 	export let data
 	setContext('cookies', data.cookies)
@@ -73,10 +75,11 @@
 	{/if}
 </svelte:head>
 
-{#if data.session}
-	<div class="flex h-screen overflow-hidden bg-base-300 flex-col">
-		<div class="navbar bg-base-300 flex-none border-b border-base-100 z-10">
-			<!-- <div class="flex-none lg:hidden">
+<QueryClientProvider client={data.queryClient}>
+	{#if data.session}
+		<div class="flex h-screen overflow-hidden bg-base-300 flex-col">
+			<div class="navbar bg-base-300 flex-none border-b border-base-100 z-10">
+				<!-- <div class="flex-none lg:hidden">
 					<label for="my-drawer-3" class="btn btn-square btn-ghost">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +95,7 @@
 						>
 					</label>
 				</div> -->
-			<!-- <div class="flex-none">
+				<!-- <div class="flex-none">
 					<button class="btn btn-square btn-ghost">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -108,17 +111,17 @@
 						>
 					</button>
 				</div> -->
-			<div class="flex-1 px-4">
-				<!-- <a href="/admin" class="text-xl normal-case btn btn-ghost">Admin</a> -->
-				<a href="/admin" class="inline text-2xl font-bold">
-					<span>R</span><span class="text-secondary">.</span><span>K</span><span
-						class="text-secondary">.</span
-					>
-				</a>
-			</div>
-			<div class="flex-none">
-				<ThemeChange />
-				<!-- <button class="btn btn-ghost btn-circle">
+				<div class="flex-1 px-4">
+					<!-- <a href="/admin" class="text-xl normal-case btn btn-ghost">Admin</a> -->
+					<a href="/admin" class="inline text-2xl font-bold">
+						<span>R</span><span class="text-secondary">.</span><span>K</span><span
+							class="text-secondary">.</span
+						>
+					</a>
+				</div>
+				<div class="flex-none">
+					<ThemeChange />
+					<!-- <button class="btn btn-ghost btn-circle">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						class="w-5 h-5"
@@ -152,56 +155,57 @@
 					</div>
 				</button> -->
 
-				<div class="dropdown dropdown-end">
-					<!-- <button tabindex="0" class="btn btn-ghost btn-circle avatar"> -->
-					<!-- <div class="w-10 rounded-full">
+					<div class="dropdown dropdown-end">
+						<!-- <button tabindex="0" class="btn btn-ghost btn-circle avatar"> -->
+						<!-- <div class="w-10 rounded-full">
 							<img
 								alt="User avatar"
 								src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
 							/>
 						</div> -->
-					<button class="avatar placeholder">
-						<div class="bg-neutral text-neutral-content w-10 rounded-full">
-							<span class="text-sm uppercase">{data.session?.user?.email?.slice(0, 2)}</span>
-						</div>
-					</button>
-					<!-- </button> -->
-					<ul
-						tabindex="-1"
-						class="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
-					>
-						<li>
-							<a href="#" class="justify-between">
-								Profile
-								<span class="badge">New</span>
-							</a>
-						</li>
-						<li><a href="#">Settings</a></li>
-						<li>
-							<a href="#" on:click={onLogout}>{isLoggingOut ? 'Logging Out...' : 'Logout'}</a>
-						</li>
-					</ul>
+						<button class="avatar placeholder">
+							<div class="bg-neutral text-neutral-content w-10 rounded-full">
+								<span class="text-sm uppercase">{data.session?.user?.email?.slice(0, 2)}</span>
+							</div>
+						</button>
+						<!-- </button> -->
+						<ul
+							tabindex="-1"
+							class="p-2 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
+						>
+							<li>
+								<a href="#" class="justify-between">
+									Profile
+									<span class="badge">New</span>
+								</a>
+							</li>
+							<li><a href="#">Settings</a></li>
+							<li>
+								<a href="#" on:click={onLogout}>{isLoggingOut ? 'Logging Out...' : 'Logout'}</a>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
+			<PaneGroup direction="horizontal" {onLayoutChange}>
+				<Pane minSize={10} maxSize={25} defaultSize={layout?.[0]} class="flex-col flex">
+					<div class="bg-base-300 flex-1 overflow-auto">
+						<Menu {items} />
+					</div>
+				</Pane>
+				<PaneResizer class="w-px relative h-full flex flex-col items-center">
+					<div class="w-px bg-base-100 flex-1" />
+				</PaneResizer>
+				<Pane defaultSize={layout?.[1]} class="flex flex-col">
+					<div class="flex-1 overflow-auto">
+						<slot />
+					</div>
+				</Pane>
+			</PaneGroup>
 		</div>
-		<PaneGroup direction="horizontal" {onLayoutChange}>
-			<Pane minSize={10} maxSize={25} defaultSize={layout?.[0]} class="flex-col flex">
-				<div class="bg-base-300 flex-1 overflow-auto">
-					<Menu {items} />
-				</div>
-			</Pane>
-			<PaneResizer class="w-2 relative h-full flex flex-col items-center">
-				<div class="w-px bg-base-100 flex-1" />
-			</PaneResizer>
-			<Pane defaultSize={layout?.[1]} class="flex flex-col">
-				<div class="flex-1 overflow-auto">
-					<slot />
-				</div>
-			</Pane>
-		</PaneGroup>
-	</div>
-{:else}
-	<div class="flex items-center justify-center h-screen">
-		<LoginForm />
-	</div>
-{/if}
+	{:else}
+		<div class="flex items-center justify-center h-screen">
+			<LoginForm />
+		</div>
+	{/if}
+</QueryClientProvider>
