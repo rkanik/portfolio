@@ -44,7 +44,7 @@
 
 	const supabaseUpdate = async (id: TId, item: Partial<TProjectTechnology>) => {
 		const { error } = await supabase
-			.from('projectTechnologies')
+			.from('project_technologies')
 			.update(item)
 			.eq('id', id)
 			.select('*,technologies(*)')
@@ -96,10 +96,10 @@
 		const sortOrder = await getNewSortOrder({
 			add: 1,
 			ascending: false,
-			table: 'projectTechnologies'
+			table: 'project_technologies'
 		})
 		const { error, data } = await supabase
-			.from('projectTechnologies')
+			.from('project_technologies')
 			.insert(
 				techs.map((tech, i) => ({
 					projectId: project.id,

@@ -60,6 +60,10 @@
 		}
 	})
 
+	$: {
+		previewForm.setFields('previewUrl', project.previewUrl, true)
+	}
+
 	const { data: basicValues, isSubmitting: basicIsSubmitting } = previewForm
 </script>
 

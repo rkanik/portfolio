@@ -103,7 +103,7 @@
 		<input
 			type="text"
 			placeholder="Search..."
-			class="input w-full mt-4 bg-neutral input-primary"
+			class="input w-full mt-4 bg-base-200 input-primary"
 			value={$inputValue}
 			on:input={onInputValue}
 		/>
@@ -115,11 +115,11 @@
 					on:click={() => toggle(technology)}
 					class={cn('card px-4 py-4 flex flex-row items-center space-x-4', {
 						'bg-primary text-white': active,
-						'bg-neutral': !active
+						'bg-base-200': !active
 					})}
 				>
 					<div class="h-6 w-6">
-						<Icon icon={technology.icon} class="text-2xl z-10" />
+						<Icon icon={technology.icon} class="text-xl z-10" />
 					</div>
 					<div>
 						{technology.name}

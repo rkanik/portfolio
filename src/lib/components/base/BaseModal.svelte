@@ -1,6 +1,6 @@
 <script lang="ts">
 	import cn from '$lib/utils/cn'
-	import { onDestroy } from 'svelte'
+	import { onDestroy, onMount } from 'svelte'
 	import BaseTeleport from './BaseTeleport.svelte'
 
 	type Activator =
@@ -21,6 +21,7 @@
 
 	export let modalBox = ''
 	export let modalClass = 'overflow-auto'
+	export let id = `modal-${Math.random().toString(36).slice(-10)}`
 
 	const onShow = () => {
 		value = true
@@ -60,8 +61,8 @@
 
 <BaseTeleport to="body">
 	<div class="base-modal">
-		<input bind:checked={value} readonly type="checkbox" class="modal-toggle" />
-		<div class={cn('modal block py-12', modalClass)}>
+		<input bind:checked={value} {id} readonly type="checkbox" class="modal-toggle" />
+		<div class={cn('modal py-12', modalClass)} role="dialog">
 			<div class={cn('relative modal-box max-h-max mx-auto', modalBox)}>
 				{#if !hideClose}
 					<button
@@ -81,6 +82,7 @@
 					{/if}
 				</div>
 			</div>
+			<label class="modal-backdrop -my-12" for={id}>Close</label>
 		</div>
 	</div>
 </BaseTeleport>
